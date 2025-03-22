@@ -1,0 +1,6 @@
+@RandomRecipeGenerator.API_HostAddress = http://localhost:5027
+
+GET {{RandomRecipeGenerator.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
