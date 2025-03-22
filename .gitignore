@@ -482,3 +482,9 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# ASP.NET Core configuration files
+RandomRecipeGenerator.API/appsettings.json
+RandomRecipeGenerator.API/appsettings.Development.json
+RandomRecipeGenerator.API/appsettings.Production.json
+RandomRecipeGenerator.API/appsettings.Staging.json
