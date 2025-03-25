@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RandomRecipeGenerator.API.Services;
 using System.Text.Json;
@@ -8,9 +9,10 @@ namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RecipeController(HttpRequestService httpRequestService) : ControllerBase
+    public class RecipeController(HttpRequestService httpRequestService, IMapper mapper) : ControllerBase
     {
         private readonly HttpRequestService _httpRequestService = httpRequestService;
+        private readonly IMapper _mapper = mapper;
 
         // GET: api/recipe
         [HttpGet]
@@ -20,17 +22,8 @@ namespace RandomRecipeGenerator.API.Controllers
 
             Console.WriteLine("recipeDomain in RecipeController:");
             Console.WriteLine(JsonSerializer.Serialize(recipeDomain));
-
-            var recipeDto = new RecipeDTO
-            {
-                Id = recipeDomain.Id,
-                Title = recipeDomain.Title,
-                Ingredients = recipeDomain.Ingredients,
-                Instructions = recipeDomain.Instructions,
-                ImageUrl = recipeDomain.ImageUrl
-            };
-
-            return Ok(recipeDto);
+            
+            return Ok(_mapper.Map<RecipeDTO>(recipeDomain));
         }
     }
 }
