@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace RandomRecipeGenerator.API.Services
 {
-    public class HttpRequestService(HttpClient httpClient, IConfiguration configuration, ILogger<HttpRequestService> logger)
+    public class HttpRequestService(HttpClient httpClient, IConfiguration configuration, ILogger<HttpRequestService> logger) : IHttpRequestService
     {
         private readonly HttpClient _httpClient = httpClient;
         private readonly IConfiguration _configuration = configuration;
@@ -39,24 +39,34 @@ namespace RandomRecipeGenerator.API.Services
                 response.EnsureSuccessStatusCode();
                 var jsonString = await response.Content.ReadAsStringAsync();
 
-                try 
-                {
-                    _logger.LogDebug("Deserializing JSON response");
-                    var data = JsonSerializer.Deserialize<JsonDocument>(jsonString);
-                    var recipe = data == null ? throw new RecipeParsingException("Unable to find a recipe. Please try again later.")
-                         : data.RootElement.GetProperty("recipes")[0];
+               
+               
+                _logger.LogDebug("Deserializing JSON response");
+                var data = JsonSerializer.Deserialize<JsonDocument>(jsonString);
 
-                    _logger.LogInformation("Successfully retrieved and parsed recipe");
-                    var mappedRecipe = MapJSONToRecipe(recipe);
-                    _logger.LogInformation("Successfully mapped recipe with ID: {RecipeId}", mappedRecipe.Id);
-                    return mappedRecipe;
-                }
-                catch (JsonException ex)
+                if (data == null)
                 {
-                    _logger.LogError(ex, "JSON parsing error, failed to parse recipe data");
-                    throw new RecipeParsingException("Unable to process the recipe data. Please try again later.");
+                    _logger.LogWarning("Deserialized JSON document was null.");
+                    throw new RecipeParsingException("Unable to find a recipe. Please try again later.");
                 }
+               
+                var recipe = data.RootElement.GetProperty("recipes")[0];
+
+                _logger.LogInformation("Successfully retrieved and parsed recipe");
+                var mappedRecipe = MapJSONToRecipe(recipe);
+                _logger.LogInformation("Successfully mapped recipe with ID: {RecipeId}", mappedRecipe.Id);
                 
+                return mappedRecipe;     
+            }
+            catch (Exception ex) when (ex is KeyNotFoundException || ex is IndexOutOfRangeException)
+            {
+                _logger.LogError(ex, "Could not find 'recipes' array or first element in JSON.");
+                throw new RecipeParsingException("No recipe found or data structure invalid in the API response.");
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "JSON parsing error, failed to parse recipe data");
+                throw new RecipeParsingException("Unable to process the recipe data. Please try again later.");
             }
             catch (HttpRequestException ex)
             {

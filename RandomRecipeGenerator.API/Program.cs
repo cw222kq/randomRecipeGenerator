@@ -24,6 +24,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<HttpRequestService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+builder.Services.AddScoped<IHttpRequestService, HttpRequestService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

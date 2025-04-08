@@ -10,9 +10,9 @@ namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RecipeController(HttpRequestService httpRequestService, IMapper mapper, ILogger<RecipeController> logger) : ControllerBase
+    public class RecipeController(IHttpRequestService httpRequestService, IMapper mapper, ILogger<RecipeController> logger) : ControllerBase
     {
-        private readonly HttpRequestService _httpRequestService = httpRequestService;
+        private readonly IHttpRequestService _httpRequestService = httpRequestService;
         private readonly IMapper _mapper = mapper;
         private readonly ILogger<RecipeController> _logger = logger;
 
@@ -23,6 +23,7 @@ namespace RandomRecipeGenerator.API.Controllers
             try {
                 _logger.LogInformation("Processing recipe request");
                 var recipeDomain = await _httpRequestService.Get("https://api.spoonacular.com/recipes/random?number=1&includeNutrition=false");
+                _logger.LogInformation("Recipe received: {@Recipe}", recipeDomain);
                 var recipeDTO = _mapper.Map<RecipeDTO>(recipeDomain);
                 _logger.LogInformation("Successfully processed recipe request. Recipe ID: {RecipeId}", recipeDTO.Id);
                 return Ok(recipeDTO);
