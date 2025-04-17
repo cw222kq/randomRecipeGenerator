@@ -1,0 +1,10 @@
+
+/.expo
+
+node_modules
+
+.expo
+
+.expo-env
+
+.expo-env.d.ts
