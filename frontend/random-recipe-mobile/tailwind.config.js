@@ -8,7 +8,7 @@ module.exports = {
     './App.{js,jsx,ts,tsx}', // Include the root App component
     './src/**/*.{js,jsx,ts,tsx}', // Include everything inside a potential 'src' folder
   ],
-  presets: [require('nativewind/preset')], // Add NativeWind preset
+  presets: [require('nativewind/preset')],
   theme: {
     extend: {},
   },

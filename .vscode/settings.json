@@ -1,6 +1,9 @@
-// .vscode/settings.json
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always"
+    // Tell ESLint to run auto-fix on save
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "always"
+    },
+  
+    // Explicitly disable the default formatter if relying only on ESLint
+    "editor.formatOnSave": false,
   }
-}
