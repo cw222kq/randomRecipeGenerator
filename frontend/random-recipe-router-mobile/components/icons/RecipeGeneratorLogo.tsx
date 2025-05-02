@@ -11,7 +11,7 @@ export default function RecipeFinderLogo({ ...rest }: ViewProps) {
 
   return (
     <View className="flex-row items-center gap-1" {...rest}>
-      <Text className="text-lg font-bold text-black dark:text-white">
+      <Text className="text-lg font-semibold text-black dark:text-white">
         Recipe
       </Text>
       <Svg
@@ -22,7 +22,7 @@ export default function RecipeFinderLogo({ ...rest }: ViewProps) {
       >
         <Path d="m175-120-56-56 410-410q-18-42-5-95t57-95q53-53 118-62t106 32q41 41 32 106t-62 118q-42 44-95 57t-95-5l-50 50 304 304-56 56-304-302-304 302Zm118-342L173-582q-54-54-54-129t54-129l248 250-128 128Z" />
       </Svg>
-      <Text className="text-lg font-bold text-blue-500">Generator</Text>
+      <Text className="text-lg font-semibold text-blue-500">Generator</Text>
     </View>
   )
 }

@@ -1,17 +1,13 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import FoodLogo from '@/components/icons/FoodLogo'
+import RecipeGeneratorLogo from '@/components/icons/RecipeGeneratorLogo'
 
 export default function Navbar() {
   return (
     <nav className="flex items-center justify-between border-b border-gray-100 py-5">
       <div className="flex items-center gap-8">
-        <Link href="/">
-          <h1 className="flex items-center gap-x-1 text-3xl font-semibold">
-            Recipe
-            <FoodLogo />
-            <span className="text-blue-500">Finder</span>
-          </h1>
+        <Link className="transition-all ease-in-out hover:scale-105" href="/">
+          <RecipeGeneratorLogo />
         </Link>
 
         <div className="hidden items-center gap-6 transition-colors sm:flex">
