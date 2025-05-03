@@ -16,43 +16,50 @@ interface RecipeCardProps {
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
   return (
-    <Card className="mx-auto w-full">
-      <CardHeader>
-        <CardTitle>{recipe.title}</CardTitle>
+    <Card className="mx-auto w-full max-w-3xl overflow-hidden">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl md:text-2xl">{recipe.title}</CardTitle>
         <CardDescription>Description</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div>
+      <CardContent className="pt-0">
+        {/* Image */}
+        <div className="relative mb-4 aspect-video w-full">
           <Image
             src={recipe.imageUrl}
             alt={recipe.title}
-            className="h-auto w-full rounded-t-lg object-cover"
+            className="rounded-md object-cover"
             priority
-            width={500}
-            height={500}
+            fill
+            sizes="(max-width: 768px) 90vw, (max-width: 1200px) 60vw, 768px"
           />
         </div>
+
+        {/* Ingredients */}
         <div className="mt-4 rounded-lg border px-4 py-4">
-          <h3 className="text-lg font-semibold">Ingredients:</h3>
-          <ul>
+          <h3 className="mb-2 text-lg font-semibold">Ingredients:</h3>
+          <ul className="text-muted-foreground list-disc space-y-1 pl-5 text-sm">
             {recipe.ingredients.map((ingredient, i) => (
               <li key={i}>{ingredient}</li>
             ))}
           </ul>
-          {recipe.ingredients}
         </div>
+
+        {/* Instructions */}
         <div className="mt-4 rounded-lg border px-4 py-4">
           <h3 className="text-lg font-semibold">Instructions:</h3>
-          {recipe.instructions}
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            {recipe.instructions}
+          </p>
         </div>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-center justify-center gap-4 border-t px-4 py-4 text-center">
+
+      <CardFooter className="border-t pt-4">
+        <div className="flex w-full flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-center sm:gap-4">
           <Button className="cursor-pointer transition-all ease-in-out hover:scale-110">
             New Recipe
           </Button>
           <Button
-            className="cursor-pointertransition-all ease-in-out hover:scale-110"
+            className="cursor-pointer transition-all ease-in-out hover:scale-110"
             variant="secondary"
           >
             Save Recipe
