@@ -4,7 +4,7 @@ import RecipeGeneratorLogo from '@/components/icons/RecipeGeneratorLogo'
 
 export default function Navbar() {
   return (
-    <nav className="flex items-center justify-between border-b border-gray-100 py-5">
+    <nav className="flex items-center justify-between border-b border-gray-200 py-5">
       <div className="flex items-center gap-8">
         <Link className="transition-all ease-in-out hover:scale-105" href="/">
           <RecipeGeneratorLogo />

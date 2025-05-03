@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card'
 import { Recipe } from '@/schemas/recipeSchema'
 import Image from 'next/image'
+import { Button } from './ui/button'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -46,8 +47,16 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         </div>
       </CardContent>
       <CardFooter>
-        <div className="flex w-full items-center justify-center border-t px-4 py-4 text-center">
-          Footer
+        <div className="flex w-full items-center justify-center gap-4 border-t px-4 py-4 text-center">
+          <Button className="cursor-pointer transition-all ease-in-out hover:scale-110">
+            New Recipe
+          </Button>
+          <Button
+            className="cursor-pointertransition-all ease-in-out hover:scale-110"
+            variant="secondary"
+          >
+            Save Recipe
+          </Button>
         </div>
       </CardFooter>
     </Card>
