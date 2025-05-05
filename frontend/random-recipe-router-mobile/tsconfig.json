@@ -1,11 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
-  "moduleResolution": "node",
+  "moduleResolution": "bundler",
   "compilerOptions": {
     "baseUrl": ".",
     "strict": true,
     "paths": {
       "@/*": ["./*"],
+      "~/*": ["./*"]
     }
   },
   "include": [
