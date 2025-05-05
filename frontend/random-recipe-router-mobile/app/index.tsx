@@ -7,13 +7,11 @@ import { Recipe } from '@/schemas/recipeSchema'
 export default function HomeScreen() {
   const [recipe, setRecipe] = useState<Recipe | null>(null)
   useEffect(() => {
-    const testGetRandomRecipe = async () => {
-      const result = await getRandomRecipe()
-      console.log('result')
-      console.log(result)
+    const resultGetRandomRecipe = async () => {
+      const result: Recipe | null = await getRandomRecipe()
       setRecipe(result)
     }
-    testGetRandomRecipe()
+    resultGetRandomRecipe()
   }, [])
 
   if (!recipe) {
