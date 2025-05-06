@@ -1,50 +1,52 @@
-# Welcome to your Expo app 👋
+# Random Recipe Mobile App (Expo Router)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is a React Native mobile application built with [Expo](https://expo.dev) and [Expo Router](https://docs.expo.dev/router/introduction/) that fetches and displays random recipes.
 
-## Get started
+## Features
 
-1. Install dependencies
+*   Displays random recipes.
+*   Built with Expo for cross-platform development (iOS, Android).
+*   Uses Expo Router for file-based routing.
+*   Styled with NativeWind (Tailwind CSS for React Native).
+*   Connects to its dedicated ASP.NET Core backend (RandomRecipeGenerator.API).
 
-   ```bash
-   npm install
-   ```
+## Get Started
 
-2. Start the app
+1.  **Clone the repository (if you haven't already):**
+    If you're setting this project up fresh or someone else is, they'll need to clone the main repository.
+    ```bash
+    # Example:
+    # git clone https://github.com/cw222kq/randomRecipeGenerator.git
+    # cd randomRecipeGenerator/frontend/random-recipe-router-mobile
+    ```
 
-   ```bash
+2.  **Install dependencies:**
+    Make sure you are in the `frontend/random-recipe-router-mobile` directory.
+    ```bash
+    npm install
+    ```
+
+3.  **Set up Environment Variables:**
+    This application requires environment variables to specify the backend API URL.
+    *   Rename the `.env.example` file (located in this directory: `frontend/random-recipe-router-mobile/`) to `.env`.
+    *   Update the variables in your new `.env` file. For example:
+        ```env
+        EXPO_PUBLIC_API_BASE_URL=http://localhost:5027
+        ```
+        **Note:** The `EXPO_PUBLIC_API_BASE_URL` should point to your running `RandomRecipeGenerator.API` backend. `http://localhost:5027` is a common example; ensure the port matches your backend's actual running port (check its `launchSettings.json`).
+        
+        **Important for Expo Go on Physical Devices:** If you are running the backend API locally (on `localhost`) and testing the mobile app on a physical device using Expo Go, `localhost` will not be accessible from your phone. You will need to expose your local backend API to the internet, for example, by using a dev tunnel (like `npx expo start --tunnel`, or a tool like ngrok for your backend). Then, update `EXPO_PUBLIC_API_BASE_URL` in your `.env` file to use the public tunnel URL.
+        
+
+4.  **Ensure Backend API is Running:**
+    Before starting the mobile app, make sure your `RandomRecipeGenerator.API` backend is running. Navigate to its directory (e.g., `../../RandomRecipeGenerator.API`) and start it (e.g., `dotnet run`).
+
+
+5.  **Start the development server:**
+    ```bash
     npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+    ```
+    This will open the Expo developer tools in your browser. From there, you can:
+    *   Run on an Android emulator or connected device.
+    *   Run on an iOS simulator or connected device.
+    *   Run in a [development build](https://docs.expo.dev/develop/development-builds/introduction/) if you have one set up.
