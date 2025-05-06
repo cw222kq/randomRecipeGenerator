@@ -20,6 +20,6 @@ This repository uses a monorepo structure:
 *   **`frontend/`**: Contains the frontend applications.
     *   `random-recipe-web/`: Next.js web application. (See [Web README](./frontend/random-recipe-web/README.md))
     *   `random-recipe-router-mobile/`: Expo Router mobile application. (See [Mobile README](./frontend/random-recipe-router-mobile/README.md))
-    *   `random-recipe-mobile/`: Original Expo mobile application (Placeholder). (See [Mobile README](./frontend/random-recipe-mobile/README.md))
+   
 
 Please refer to the specific README files within each project directory for detailed setup instructions.
