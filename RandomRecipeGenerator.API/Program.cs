@@ -45,8 +45,14 @@ builder.Services
     .AddCookie()
     .AddGoogleOpenIdConnect(options =>
     {
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        string? clientID = builder.Configuration["Authentication:Google:ClientId"];
+        string? clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+
+        ArgumentNullException.ThrowIfNull(clientID, nameof(clientSecret));
+        ArgumentNullException.ThrowIfNull(clientSecret, nameof(clientSecret));
+
+        options.ClientId = clientID;
+        options.ClientSecret = clientSecret;
     });
 
 var app = builder.Build();
