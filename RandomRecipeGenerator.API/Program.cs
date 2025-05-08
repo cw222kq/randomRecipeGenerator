@@ -48,11 +48,13 @@ builder.Services
         string? clientID = builder.Configuration["Authentication:Google:ClientId"];
         string? clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 
-        ArgumentNullException.ThrowIfNull(clientID, nameof(clientSecret));
+        ArgumentNullException.ThrowIfNull(clientID, nameof(clientID));
         ArgumentNullException.ThrowIfNull(clientSecret, nameof(clientSecret));
 
         options.ClientId = clientID;
         options.ClientSecret = clientSecret;
+        options.CallbackPath = "/signin-google";
+
     });
 
 var app = builder.Build();
