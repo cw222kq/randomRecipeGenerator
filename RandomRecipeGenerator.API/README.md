@@ -28,7 +28,20 @@ This folder contains the ASP.NET Core 8 backend REST API for the Random Recipe G
           "SpoonacularApiKey": "YOUR_REAL_SPOONACULAR_API_KEY"
         }
         ```
-   
+
+## Authentication
+
+This API supports user authentication via Google Sign-In.
+
+*   **Google Sign-In:** Users can authenticate using their Google accounts. The API handles the OAuth 2.0 flow with Google.
+    *   The primary endpoints for this are `/api/account/login-google` (to initiate login) and `/api/account/google-login-callback` (the callback URL for Google to redirect to after successful authentication).
+    *   **Local Development:** Client ID and Client Secret for Google OAuth are configured using the **.NET Secret Manager**. This means they are stored in a `secrets.json` file located in your user profile directory (e.g., `%APPDATA%\Microsoft\UserSecrets\<user_secrets_id>\secrets.json` on Windows or `~/.microsoft/usersecrets/<user_secrets_id>/secrets.json` on macOS/Linux), not directly in the project's `appsettings.json` files. The .NET Secret Manager tool is for local development only and these secrets are not deployed.
+    *   **Production:** For production environments, these secrets (Client ID and Client Secret) **must not** be managed with the .NET Secret Manager. Instead, they should be configured securely using **environment variables** on your hosting platform (e.g., Azure App Service Application Settings, AWS Environment Properties, Docker environment variables) or a dedicated secret management service like Azure Key Vault, AWS Secrets Manager, or HashiCorp Vault. Your application will automatically pick up these values if they are set as environment variables (e.g., `Authentication:Google:ClientId` and `Authentication:Google:ClientSecret`). Refer to the `Program.cs` for how these secrets are loaded by the Google authentication services.
+*   **Account Handling (Planned):**
+    *   Upon successful sign-in with Google, the system will check if a user account associated with that Google ID already exists in the application's database.
+    *   If no existing account is found, a new user account will be automatically created and linked to their Google identity. (This database interaction logic is planned for implementation in the `AccountController`'s callback method).
+
+
 ## Running the API Locally
 
 There are several ways to run the API:
