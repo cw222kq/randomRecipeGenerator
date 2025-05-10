@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+//import { Button } from '@/components/ui/button'
+import GoogleSignInButton from '@/components/GoogleSignInButton'
 import RecipeGeneratorLogo from '@/components/icons/RecipeGeneratorLogo'
 
 export default function Navbar() {
@@ -27,16 +28,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="hidden gap-2 sm:flex sm:items-center sm:gap-4">
-        <Button className="w-full cursor-pointer transition-all ease-in-out hover:scale-110 sm:w-auto">
-          Login
-        </Button>
-        <Button
-          className="w-full cursor-pointer transition-all ease-in-out hover:scale-110 sm:w-auto"
-          variant="secondary"
-        >
-          Sign up
-        </Button>
+      <div className="hidden ease-in-out hover:scale-105 sm:flex sm:items-center">
+        <GoogleSignInButton />
       </div>
     </nav>
   )
