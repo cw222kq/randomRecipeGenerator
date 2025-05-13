@@ -2,7 +2,9 @@ import { RecipeSchema, Recipe } from '@/schemas/recipeSchema'
 
 const getRandomRecipe = async (): Promise<Recipe | null> => {
   try {
-    const response = await fetch('https://localhost:7087/api/recipe')
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recipe`,
+    )
 
     if (!response.ok) {
       console.error(
