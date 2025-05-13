@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using RandomRecipeGenerator.API.Models.DTO;
 
 namespace RandomRecipeGenerator.API.Controllers
 {
@@ -33,9 +34,24 @@ namespace RandomRecipeGenerator.API.Controllers
             var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
             var firstName = User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value;
             var lastName = User.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value;
-            var name = User.FindFirst("name")?.Value; 
 
-            return Ok(new { Message = "Login successful", UserId = userId, Email = email, Name = name, FirstName = firstName, LastName = lastName });
+            if (userId == null || email == null)
+            {
+                return BadRequest("External login failed.");
+            }
+
+            var userDTO = new UserDTO
+            {
+                GoogleUserId = userId,
+                Email = email,
+                FirstName = firstName ?? string.Empty,
+                LastName = lastName ?? string.Empty,
+            };
+            
+            var userJSON = System.Text.Json.JsonSerializer.Serialize(userDTO);
+            Console.WriteLine(userJSON);
+
+            return Redirect($"https://localhost:3000/hello");
         }
     }
 }
