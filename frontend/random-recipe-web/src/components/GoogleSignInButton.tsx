@@ -6,8 +6,7 @@ export default function GoogleSignInButton() {
   return (
     <GoogleButton
       onClick={() =>
-        (window.location.href =
-          'https://localhost:7087/api/account/login-google')
+        (window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/account/login-google`)
       }
     />
   )
