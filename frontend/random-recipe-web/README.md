@@ -12,36 +12,58 @@ This is a [Next.js](https://nextjs.org) application that fetches and displays ra
 
 ## Getting Started
 
-1.  **Clone the repository (if you haven't already):**
-    If you're setting this project up fresh or someone else is, they'll need to clone the main repository.
-    ```bash
-    # Example:
-    # git clone https://github.com/cw222kq/randomRecipeGenerator.git
-    # cd randomRecipeGenerator/frontend/random-recipe-web
-    ```
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-2.  **Install dependencies:**
-    Make sure you are in the `frontend/random-recipe-web` directory.
-    ```bash
-    npm install
-    ```
+2. HTTPS Setup for Development
+   Google OAuth requires HTTPS, even in development. Follow these steps:
 
-3.  **Set up Environment Variables:**
-    This application requires environment variables to specify the backend API URL for client-side requests (if any) or during build time if not fetched directly by Server Components.
-    *   Rename the `.env.local.example` file (located in this directory: `frontend/random-recipe-web/`) to `.env.local`. (Next.js convention for local environment variables).
-    *   Update the variables in your new `.env.local` file. For example:
-        ```env
-        NEXT_PUBLIC_API_BASE_URL=http://localhost:5027 
-        ```
-        **Note:** 
-        *   The `NEXT_PUBLIC_API_BASE_URL` should point to your running `RandomRecipeGenerator.API` backend. `http://localhost:5027` is an example; ensure the port matches your backend's actual running port (check its `launchSettings.json`).
-        *   Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. If the API is only called server-side by Server Components, you might not need the `NEXT_PUBLIC_` prefix and can just use a variable like `API_BASE_URL` (accessed via `process.env.API_BASE_URL` in server-side code).
+   a. Install mkcert:
+   ```bash
+   # Using Chocolatey
+   choco install mkcert
+   ```
 
-4.  **Ensure Backend API is Running:**
-    Before starting the web app, make sure your `RandomRecipeGenerator.API` backend is running. Navigate to its directory (e.g., `../../RandomRecipeGenerator.API`) and start it (e.g., `dotnet run`).
+   b. Generate development certificates:
+   ```bash
+   # Install local CA
+   mkcert -install
+   
+   # Create certificates folder
+   mkdir certificates
+   cd certificates
+   
+   # Generate certificates for localhost
+   mkcert localhost
+   ```
 
-5.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-    Open [http://localhost:3000](http://localhost:3000) (or the port shown in your terminal) with your browser to see the result. The page auto-updates as you edit files.
+   c. Verify certificate installation:
+   - Check that `certificates` folder contains:
+     - `localhost.pem`
+     - `localhost-key.pem`
+   - Access https://localhost:3000 in your browser
+   - You should see a secure connection without warnings
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+Open [https://localhost:3000](https://localhost:3000) with your browser to see the result.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
