@@ -2,23 +2,46 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. HTTPS Setup for Development
+   Google OAuth requires HTTPS, even in development. Follow these steps:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   a. Install mkcert:
+   ```bash
+   # Using Chocolatey
+   choco install mkcert
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   b. Generate development certificates:
+   ```bash
+   # Install local CA
+   mkcert -install
+   
+   # Create certificates folder
+   mkdir certificates
+   cd certificates
+   
+   # Generate certificates for localhost
+   mkcert localhost
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   c. Verify certificate installation:
+   - Check that `certificates` folder contains:
+     - `localhost.pem`
+     - `localhost-key.pem`
+   - Access https://localhost:3000 in your browser
+   - You should see a secure connection without warnings
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+Open [https://localhost:3000](https://localhost:3000) with your browser to see the result.
 
 ## Learn More
 
