@@ -4,13 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RandomRecipeGenerator.API.Models.DTO;
+using RandomRecipeGenerator.API.Services;
 
 namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController(IJwtService jwtService) : ControllerBase
     {
+        private readonly IJwtService _jwtService = jwtService;
+
         [HttpGet("login-google")]
         public IActionResult LoginGoogle()
         {
@@ -47,11 +50,14 @@ namespace RandomRecipeGenerator.API.Controllers
                 FirstName = firstName ?? string.Empty,
                 LastName = lastName ?? string.Empty,
             };
-            
-            var userJSON = System.Text.Json.JsonSerializer.Serialize(userDTO);
-            Console.WriteLine(userJSON);
 
-            return Redirect($"https://localhost:3000/hello");
+            var jwtToken = _jwtService.GenerateToken(userDTO);
+
+            return Ok(new
+            {
+                token = jwtToken,
+                redirectUrl = "https://localhost:3000/hello"
+            });
         }
     }
 }
