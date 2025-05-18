@@ -1,3 +1,5 @@
+# Random Recipe Web
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -36,7 +38,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
    - Access https://localhost:3000 in your browser
    - You should see a secure connection without warnings
 
-3. Run the development server:
+3. Environment Setup
+   Rename `.env.example` to `.env` and set `NEXT_PUBLIC_API_BASE_URL` to point to your backend
+
+4. Run the development server:
    ```bash
    npm run dev
    ```
