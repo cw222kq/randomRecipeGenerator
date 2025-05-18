@@ -1,4 +1,4 @@
-# Random Recipe Mobile App (Expo Router)
+# Random Recipe Router Mobile
 
 This is a React Native mobile application built with [Expo](https://expo.dev) and [Expo Router](https://docs.expo.dev/router/introduction/) that fetches and displays random recipes.
 
