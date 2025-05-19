@@ -22,32 +22,6 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
-// Setup and configure JWT
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
-
-var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
-if (jwtSettings == null ||
-    string.IsNullOrEmpty(jwtSettings.Key) || 
-    string.IsNullOrEmpty(jwtSettings.Issuer) ||
-    string.IsNullOrEmpty(jwtSettings.Audience))
-{
-    throw new Exception("JWT configuration is missing or is invalid.");
-}
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings.Issuer,
-            ValidAudience = jwtSettings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
-        });
-   
-
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -57,7 +31,6 @@ builder.Services.AddHttpClient<HttpRequestService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 builder.Services.AddScoped<IHttpRequestService, HttpRequestService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
 
 // This configures Google.Apis.Auth.AspNetCore3 for use in this app.
 builder.Services
