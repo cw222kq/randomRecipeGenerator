@@ -10,10 +10,8 @@ namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IJwtService jwtService) : ControllerBase
+    public class AccountController() : ControllerBase
     {
-        private readonly IJwtService _jwtService = jwtService;
-
         [HttpGet("login-google")]
         public IActionResult LoginGoogle()
         {
@@ -33,31 +31,26 @@ namespace RandomRecipeGenerator.API.Controllers
                 return BadRequest("External login failed.");
             }
 
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-            var firstName = User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value;
-            var lastName = User.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value;
+            return Redirect("https://localhost:3000/hello");
+        }
 
-            if (userId == null || email == null)
+        [HttpGet("user")]
+        public IActionResult GetCurrentUser()
+        {
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
-                return BadRequest("External login failed.");
+                return Unauthorized();
             }
-
+           
             var userDTO = new UserDTO
             {
-                GoogleUserId = userId,
-                Email = email,
-                FirstName = firstName ?? string.Empty,
-                LastName = lastName ?? string.Empty,
+                GoogleUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
+                Email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? string.Empty,
+                FirstName = User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value ?? string.Empty,
+                LastName = User.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value ?? string.Empty,
             };
 
-            var jwtToken = _jwtService.GenerateToken(userDTO);
-
-            return Ok(new
-            {
-                token = jwtToken,
-                redirectUrl = "https://localhost:3000/hello"
-            });
+            return Ok(userDTO);
         }
     }
 }
