@@ -1,33 +1,21 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-
-interface User {
-  firstName: string
-  lastName: string
-  email: string
-}
+import getLoggedInUser from '@/services/userService'
+import { User } from '@/schemas/userSchema'
 
 export default function Hello() {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    const getLoggedInUser = async () => {
-      try {
-        const loggedInUser = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/account/user`, // ToDo: Create a service for this
-          { credentials: 'include' },
-        )
-        const user = await loggedInUser.json()
-        setUser(user)
-      } catch (error) {
-        console.error('Error fetching logged in user:', error)
-      }
+    const setLoggedInUser = async () => {
+      const loggedInUser = await getLoggedInUser()
+      setUser(loggedInUser)
     }
     if (user === null) {
-      getLoggedInUser()
+      setLoggedInUser()
     }
-  }, [user])
+  })
 
   return (
     <div className="py-6">
