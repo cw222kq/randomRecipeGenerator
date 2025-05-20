@@ -15,7 +15,7 @@ export default function Hello() {
     const getLoggedInUser = async () => {
       try {
         const loggedInUser = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/account/user`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/account/user`, // ToDo: Create a service for this
           { credentials: 'include' },
         )
         const user = await loggedInUser.json()
