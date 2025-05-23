@@ -52,5 +52,14 @@ namespace RandomRecipeGenerator.API.Controllers
 
             return Ok(userDTO);
         }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            // Clear the existing external cookie
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            return Redirect("https://localhost:3000/");
+        }
     }
 }
