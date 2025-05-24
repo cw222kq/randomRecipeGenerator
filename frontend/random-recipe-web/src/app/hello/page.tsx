@@ -10,6 +10,7 @@ export default function Hello() {
   useEffect(() => {
     const setLoggedInUser = async () => {
       const loggedInUser = await getLoggedInUser()
+      console.log('request logged in user')
       setUser(loggedInUser)
     }
     if (user === null) {
