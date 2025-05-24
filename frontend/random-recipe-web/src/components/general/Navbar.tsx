@@ -1,6 +1,6 @@
 import Link from 'next/link'
-//import { Button } from '@/components/ui/button'
 import GoogleSignInButton from '@/components/GoogleSignInButton'
+import SignOutButton from '@/components/SignOutButton'
 import RecipeGeneratorLogo from '@/components/icons/RecipeGeneratorLogo'
 
 export default function Navbar() {
@@ -30,6 +30,9 @@ export default function Navbar() {
 
       <div className="hidden ease-in-out hover:scale-105 sm:flex sm:items-center">
         <GoogleSignInButton />
+      </div>
+      <div className="hidden ease-in-out hover:scale-105 sm:flex sm:items-center">
+        <SignOutButton />
       </div>
     </nav>
   )
