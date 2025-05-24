@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import getLoggedInUser from '@/services/userService'
+import { getLoggedInUser } from '@/services/userService'
 import { User } from '@/schemas/userSchema'
 
 export default function Hello() {
