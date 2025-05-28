@@ -1,8 +1,8 @@
 'use client'
 
 import GoogleButton from 'react-google-button'
-import { login } from '@/services/userService'
+import { loginWithGoogle } from '@/services/userService'
 
 export default function GoogleSignInButton() {
-  return <GoogleButton onClick={() => login()} />
+  return <GoogleButton onClick={() => loginWithGoogle()} />
 }
