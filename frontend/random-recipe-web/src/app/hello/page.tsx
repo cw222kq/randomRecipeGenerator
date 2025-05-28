@@ -10,19 +10,27 @@ import Spinner from '@/components/common/Spinner'
 export default function Hello() {
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const setLoggedInUser = async () => {
-      setIsLoading(true)
-      const loggedInUser: User | null = await getLoggedInUser()
-      console.log('request logged in user!!!!!')
-      if (loggedInUser === null) {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const loggedInUser: User | null = await getLoggedInUser()
+        console.log('request logged in user!!!!!')
+        if (loggedInUser === null) {
+          setIsLoading(false)
+          return
+        }
+        dispatch(login(loggedInUser))
+      } catch (error) {
+        console.error('Error fetching user:', error)
+        setError('An error occurred while fetching the user data')
+      } finally {
         setIsLoading(false)
-        return
       }
-      dispatch(login(loggedInUser))
-      setIsLoading(false)
     }
     if (user === null) {
       setLoggedInUser()
@@ -31,6 +39,8 @@ export default function Hello() {
 
   return (
     <div className="py-6">
+      {/* Todo: Add a toast!!! */}
+      {error && <div className="mb-8 text-red-500">{error}</div>}
       {isLoading && <Spinner />}
       {!user && (
         <h1 className="mb-8 text-3xl font-bold tracking-tight">

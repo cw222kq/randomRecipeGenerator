@@ -6,7 +6,7 @@ export const loginWithGoogle = (): void => {
   window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/account/login-google`
 }
 
-export const logout = (): void => {
+export const logoutWithGoogle = (): void => {
   window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/account/logout`
 }
 
