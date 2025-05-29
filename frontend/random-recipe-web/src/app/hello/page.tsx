@@ -6,6 +6,7 @@ import { User } from '@/schemas/userSchema'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { login } from '@/store/features/auth/authSlice'
 import Spinner from '@/components/common/Spinner'
+import { toast } from 'react-toastify'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -30,6 +31,7 @@ export default function Hello() {
         setError('An error occurred while fetching the user data')
       } finally {
         setIsLoading(false)
+        toast.info('HELLO, WELCOME!!!!')
       }
     }
     if (user === null) {
