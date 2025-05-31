@@ -4,40 +4,41 @@ import { useEffect, useState } from 'react'
 import { getLoggedInUser } from '@/services/userService'
 import { User } from '@/schemas/userSchema'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { login } from '@/store/features/auth/authSlice'
+import { login, setLoading } from '@/store/features/auth/authSlice'
 import Spinner from '@/components/common/Spinner'
 import { toast } from 'react-toastify'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
-  const { user } = useAppSelector((state) => state.auth)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { user, isLoading } = useAppSelector((state) => state.auth)
   const [error, setError] = useState<string | null>(null)
+  const [hasChecked, setHasChecked] = useState<boolean>(false)
 
   useEffect(() => {
     const setLoggedInUser = async () => {
       try {
-        setIsLoading(true)
+        dispatch(setLoading(true))
         setError(null)
         const loggedInUser: User | null = await getLoggedInUser()
         console.log('request logged in user!!!!!')
         if (loggedInUser === null) {
-          setIsLoading(false)
           return
         }
         dispatch(login(loggedInUser))
+        toast.info(`Hello, Welcome ${loggedInUser.firstName}!`)
       } catch (error) {
         console.error('Error fetching user:', error)
         setError('An error occurred while fetching the user data')
       } finally {
-        setIsLoading(false)
-        toast.info('HELLO, WELCOME!!!!')
+        dispatch(setLoading(false))
+        setHasChecked(true)
       }
     }
-    if (user === null) {
+
+    if (user === null && !hasChecked && !isLoading) {
       setLoggedInUser()
     }
-  }, [user, dispatch])
+  }, [user, dispatch, hasChecked, isLoading])
 
   return (
     <div className="py-6">

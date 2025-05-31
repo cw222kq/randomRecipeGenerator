@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '../components/general/Navbar'
 import { Providers } from './providers'
 import Toast from '../components/common/Toast'
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],

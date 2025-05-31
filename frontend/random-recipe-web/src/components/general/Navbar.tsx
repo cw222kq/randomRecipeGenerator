@@ -6,9 +6,10 @@ import SignOutButton from '@/components/SignOutButton'
 import RecipeGeneratorLogo from '@/components/icons/RecipeGeneratorLogo'
 import { useAppSelector } from '@/store/hooks'
 import { useEffect, useState } from 'react'
+//import Spinner from '@/components/common/Spinner'
 
 export default function Navbar() {
-  const { user } = useAppSelector((state) => state.auth)
+  const { user, isLoading } = useAppSelector((state) => state.auth)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -63,8 +64,11 @@ export default function Navbar() {
       </div>
 
       <div className="hidden ease-in-out hover:scale-105 sm:flex sm:items-center">
-        {!user && <GoogleSignInButton />}
-        {user && <SignOutButton />}
+        {isLoading && (
+          <div className="h-8 w-20 animate-pulse rounded bg-gray-200"></div>
+        )}
+        {!isLoading && !user && <GoogleSignInButton />}
+        {!isLoading && user && <SignOutButton />}
       </div>
     </nav>
   )
