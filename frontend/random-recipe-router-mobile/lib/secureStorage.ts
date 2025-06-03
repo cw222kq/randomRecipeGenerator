@@ -4,16 +4,28 @@ import * as SecureStore from 'expo-secure-store'
 const KEYS = {
   APP_TOKEN: 'app_auth_token',
   USER_DATA: 'user_data',
+  TOKEN_EXPIRY: 'token_expiry',
 } as const
 
 export const secureStorage = {
   // Store authentication token from the backend
-  async setAppToken(token: string): Promise<void> {
+  async setAppToken(token: string, expireAt?: string): Promise<void> {
     await SecureStore.setItemAsync(KEYS.APP_TOKEN, token)
+    if (expireAt) {
+      await SecureStore.setItemAsync(KEYS.TOKEN_EXPIRY, expireAt)
+    }
   },
 
   async getAppToken(): Promise<string | null> {
     return await SecureStore.getItemAsync(KEYS.APP_TOKEN)
+  },
+
+  async isTokenExpired(): Promise<boolean> {
+    const expiry = await SecureStore.getItemAsync(KEYS.TOKEN_EXPIRY)
+    if (!expiry) {
+      return false
+    }
+    return new Date(expiry) <= new Date()
   },
 
   // Store user profile data from the backend
@@ -50,6 +62,7 @@ export const secureStorage = {
     await Promise.all([
       SecureStore.deleteItemAsync(KEYS.APP_TOKEN),
       SecureStore.deleteItemAsync(KEYS.USER_DATA),
+      SecureStore.deleteItemAsync(KEYS.TOKEN_EXPIRY),
     ])
   },
 }
