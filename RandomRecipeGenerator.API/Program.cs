@@ -4,6 +4,9 @@ using Serilog;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RandomRecipeGenerator.API.Models.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +72,21 @@ builder.Services
         options.ClientSecret = clientSecret;
         options.CallbackPath = "/signin-google";
 
+    });
+
+// Configure JWT settings
+builder.Services.AddAuthentication() // Adding authentication to our application
+    .AddJwtBearer("Mobile", options => // Adding the JWT token
+    options.TokenValidationParameters = new TokenValidationParameters // Adding the parameters that we want the token to be validated against
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "secret-key"))
     });
 
 var app = builder.Build();
