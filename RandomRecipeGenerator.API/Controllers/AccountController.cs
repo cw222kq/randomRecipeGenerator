@@ -71,7 +71,7 @@ namespace RandomRecipeGenerator.API.Controllers
                 var state = Guid.NewGuid().ToString();
                 var nonce = Guid.NewGuid().ToString();
 
-                HttpContext.Session.SetString($"ouath_state_{state}", nonce);
+                HttpContext.Session.SetString($"oauth_state_{state}", nonce);
 
                 var clientId = HttpContext.RequestServices.
                     GetRequiredService<IConfiguration>()["Authentication:Google:ClientId"];
