@@ -69,6 +69,9 @@ namespace RandomRecipeGenerator.API.Controllers
             {
                 // Generate secure state parameter, protect against CSRF
                 var state = Guid.NewGuid().ToString();
+                var nonce = Guid.NewGuid().ToString();
+
+                HttpContext.Session.SetString($"ouath_state_{state}", nonce);
 
                 var clientId = HttpContext.RequestServices.
                     GetRequiredService<IConfiguration>()["Authentication:Google:ClientId"];
