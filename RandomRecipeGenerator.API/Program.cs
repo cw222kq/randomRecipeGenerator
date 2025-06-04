@@ -89,6 +89,16 @@ builder.Services.AddAuthentication() // Adding authentication to our application
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "secret-key"))
     });
 
+// Session support for OAuth state management
+builder.Services.AddDistributedMemoryCache(); // In-memory cache for session state
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.Cookie.HttpOnly = true; // Make the session cookie HTTP only
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -100,6 +110,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
