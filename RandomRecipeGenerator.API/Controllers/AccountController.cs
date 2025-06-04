@@ -63,7 +63,7 @@ namespace RandomRecipeGenerator.API.Controllers
         }
 
         [HttpPost("mobile-auth-init")]
-        public IActionResult InitiateMobileAuth([FromBody] MobileAuthRequest request)
+        public IActionResult InitiateMobileAuth([FromBody] MobileAuthRequestDTO request)
         {
             try
             {
@@ -101,6 +101,43 @@ namespace RandomRecipeGenerator.API.Controllers
             {
                 Console.WriteLine($"Error initiating mobile authentication: {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while initiating mobile authentication.");
+            }
+        }
+
+        [HttpPost("mobile-auth-complete")]
+        public IActionResult CompleteMobileAuth([FromBody] MobileAuthCompleteRequestDTO request)
+        {
+            try
+            {
+                // Validate state parameter for CSRF protection
+                var storedNonce = HttpContext.Session.GetString($"oauth_state_{request.State}");
+                if (string.IsNullOrEmpty(storedNonce))
+                {
+                    Console.WriteLine("Invalid or expired OAuth state");
+                    return BadRequest("Invalid or expired autentication state");
+                }
+
+                HttpContext.Session.Remove($"oauth_state_{request.State}");
+
+                var placeholderUser = new UserDTO
+                {
+                    GoogleUserId = "placeholder-id",
+                    Email = "placeholder@example.com",
+                    FirstName = "Placeholder",
+                    LastName = "User"
+                };
+
+                return Ok(new MobileAuthCompleteResponseDTO
+                {
+                    User = placeholderUser,
+                    Token = "placeholder-jwt-token",
+                    ExpiresAt = DateTime.UtcNow.AddDays(30).ToString("O")
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Mobile auth complete error: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Authentication failed");
             }
         }
     }

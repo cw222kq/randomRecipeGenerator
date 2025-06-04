@@ -1,6 +1,6 @@
 ﻿namespace RandomRecipeGenerator.API.Models.DTO
 {
-    public class MobileAuthRequest
+    public class MobileAuthRequestDTO
     {
         public required string RedirectUri { get; set; }
     }
