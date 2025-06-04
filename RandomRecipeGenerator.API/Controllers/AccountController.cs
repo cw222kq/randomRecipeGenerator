@@ -41,7 +41,7 @@ namespace RandomRecipeGenerator.API.Controllers
             {
                 return Unauthorized();
             }
-           
+
             var userDTO = new UserDTO
             {
                 GoogleUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
@@ -58,8 +58,47 @@ namespace RandomRecipeGenerator.API.Controllers
         {
             // Clear the existing external cookie
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            
+
             return Redirect("https://localhost:3000/");
+        }
+
+        [HttpPost("mobile-auth-init")]
+        public IActionResult InitiateMobileAuth([FromBody] MobileAuthRequest request)
+        {
+            try
+            {
+                // Generate secure state parameter, protect against CSRF
+                var state = Guid.NewGuid().ToString();
+
+                var clientId = HttpContext.RequestServices.
+                    GetRequiredService<IConfiguration>()["Authentication:Google:ClientId"];
+
+                if (string.IsNullOrEmpty(clientId))
+                {
+                    return BadRequest("Client ID is not configured.");
+                }
+
+                // Generate GoogleOauth URL
+                var authUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+                    $"client_id={Uri.EscapeDataString(clientId)}&" +
+                    $"redirect_uri={Uri.EscapeDataString(request.RedirectUri)}&" +
+                    $"response_type=code&" +
+                    $"scope={Uri.EscapeDataString("openid email profile")}&" +
+                    $"state={Uri.EscapeDataString(state)}&" +
+                    $"access_type=offline&" +
+                    $"prompt=select_account";
+
+                return Ok(new
+                {
+                    AuthUrl = authUrl,
+                    State = state
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error initiating mobile authentication: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while initiating mobile authentication.");
+            }
         }
     }
 }
