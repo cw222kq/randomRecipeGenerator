@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using RandomRecipeGenerator.API.Models.Domain;
 using RandomRecipeGenerator.API.Models.Exceptions;
 using Microsoft.Extensions.Logging;
+using RandomRecipeGenerator.API.Models.DTO;
 
 namespace RandomRecipeGenerator.API.Services
 {
@@ -99,6 +100,70 @@ namespace RandomRecipeGenerator.API.Services
             };
 
             return mappedRecipe;
+        }
+
+        public async Task<GoogleTokenResponseDTO?> PostFormAsync(string url, Dictionary<string, string> formData)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                _logger.LogError("Empty URL provided to PostFormAsync method");
+                return null;
+            }
+
+            if (formData == null || formData.Count == 0)
+            {
+                _logger.LogError("Empty or null form data provided to PostFormAsync method");
+                return null;
+            }
+
+            try
+            {
+                _logger.LogInformation("Making form POST request to: {Url}", url);
+                var content = new FormUrlEncodedContent(formData); // Create form-encoded data from the dictionary to Google's OAuth endpoint
+                var response = await _httpClient.PostAsync(url, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("OAuth request failed with status code: {StatusCode}", response.StatusCode);
+                    return null;
+                }
+
+                var jsonString = await response.Content.ReadAsStringAsync();
+                _logger.LogDebug("Recived response from OAuth endpoint. Deserializing response");
+
+                var data = JsonSerializer.Deserialize<JsonDocument>(jsonString);
+                if (data == null)
+                {
+                    _logger.LogWarning("Deserialized JSON document was null from OAuth endpoint");
+                    return null;
+                }
+
+                var googleTokenResponseDTO = new GoogleTokenResponseDTO
+                {
+                    AccessToken = data.RootElement.GetProperty("access_token").GetString() ?? string.Empty,
+                    IdToken = data.RootElement.GetProperty("id_token").GetString() ?? string.Empty,
+                    ExpiresIn = data.RootElement.GetProperty("expires_in").GetInt32().ToString() ?? string.Empty
+                };
+
+                _logger.LogInformation("Successfully parsed OAuth token response");
+                return googleTokenResponseDTO;
+
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "JSON parsing error for OAuth response");
+                return null;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "HTTP request error while for OAuth request to {Url}", url);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while making OAuth request to {Url}", url);
+                return null;
+            }
         }
     }
 }
