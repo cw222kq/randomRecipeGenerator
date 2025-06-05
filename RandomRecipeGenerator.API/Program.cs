@@ -43,7 +43,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<HttpRequestService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+// Register services and their interfaces
 builder.Services.AddScoped<IHttpRequestService, HttpRequestService>();
+builder.Services.AddScoped<IOAuthService, OAuthService>();
 
 // This configures Google.Apis.Auth.AspNetCore3 for use in this app.
 builder.Services
