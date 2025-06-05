@@ -10,8 +10,10 @@ namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController() : ControllerBase
+    public class AccountController(IOAuthService oAuthService) : ControllerBase
     {
+        private readonly IOAuthService _oAuthService = oAuthService;
+
         [HttpGet("login-google")]
         public IActionResult LoginGoogle()
         {
@@ -105,7 +107,7 @@ namespace RandomRecipeGenerator.API.Controllers
         }
 
         [HttpPost("mobile-auth-complete")]
-        public IActionResult CompleteMobileAuth([FromBody] MobileAuthCompleteRequestDTO request)
+        public async Task<IActionResult> CompleteMobileAuth([FromBody] MobileAuthCompleteRequestDTO request)
         {
             try
             {
@@ -114,22 +116,29 @@ namespace RandomRecipeGenerator.API.Controllers
                 if (string.IsNullOrEmpty(storedNonce))
                 {
                     Console.WriteLine("Invalid or expired OAuth state");
-                    return BadRequest("Invalid or expired autentication state");
+                    return BadRequest("Invalid or expired authentication state");
                 }
 
                 HttpContext.Session.Remove($"oauth_state_{request.State}");
 
-                var placeholderUser = new UserDTO
+                var tokenResponse = await _oAuthService.ExchangeCodeForTokens(request.Code, request.RedirectUri);
+                if (tokenResponse == null)
                 {
-                    GoogleUserId = "placeholder-id",
-                    Email = "placeholder@example.com",
-                    FirstName = "Placeholder",
-                    LastName = "User"
-                };
+                    Console.WriteLine("Failed to exchange authorization code for tokens");
+                    return BadRequest("Failed to exchange authorization code for tokens");
+                }
 
+                var userProfileResponse = await _oAuthService.GetUserProfileAsync(tokenResponse.AccessToken);
+                if (userProfileResponse == null)
+                {
+                    Console.WriteLine("Failed to retrieve user profile");
+                    return BadRequest("Failed to retrieve user profile");
+                }
+
+  
                 return Ok(new MobileAuthCompleteResponseDTO
                 {
-                    User = placeholderUser,
+                    User = userProfileResponse,
                     Token = "placeholder-jwt-token",
                     ExpiresAt = DateTime.UtcNow.AddDays(30).ToString("O")
                 });
