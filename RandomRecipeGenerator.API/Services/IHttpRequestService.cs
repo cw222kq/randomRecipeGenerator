@@ -7,5 +7,6 @@ namespace RandomRecipeGenerator.API.Services
     {
         Task<Recipe> Get(string url);
         Task<GoogleTokenResponseDTO?> PostFormAsync(string url, Dictionary<string, string> formData);
+        Task<UserDTO?> GetUserProfileAsync(string accessToken);
     }
 }

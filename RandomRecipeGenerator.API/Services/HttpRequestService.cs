@@ -7,6 +7,7 @@ using RandomRecipeGenerator.API.Models.Domain;
 using RandomRecipeGenerator.API.Models.Exceptions;
 using Microsoft.Extensions.Logging;
 using RandomRecipeGenerator.API.Models.DTO;
+using System.Net.Http.Headers;
 
 namespace RandomRecipeGenerator.API.Services
 {
@@ -162,6 +163,60 @@ namespace RandomRecipeGenerator.API.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while making OAuth request to {Url}", url);
+                return null;
+            }
+        }
+
+        public async Task<UserDTO?> GetUserProfileAsync(string accessToken)
+        {
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                _logger.LogError("Empty access token provided to GetUserProfile method");
+                return null;
+            }
+
+            const string userInfoUrl = "https://openidconnect.googleapis.com/v1/userinfo";
+
+            try
+            {
+                _logger.LogInformation("Fething user profile from Google API");
+
+                var request = new HttpRequestMessage(HttpMethod.Get, userInfoUrl);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Failed to fetch user profile from Google API. Status code: {StatusCode}", response.StatusCode);
+                    return null;
+                }
+
+                var jsonString = await response.Content.ReadAsStringAsync();
+                _logger.LogDebug("Received response from Google API. Deserializing response");
+
+                var data = JsonSerializer.Deserialize<JsonDocument>(jsonString);
+
+                if (data == null)
+                {
+                    _logger.LogWarning("Deserialized user profile JSON was null");
+                    return null;
+                }
+
+                var userDTO = new UserDTO
+                {
+                    GoogleUserId = data.RootElement.GetProperty("sub").GetString() ?? string.Empty,
+                    Email = data.RootElement.GetProperty("email").GetString() ?? string.Empty,
+                    FirstName = data.RootElement.TryGetProperty("given_name", out var givenName) ? givenName.GetString() : null,
+                    LastName = data.RootElement.TryGetProperty("family_name", out var familyName) ? givenName.GetString() : null
+                };
+
+                _logger.LogInformation("Successfully retrived user profile for: {Email}", userDTO.Email);
+                return userDTO;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user profile from Google API");
                 return null;
             }
         }

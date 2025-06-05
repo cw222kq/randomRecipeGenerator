@@ -56,5 +56,10 @@ namespace RandomRecipeGenerator.API.Services
                 return null;
             }
         }
+
+        public async Task<UserDTO?> GetUserProfileAsync(string accessToken)
+        {
+           return await _httpRequestService.GetUserProfileAsync(accessToken);
+        }
     }
 }
