@@ -1,4 +1,8 @@
-﻿using RandomRecipeGenerator.API.Models.DTO;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using RandomRecipeGenerator.API.Models.DTO;
 
 namespace RandomRecipeGenerator.API.Services
 {
@@ -54,6 +58,58 @@ namespace RandomRecipeGenerator.API.Services
             {
                 _logger.LogError(ex, "An error occurred while exchanging authorization code for tokens");
                 return null;
+            }
+        }
+
+        public string GenerateJwtToken(UserDTO user)
+        {
+            if (user == null)
+            {
+                _logger.LogError("User is null, cannot generate JWT token.");
+                throw new ArgumentNullException(nameof(user), "User cannot be null when generating JWT token.");
+            }
+
+            try
+            {
+                var jwtKey = _configuration["Jwt:Key"];
+                var jwtIssuer = _configuration["Jwt:Issuer"];
+                var jwtAudience = _configuration["Jwt:Audience"];
+
+                if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
+                {
+                    _logger.LogError("JWT configuration is not set properly.");
+                    throw new InvalidOperationException("JWT configuration is not set properly.");
+                }
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.GoogleUserId),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
+                    new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty)
+                };
+
+                var token = new JwtSecurityToken(
+                    issuer: jwtIssuer,
+                    audience: jwtAudience,
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddDays(30),
+                    signingCredentials: creds
+                );
+
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+                _logger.LogInformation("Successfully generated JWT token for user: {Email}", user.Email);
+                return tokenString;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while generating JWT token");
+                throw new InvalidOperationException("An error occurred while generating JWT token", ex);
             }
         }
 

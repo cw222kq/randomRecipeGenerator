@@ -6,5 +6,6 @@ namespace RandomRecipeGenerator.API.Services
     {
         Task<GoogleTokenResponseDTO?> ExchangeCodeForTokens(string code, string redirectUri);
         Task<UserDTO?> GetUserProfileAsync(string accessToken);
+        string GenerateJwtToken(UserDTO user);
     }
 }
