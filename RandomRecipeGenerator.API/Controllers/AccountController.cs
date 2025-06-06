@@ -5,6 +5,7 @@ using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RandomRecipeGenerator.API.Models.DTO;
 using RandomRecipeGenerator.API.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace RandomRecipeGenerator.API.Controllers
 {
@@ -135,11 +136,10 @@ namespace RandomRecipeGenerator.API.Controllers
                     return BadRequest("Failed to retrieve user profile");
                 }
 
-  
                 return Ok(new MobileAuthCompleteResponseDTO
                 {
                     User = userProfileResponse,
-                    Token = "placeholder-jwt-token",
+                    Token = _oAuthService.GenerateJwtToken(userProfileResponse),
                     ExpiresAt = DateTime.UtcNow.AddDays(30).ToString("O")
                 });
             }
@@ -149,5 +149,5 @@ namespace RandomRecipeGenerator.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Authentication failed");
             }
         }
-    }
+    }   
 }
