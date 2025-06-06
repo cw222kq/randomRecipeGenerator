@@ -11,9 +11,10 @@ namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IOAuthService oAuthService) : ControllerBase
+    public class AccountController(IOAuthService oAuthService, ILogger<AccountController> logger) : ControllerBase
     {
         private readonly IOAuthService _oAuthService = oAuthService;
+        private readonly ILogger<AccountController> _logger = logger;
 
         [HttpGet("login-google")]
         public IActionResult LoginGoogle()
@@ -94,6 +95,8 @@ namespace RandomRecipeGenerator.API.Controllers
                     $"access_type=offline&" +
                     $"prompt=select_account";
 
+                _logger.LogInformation("Successfully initiated mobile authentication for redirect URI: {RedirectUri}", request.RedirectUri);
+
                 return Ok(new
                 {
                     AuthUrl = authUrl,
@@ -102,7 +105,7 @@ namespace RandomRecipeGenerator.API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error initiating mobile authentication: {ex.Message}");
+                _logger.LogError(ex, "Error initiating mobile authentication");
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while initiating mobile authentication.");
             }
         }
@@ -116,7 +119,7 @@ namespace RandomRecipeGenerator.API.Controllers
                 var storedNonce = HttpContext.Session.GetString($"oauth_state_{request.State}");
                 if (string.IsNullOrEmpty(storedNonce))
                 {
-                    Console.WriteLine("Invalid or expired OAuth state");
+                    _logger.LogWarning("Invalid or expired OAuth state for state parameter: {State}", request.State);
                     return BadRequest("Invalid or expired authentication state");
                 }
 
@@ -125,16 +128,18 @@ namespace RandomRecipeGenerator.API.Controllers
                 var tokenResponse = await _oAuthService.ExchangeCodeForTokens(request.Code, request.RedirectUri);
                 if (tokenResponse == null)
                 {
-                    Console.WriteLine("Failed to exchange authorization code for tokens");
+                    _logger.LogError("Failed to exchange authorization code for tokens");
                     return BadRequest("Failed to exchange authorization code for tokens");
                 }
 
                 var userProfileResponse = await _oAuthService.GetUserProfileAsync(tokenResponse.AccessToken);
                 if (userProfileResponse == null)
                 {
-                    Console.WriteLine("Failed to retrieve user profile");
+                    _logger.LogError("Failed to retrieve user profile from Google API");
                     return BadRequest("Failed to retrieve user profile");
                 }
+
+                _logger.LogInformation("Successfully completed mobile authentication for user: {Email}", userProfileResponse.Email);
 
                 return Ok(new MobileAuthCompleteResponseDTO
                 {
@@ -145,7 +150,7 @@ namespace RandomRecipeGenerator.API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Mobile auth complete error: {ex.Message}");
+                _logger.LogError(ex, "Mobile authentication completion failed");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Authentication failed");
             }
         }
