@@ -1,19 +1,29 @@
 const userService = {
   async initializeAuth() {
-    const response = await fetch(
-      `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-init`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-init`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            redirectUri: 'randomrecipe://auth',
+          }),
         },
-        body: JSON.stringify({
-          redirectUri: 'randomrecipe://auth',
-        }),
-      },
-    )
+      )
 
-    return response.json()
+      if (!response.ok) {
+        console.error('Failed to initialize authentication', response.status)
+        return null
+      }
+
+      return response.json()
+    } catch (error) {
+      console.error('Failed to initialize authentication', error)
+      return null
+    }
   },
 }
 

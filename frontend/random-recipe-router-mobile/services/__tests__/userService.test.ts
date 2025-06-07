@@ -48,5 +48,35 @@ describe('userService', () => {
       expect(result.authUrl).toContain('accounts.google.com')
       expect(result.state).toBe(mockResponse.state)
     })
+    it('should return null when API request fails', async () => {
+      // Arrange - Mock failed API response
+      ;(fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+      })
+
+      // Act - Call the method that is being tested
+      const result = await userService.initializeAuth()
+
+      // Assert - Verify the result
+      expect(result).toBeNull()
+      expect(console.error).toHaveBeenCalledWith(
+        'Failed to initialize authentication',
+        500,
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-init`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            redirectUri: 'randomrecipe://auth',
+          }),
+        },
+      )
+    })
   })
 })
