@@ -1,4 +1,4 @@
-import { User, userSchema } from '@/schemas/userSchema'
+import { User, UserSchema } from '@/schemas/userSchema'
 import * as SecureStore from 'expo-secure-store'
 
 const KEYS = {
@@ -40,7 +40,7 @@ export const secureStorage = {
     }
     try {
       const parsedUserData = JSON.parse(userData)
-      const validatedUserData = userSchema.safeParse(parsedUserData)
+      const validatedUserData = UserSchema.safeParse(parsedUserData)
 
       if (!validatedUserData.success) {
         console.error(
