@@ -45,9 +45,8 @@ describe('userService', () => {
         },
       )
       expect(result).toEqual(mockResponse)
-      expect(result.authUrl).toContain('accounts.google.com')
-      expect(result.state).toBe(mockResponse.state)
     })
+
     it('should return null when API request fails', async () => {
       // Arrange - Mock failed API response
       ;(fetch as jest.Mock).mockResolvedValue({
@@ -78,6 +77,29 @@ describe('userService', () => {
         },
       )
     })
+
+    it('should handle invalid response data gracefully', async () => {
+      // Arrange - Setup invalid response data
+      const mockResponse = {
+        authUrl: 'invalid-url',
+        // Missing required state field
+      }
+
+      ;(fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => mockResponse,
+      })
+
+      // Act - Call the method that is being tested
+      const result = await userService.initializeAuth()
+
+      // Assert - handle validation error gracefully
+      expect(result).toBeNull()
+      expect(console.error).toHaveBeenCalledWith(
+        'Invalid response data from initializeAuth',
+        expect.any(Object),
+      )
+    })
   })
 
   describe('completeAuth', () => {
@@ -97,7 +119,7 @@ describe('userService', () => {
           lastName: 'User',
         },
         token: 'mock-token',
-        expiresAt: 'mock-expires-at',
+        expiresAt: '2025-01-30T10:30:00.000Z',
       }
 
       // Mock successful API response
@@ -121,9 +143,6 @@ describe('userService', () => {
         },
       )
       expect(result).toEqual(mockResponse)
-      expect(result.user).toEqual(mockResponse.user)
-      expect(result.token).toBe(mockResponse.token)
-      expect(result.expiresAt).toBe(mockResponse.expiresAt)
     })
 
     it('should return null when API request fails', async () => {
@@ -158,6 +177,41 @@ describe('userService', () => {
           },
           body: JSON.stringify(mockRequest),
         },
+      )
+    })
+
+    it('should handle invalid response data gracefully', async () => {
+      // Arrange - Setup invalid response data
+      const mockRequest = {
+        code: 'mock-code',
+        state: 'mock-state',
+        redirectUri: 'https://mock-redirect-uri.com',
+      }
+
+      const mockInvalidResponse = {
+        user: {
+          googleUserId: 'mock-google-user-id',
+          email: 'invalid-email',
+          firstName: 'Mock',
+          lastName: 'User',
+        },
+        token: 'mock-token',
+        // missing expiresAt field
+      }
+
+      ;(fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => mockInvalidResponse,
+      })
+
+      // Act - Call the method that is being tested
+      const result = await userService.completeAuth(mockRequest)
+
+      // Assert - handle validation error gracefully
+      expect(result).toBeNull()
+      expect(console.error).toHaveBeenCalledWith(
+        'Invalid response data from completeAuth',
+        expect.any(Object),
       )
     })
   })
