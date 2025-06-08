@@ -15,14 +15,14 @@ describe('userService', () => {
   })
 
   describe('initializeAuth', () => {
-    it('should sucessfully call mobile-auth-init endpoint and return OAuth URL and state', async () => {
+    it('should successfully call mobile-auth-init endpoint and return OAuth URL and state', async () => {
       // Arrange - Setup test data
       const mockResponse = {
         authUrl: 'https://accounts.google.com/oauth2/auth?client_id=test',
         state: 'mock-state-123',
       }
 
-      // Mock sucssesful API response
+      // Mock successful API response
       ;(fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: () => mockResponse,
@@ -124,6 +124,41 @@ describe('userService', () => {
       expect(result.user).toEqual(mockResponse.user)
       expect(result.token).toBe(mockResponse.token)
       expect(result.expiresAt).toBe(mockResponse.expiresAt)
+    })
+
+    it('should return null when API request fails', async () => {
+      // Arrange
+      const mockRequest = {
+        code: 'mock-code',
+        state: 'mock-state',
+        redirectUri: 'https://mock-redirect-uri.com',
+      }
+
+      ;(fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+      })
+
+      // Act - Call the method that is being tested
+      const result = await userService.completeAuth(mockRequest)
+
+      // Assert - Verify the result
+      expect(result).toBeNull()
+      expect(console.error).toHaveBeenCalledWith(
+        'Failed to complete authentication',
+        500,
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-complete`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(mockRequest),
+        },
+      )
     })
   })
 })

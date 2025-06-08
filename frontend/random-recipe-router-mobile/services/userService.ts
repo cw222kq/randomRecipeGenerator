@@ -31,17 +31,28 @@ const userService = {
     state: string
     redirectUri: string
   }) {
-    const response = await fetch(
-      `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-complete`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-complete`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(request),
         },
-        body: JSON.stringify(request),
-      },
-    )
-    return response.json()
+      )
+
+      if (!response.ok) {
+        console.error('Failed to complete authentication', response.status)
+        return null
+      }
+
+      return response.json()
+    } catch (error) {
+      console.error('Failed to complete authentication', error)
+      return null
+    }
   },
 }
 
