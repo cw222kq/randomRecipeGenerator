@@ -4,7 +4,7 @@ import {
   CompleteAuthRequest,
 } from '@/schemas/authSchemas'
 
-const userService = {
+const authService = {
   async initializeAuth() {
     try {
       const response = await fetch(
@@ -80,4 +80,4 @@ const userService = {
   },
 }
 
-export default userService
+export default authService

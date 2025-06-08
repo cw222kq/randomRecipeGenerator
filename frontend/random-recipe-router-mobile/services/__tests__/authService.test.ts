@@ -1,8 +1,8 @@
-import userService from '@/services/userService'
+import authService from '@/services/authService'
 
 global.fetch = jest.fn()
 
-describe('userService', () => {
+describe('authService', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     // Clear any console logs
@@ -29,7 +29,7 @@ describe('userService', () => {
       })
 
       // Act -Call the method that is being tested
-      const result = await userService.initializeAuth()
+      const result = await authService.initializeAuth()
 
       // Assert - Verify the result
       expect(fetch).toHaveBeenCalledWith(
@@ -56,7 +56,7 @@ describe('userService', () => {
       })
 
       // Act - Call the method that is being tested
-      const result = await userService.initializeAuth()
+      const result = await authService.initializeAuth()
 
       // Assert - Verify the result
       expect(result).toBeNull()
@@ -91,7 +91,7 @@ describe('userService', () => {
       })
 
       // Act - Call the method that is being tested
-      const result = await userService.initializeAuth()
+      const result = await authService.initializeAuth()
 
       // Assert - handle validation error gracefully
       expect(result).toBeNull()
@@ -129,7 +129,7 @@ describe('userService', () => {
       })
 
       // Act - Call the method that is being tested
-      const result = await userService.completeAuth(mockRequest)
+      const result = await authService.completeAuth(mockRequest)
 
       // Assert - Verify the result
       expect(fetch).toHaveBeenCalledWith(
@@ -160,7 +160,7 @@ describe('userService', () => {
       })
 
       // Act - Call the method that is being tested
-      const result = await userService.completeAuth(mockRequest)
+      const result = await authService.completeAuth(mockRequest)
 
       // Assert - Verify the result
       expect(result).toBeNull()
@@ -205,7 +205,7 @@ describe('userService', () => {
       })
 
       // Act - Call the method that is being tested
-      const result = await userService.completeAuth(mockRequest)
+      const result = await authService.completeAuth(mockRequest)
 
       // Assert - handle validation error gracefully
       expect(result).toBeNull()
