@@ -25,6 +25,24 @@ const userService = {
       return null
     }
   },
+
+  async completeAuth(request: {
+    code: string
+    state: string
+    redirectUri: string
+  }) {
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-complete`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      },
+    )
+    return response.json()
+  },
 }
 
 export default userService

@@ -79,4 +79,51 @@ describe('userService', () => {
       )
     })
   })
+
+  describe('completeAuth', () => {
+    it('should successfully call mobile-auth-complete endpoint and return code, state, and redirectUri', async () => {
+      // Arrange - Setup test data
+      const mockRequest = {
+        code: 'mock-code',
+        state: 'mock-state',
+        redirectUri: 'https://mock-redirect-uri.com',
+      }
+
+      const mockResponse = {
+        user: {
+          googleUserId: 'mock-google-user-id',
+          email: 'mock-email@example.com',
+          firstName: 'Mock',
+          lastName: 'User',
+        },
+        token: 'mock-token',
+        expiresAt: 'mock-expires-at',
+      }
+
+      // Mock successful API response
+      ;(fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => mockResponse,
+      })
+
+      // Act - Call the method that is being tested
+      const result = await userService.completeAuth(mockRequest)
+
+      // Assert - Verify the result
+      expect(fetch).toHaveBeenCalledWith(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-complete`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(mockRequest),
+        },
+      )
+      expect(result).toEqual(mockResponse)
+      expect(result.user).toEqual(mockResponse.user)
+      expect(result.token).toBe(mockResponse.token)
+      expect(result.expiresAt).toBe(mockResponse.expiresAt)
+    })
+  })
 })
