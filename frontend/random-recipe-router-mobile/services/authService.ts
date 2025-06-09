@@ -15,7 +15,8 @@ const authService = {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            redirectUri: 'randomrecipe://auth',
+            //redirectUri: 'randomrecipe://auth',
+            redirectUri: `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-callback`,
           }),
         },
       )

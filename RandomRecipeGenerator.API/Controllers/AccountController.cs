@@ -154,5 +154,18 @@ namespace RandomRecipeGenerator.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Authentication failed");
             }
         }
+
+        [HttpGet("mobile-auth-callback")]
+        public IActionResult MobileAuthCallback([FromQuery] string code, [FromQuery] string state)
+        {
+            if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(state))
+            {
+                _logger.LogWarning("Invalid mobile authentication callback parameters: code={Code}, state={State}", code, state);
+                return BadRequest("Missing authorization code or state");
+            }
+
+            var redirectUrl = $"randomrecipe://auth?code={Uri.EscapeDataString(code)}&state={Uri.EscapeDataString(state)}";
+            return Redirect(redirectUrl);
+        }
     }   
 }

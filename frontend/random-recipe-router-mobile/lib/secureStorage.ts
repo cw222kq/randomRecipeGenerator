@@ -58,11 +58,24 @@ export const secureStorage = {
     }
   },
 
-  async clearAll(): Promise<void> {
+  async clearAllAuthData(): Promise<void> {
     await Promise.all([
       SecureStore.deleteItemAsync(KEYS.APP_TOKEN),
       SecureStore.deleteItemAsync(KEYS.USER_DATA),
       SecureStore.deleteItemAsync(KEYS.TOKEN_EXPIRY),
     ])
+  },
+
+  // Store custom items
+  async setItem(key: string, value: string): Promise<void> {
+    await SecureStore.setItemAsync(key, value)
+  },
+
+  async getItem(key: string): Promise<string | null> {
+    return await SecureStore.getItemAsync(key)
+  },
+
+  async deleteItem(key: string): Promise<void> {
+    await SecureStore.deleteItemAsync(key)
   },
 }
