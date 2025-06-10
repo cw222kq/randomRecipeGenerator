@@ -12,11 +12,11 @@ export const Navbar = () => {
         {/* When logged in
         <Link href="/">
           <Text className="text-black dark:text-white">Home</Text>
-        </Link>
+        </Link> 
         <Link href="/hello">
           <Text className="text-black dark:text-white">Another Page</Text>
-        </Link>
-        */}
+        </Link>*/}
+
         {/* When logged out => Google Sign In Button */}
         <GoogleSignInButton />
       </View>
