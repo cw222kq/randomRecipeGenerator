@@ -3,8 +3,8 @@ import { z } from 'zod'
 export const UserSchema = z.object({
   googleUserId: z.string(),
   email: z.string().email(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
+  firstName: z.string().optional().nullable(),
+  lastName: z.string().optional().nullable(),
 })
 
 export type User = z.infer<typeof UserSchema>
