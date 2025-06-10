@@ -21,9 +21,15 @@ export const CompleteAuthResponseSchema = z.object({
   expiresAt: z.string().datetime(),
 })
 
+export const AuthStateSchema = z.object({
+  isLoading: z.boolean(),
+  error: z.string().nullable(),
+})
+
 // Infer TypeScript types
 export type InitializeAuthResponse = z.infer<
   typeof InitializeAuthResponseSchema
 >
 export type CompleteAuthRequest = z.infer<typeof CompleteAuthRequestSchema>
 export type CompleteAuthResponse = z.infer<typeof CompleteAuthResponseSchema>
+export type AuthState = z.infer<typeof AuthStateSchema>
