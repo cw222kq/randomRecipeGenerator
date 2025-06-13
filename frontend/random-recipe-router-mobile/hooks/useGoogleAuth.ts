@@ -72,7 +72,7 @@ export const useGoogleAuth = () => {
       return null
     }
 
-    Promise.all([
+    await Promise.all([
       secureStorage.setAppToken(authResult.token, authResult.expiresAt),
       secureStorage.setUserData(authResult.user),
       secureStorage.deleteItem('oauth_state'),
@@ -145,6 +145,7 @@ export const useGoogleAuth = () => {
     try {
       setAuthState({ isLoading: true, error: null })
 
+      // Returns Google OAuth URL and state
       const response = await authService.initializeAuth()
 
       if (response === null) {
@@ -154,11 +155,14 @@ export const useGoogleAuth = () => {
 
       await secureStorage.setItem('oauth_state', response.state)
 
+      // Opens Google OAuth URL in browser
+      // Flow: Mobile App → Google OAuth → Backend Callback → Deep Link (randomrecipe://auth?code=...&state=...)
       const result = await WebBrowser.openAuthSessionAsync(
         response.authUrl,
         'randomrecipe://auth',
       )
 
+      // Extract the code and state from the deep link
       await handleAuthResult(result)
     } catch (error) {
       const errorMessage =
