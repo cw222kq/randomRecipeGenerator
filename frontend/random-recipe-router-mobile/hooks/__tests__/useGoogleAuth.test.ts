@@ -120,12 +120,12 @@ describe('useGoogleAuth Hook', () => {
     // Arrange
     const mockAuthResult = {
       user: {
-        googleUserId: 'mock-google-user-id-123',
+        googleUserId: 'mock-google-user-id',
         email: 'mock-email@example.com',
         firstName: 'Mock',
         lastName: 'User',
       },
-      token: 'mock-jwt-token-123',
+      token: 'mock-jwt-token',
       expiresAt: '2025-10-31T23:59:59.000Z',
     }
 
@@ -165,11 +165,29 @@ describe('useGoogleAuth Hook', () => {
       state: 'some-mock-state',
       redirectUri: `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-callback`,
     })
+    expect(mockSecureStorage.setAppToken).toHaveBeenCalledWith(
+      'mock-jwt-token',
+      '2025-10-31T23:59:59.000Z',
+    )
+    expect(mockSecureStorage.setUserData).toHaveBeenCalledWith({
+      googleUserId: 'mock-google-user-id',
+      email: 'mock-email@example.com',
+      firstName: 'Mock',
+      lastName: 'User',
+    })
+    expect(mockSecureStorage.deleteItem).toHaveBeenCalledWith('oauth_state')
+
     expect(result.current.isLoading).toBe(false)
     expect(result.current.error).toBe(null)
     expect(mockWebBrowser.openAuthSessionAsync).toHaveBeenCalledTimes(1)
     expect(mockLinking.parse).toHaveBeenCalledTimes(1)
     expect(mockSecureStorage.getItem).toHaveBeenCalledTimes(1)
     expect(mockAuthService.completeAuth).toHaveBeenCalledTimes(1)
+    expect(mockSecureStorage.setItem).toHaveBeenCalledWith(
+      'post_login_redirect',
+      '/hello',
+    )
+    expect(mockUpdates.reloadAsync).toHaveBeenCalledTimes(1)
+    expect(mockPush).not.toHaveBeenCalled()
   })
 })
