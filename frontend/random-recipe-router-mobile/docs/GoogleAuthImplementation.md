@@ -776,6 +776,105 @@ const ApiService = {
 }
 ```
 
+## Testing
+
+### Test Structure
+
+The OAuth implementation includes comprehensive test coverage using Jest and React Native Testing Library to ensure reliability and maintainability.
+
+**Test File:** `hooks/__tests__/useGoogleAuth.test.ts`
+
+### Test Coverage
+
+#### 1. Initial State Testing
+- Verifies default loading and error states are correctly initialized
+- Confirms hook interface returns the expected functions (`signInWithGoogle`, `isLoading`, `error`)
+- Tests proper TypeScript typing and function availability
+
+#### 2. Loading State Management
+- Tests loading state transitions during OAuth flow initiation
+- Verifies state cleanup after OAuth completion or cancellation
+- Ensures UI receives proper loading indicators
+
+#### 3. Error Handling
+- Network failures during authentication initialization
+- API errors with proper error state management
+- Graceful error recovery and state cleanup
+
+#### 4. Complete OAuth Flow Integration
+- **End-to-end authentication success scenario**
+- **CSRF state validation:** Verifies secure state parameter handling
+- **Secure storage operations:** Token and user data storage validation
+- **Navigation after authentication:** Environment-specific redirect behavior
+- **API interaction verification:** Proper backend endpoint calls
+
+### Key Test Scenarios
+
+```typescript
+// Complete OAuth flow test structure
+it('should complete successful OAuth flow', async () => {
+  // Mock all external dependencies
+  mockAuthService.initializeAuth.mockResolvedValue({ authUrl, state })
+  mockWebBrowser.openAuthSessionAsync.mockResolvedValue({ type: 'success', url })
+  mockLinking.parse.mockReturnValue({ queryParams: { code, state } })
+  mockSecureStorage.getItem.mockResolvedValue('stored-state')
+  mockAuthService.completeAuth.mockResolvedValue(authResult)
+
+  // Execute OAuth flow
+  await result.current.signInWithGoogle()
+
+  // Verify complete flow
+  expect(mockSecureStorage.setAppToken).toHaveBeenCalledWith(token, expiresAt)
+  expect(mockSecureStorage.setUserData).toHaveBeenCalledWith(userData)
+  expect(mockUpdates.reloadAsync).toHaveBeenCalledTimes(1) // Development mode
+})
+```
+
+### Environment-Specific Testing
+
+The tests handle both development and production navigation patterns:
+
+```typescript
+// Development environment (__DEV__ = true)
+expect(mockUpdates.reloadAsync).toHaveBeenCalledTimes(1)
+expect(mockPush).not.toHaveBeenCalled()
+
+// Production environment (__DEV__ = false)
+expect(mockPush).toHaveBeenCalledWith('/hello')
+expect(mockUpdates.reloadAsync).not.toHaveBeenCalled()
+```
+
+### Mock Strategy
+
+The test suite mocks all external dependencies for isolated testing:
+
+- **`expo-router`:** Router navigation functions
+- **`@/services/authService`:** Backend API communication
+- **`@/lib/secureStorage`:** Secure storage operations
+- **`expo-web-browser`:** OAuth browser interactions
+- **`expo-updates`:** App reload functionality
+- **`expo-linking`:** Deep link URL parsing
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run specific OAuth tests
+npm test -- --testPathPattern=useGoogleAuth.test.ts
+
+# Run tests with coverage
+npm test -- --coverage
+```
+
+### Test Benefits
+
+- **Regression Prevention:** Catches breaking changes during development
+- **Documentation:** Tests serve as living documentation of expected behavior
+- **Refactoring Safety:** Enables confident code improvements
+- **Integration Verification:** Ensures all OAuth components work together correctly
+
 ## Troubleshooting
 
 ### Common Issues
