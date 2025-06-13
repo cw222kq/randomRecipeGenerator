@@ -4,6 +4,9 @@ using Serilog;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RandomRecipeGenerator.API.Models.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +43,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<HttpRequestService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+// Register services and their interfaces
 builder.Services.AddScoped<IHttpRequestService, HttpRequestService>();
+builder.Services.AddScoped<IOAuthService, OAuthService>();
 
 // This configures Google.Apis.Auth.AspNetCore3 for use in this app.
 builder.Services
@@ -71,6 +76,31 @@ builder.Services
 
     });
 
+// Configure JWT settings
+builder.Services.AddAuthentication() // Adding authentication to our application
+    .AddJwtBearer("Mobile", options => // Adding the JWT token
+    options.TokenValidationParameters = new TokenValidationParameters // Adding the parameters that we want the token to be validated against
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "secret-key"))
+    });
+
+// Session support for OAuth state management
+builder.Services.AddDistributedMemoryCache(); // In-memory cache for session state
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.Cookie.HttpOnly = true; // Make the session cookie HTTP only
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -82,6 +112,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

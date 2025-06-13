@@ -53,7 +53,10 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
       </CardContent>
       <CardFooter>
         <View className="flex-row justify-between w-full">
+          {/* When logged in
           <Button color="black" title="Save Recipe" />
+          */}
+          {/* When logged out */}
           <Button color="gray" title="New Recipe" />
         </View>
       </CardFooter>
