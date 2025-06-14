@@ -21,9 +21,17 @@ export const CompleteAuthResponseSchema = z.object({
   expiresAt: z.string().datetime(),
 })
 
+// OAuth flow state (for useGoogleAuth hook)
 export const AuthStateSchema = z.object({
   isLoading: z.boolean(),
   error: z.string().nullable(),
+})
+
+// Redux auth state (for Redux store)
+export const ReduxAuthStateSchema = z.object({
+  user: UserSchema.nullable(),
+  isAuthenticated: z.boolean(),
+  isLoading: z.boolean(),
 })
 
 // Infer TypeScript types
@@ -33,3 +41,10 @@ export type InitializeAuthResponse = z.infer<
 export type CompleteAuthRequest = z.infer<typeof CompleteAuthRequestSchema>
 export type CompleteAuthResponse = z.infer<typeof CompleteAuthResponseSchema>
 export type AuthState = z.infer<typeof AuthStateSchema>
+export type ReduxAuthState = z.infer<typeof ReduxAuthStateSchema>
+
+export const initialReduxAuthState: ReduxAuthState = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+}
