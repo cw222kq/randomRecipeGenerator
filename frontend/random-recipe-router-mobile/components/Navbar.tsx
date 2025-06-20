@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import { Link } from 'expo-router'
-import RecipeGeneratorLogo from './icons/RecipeGeneratorLogo'
-import GoogleSignInButton from './GoogleSignInButton'
+import RecipeGeneratorLogo from '@/components/icons/RecipeGeneratorLogo'
+import GoogleSignInButton from '@/components/GoogleSignInButton'
 
 export const Navbar = () => {
   return (
