@@ -1,3 +1,4 @@
+import React from 'react'
 import { renderHook, act } from '@testing-library/react-native'
 import { useGoogleAuth } from '@/hooks/useGoogleAuth'
 import authService from '@/services/authService'
@@ -5,6 +6,8 @@ import { secureStorage } from '@/lib/secureStorage'
 import * as WebBrowser from 'expo-web-browser'
 import * as Updates from 'expo-updates'
 import * as Linking from 'expo-linking'
+import { Provider } from 'react-redux'
+import { store } from '@/store/index'
 
 // Mock the expo-router and its push function
 const mockPush = jest.fn()
@@ -29,6 +32,7 @@ jest.mock('@/lib/secureStorage', () => ({
     deleteItem: jest.fn(),
     setAppToken: jest.fn(),
     setUserData: jest.fn(),
+    getUserData: jest.fn(),
   },
 }))
 
@@ -51,6 +55,10 @@ const mockWebBrowser = WebBrowser as jest.Mocked<typeof WebBrowser>
 const mockUpdates = Updates as jest.Mocked<typeof Updates>
 const mockLinking = Linking as jest.Mocked<typeof Linking>
 
+const ReduxWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Provider store={store}>{children}</Provider>
+)
+
 describe('useGoogleAuth Hook', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -65,7 +73,9 @@ describe('useGoogleAuth Hook', () => {
 
   it('should initialize with correct default state', () => {
     // Arrange - Setup test data
-    const { result } = renderHook(() => useGoogleAuth())
+    const { result } = renderHook(() => useGoogleAuth(), {
+      wrapper: ReduxWrapper,
+    })
 
     // Assert - Verify the result
     expect(result.current.isLoading).toBe(false)
@@ -84,7 +94,9 @@ describe('useGoogleAuth Hook', () => {
       type: 'cancel',
     } as WebBrowser.WebBrowserAuthSessionResult)
 
-    const { result } = renderHook(() => useGoogleAuth())
+    const { result } = renderHook(() => useGoogleAuth(), {
+      wrapper: ReduxWrapper,
+    })
 
     // Act - Call the method that is being tested
     act(() => {
@@ -104,7 +116,9 @@ describe('useGoogleAuth Hook', () => {
     const errorMessage = 'Network error'
     mockAuthService.initializeAuth.mockRejectedValue(new Error(errorMessage))
 
-    const { result } = renderHook(() => useGoogleAuth())
+    const { result } = renderHook(() => useGoogleAuth(), {
+      wrapper: ReduxWrapper,
+    })
 
     // Act
     await act(async () => {
@@ -147,7 +161,16 @@ describe('useGoogleAuth Hook', () => {
     mockSecureStorage.getItem.mockResolvedValue('some-mock-state')
     mockAuthService.completeAuth.mockResolvedValue(mockAuthResult)
 
-    const { result } = renderHook(() => useGoogleAuth())
+    mockSecureStorage.getUserData.mockResolvedValue({
+      googleUserId: 'mock-google-user-id',
+      email: 'mock-email@example.com',
+      firstName: 'Mock',
+      lastName: 'User',
+    })
+
+    const { result } = renderHook(() => useGoogleAuth(), {
+      wrapper: ReduxWrapper,
+    })
 
     // Act
     await act(async () => {
@@ -183,7 +206,19 @@ describe('useGoogleAuth Hook', () => {
     expect(mockLinking.parse).toHaveBeenCalledTimes(1)
     expect(mockSecureStorage.getItem).toHaveBeenCalledTimes(1)
     expect(mockAuthService.completeAuth).toHaveBeenCalledTimes(1)
-    expect(mockSecureStorage.setItem).toHaveBeenCalledWith(
+    console.log('setItem calls:', mockSecureStorage.setItem.mock.calls)
+    console.log(
+      'Number of setItem calls:',
+      mockSecureStorage.setItem.mock.calls.length,
+    )
+    expect(mockSecureStorage.setItem).toHaveBeenCalledTimes(2)
+    expect(mockSecureStorage.setItem).toHaveBeenNthCalledWith(
+      1,
+      'oauth_state',
+      'some-mock-state',
+    )
+    expect(mockSecureStorage.setItem).toHaveBeenNthCalledWith(
+      2,
       'post_login_redirect',
       '/hello',
     )
