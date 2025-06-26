@@ -1,28 +1,12 @@
-import React from 'react'
-import { configureStore } from '@reduxjs/toolkit'
-import authReducer, { login } from '@/store/features/auth/authSlice'
-import { Provider } from 'react-redux'
+import { login } from '@/store/features/auth/authSlice'
 import { renderHook, act } from '@testing-library/react-native'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { initialReduxAuthState } from '@/schemas/authSchemas'
 import { User } from '@/schemas/userSchema'
-
-const createTestStore = () =>
-  configureStore({
-    reducer: { auth: authReducer },
-  })
-
-// Wrapper component (testing hooks)
-const createWrapper = (store: ReturnType<typeof createTestStore>) => {
-  const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-    <Provider store={store}>{children}</Provider>
-  )
-  TestWrapper.displayName = 'TestWrapper'
-  return TestWrapper
-}
+import { createTestStore, createReduxWrapper, TestStore } from '@/test-utils'
 
 describe('Redux hooks', () => {
-  let store: ReturnType<typeof createTestStore>
+  let store: TestStore
 
   beforeEach(() => {
     store = createTestStore()
@@ -31,7 +15,7 @@ describe('Redux hooks', () => {
   describe('useAppSelector', () => {
     it('should select auth state correctly', () => {
       // Arrange
-      const wrapper = createWrapper(store)
+      const wrapper = createReduxWrapper(store)
 
       // Act
       const { result } = renderHook(
@@ -46,7 +30,7 @@ describe('Redux hooks', () => {
 
   it('should update when state changes', () => {
     // Arrange
-    const wrapper = createWrapper(store)
+    const wrapper = createReduxWrapper(store)
     const mockUser: User = {
       googleUserId: '123',
       email: 'test@test.com',
@@ -71,7 +55,7 @@ describe('Redux hooks', () => {
   describe('useAppDispatch', () => {
     it('should return dispatch function', () => {
       // Arrange
-      const wrapper = createWrapper(store)
+      const wrapper = createReduxWrapper(store)
 
       // Act
       const { result } = renderHook(() => useAppDispatch(), { wrapper })
@@ -83,7 +67,7 @@ describe('Redux hooks', () => {
 
     it('should dispatch actions correctly', () => {
       // Arrange
-      const wrapper = createWrapper(store)
+      const wrapper = createReduxWrapper(store)
       const mockUser: User = {
         googleUserId: '123',
         email: 'test@test.com',

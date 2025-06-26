@@ -1,4 +1,3 @@
-import React from 'react'
 import { renderHook, act } from '@testing-library/react-native'
 import { useGoogleAuth } from '@/hooks/useGoogleAuth'
 import authService from '@/services/authService'
@@ -6,8 +5,7 @@ import { secureStorage } from '@/lib/secureStorage'
 import * as WebBrowser from 'expo-web-browser'
 import * as Updates from 'expo-updates'
 import * as Linking from 'expo-linking'
-import { Provider } from 'react-redux'
-import { store } from '@/store/index'
+import { createTestStore, createReduxWrapper, TestStore } from '@/test-utils'
 
 // Mock the expo-router and its push function
 const mockPush = jest.fn()
@@ -55,16 +53,18 @@ const mockWebBrowser = WebBrowser as jest.Mocked<typeof WebBrowser>
 const mockUpdates = Updates as jest.Mocked<typeof Updates>
 const mockLinking = Linking as jest.Mocked<typeof Linking>
 
-const ReduxWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Provider store={store}>{children}</Provider>
-)
-
 describe('useGoogleAuth Hook', () => {
+  let store: TestStore
+  let wrapper: ReturnType<typeof createReduxWrapper>
+
   beforeEach(() => {
     jest.clearAllMocks()
 
     jest.spyOn(console, 'log').mockImplementation(() => {})
     jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    store = createTestStore()
+    wrapper = createReduxWrapper(store)
   })
 
   afterEach(() => {
@@ -74,7 +74,7 @@ describe('useGoogleAuth Hook', () => {
   it('should initialize with correct default state', () => {
     // Arrange - Setup test data
     const { result } = renderHook(() => useGoogleAuth(), {
-      wrapper: ReduxWrapper,
+      wrapper,
     })
 
     // Assert - Verify the result
@@ -95,7 +95,7 @@ describe('useGoogleAuth Hook', () => {
     } as WebBrowser.WebBrowserAuthSessionResult)
 
     const { result } = renderHook(() => useGoogleAuth(), {
-      wrapper: ReduxWrapper,
+      wrapper,
     })
 
     // Act - Call the method that is being tested
@@ -117,7 +117,7 @@ describe('useGoogleAuth Hook', () => {
     mockAuthService.initializeAuth.mockRejectedValue(new Error(errorMessage))
 
     const { result } = renderHook(() => useGoogleAuth(), {
-      wrapper: ReduxWrapper,
+      wrapper,
     })
 
     // Act
@@ -169,7 +169,7 @@ describe('useGoogleAuth Hook', () => {
     })
 
     const { result } = renderHook(() => useGoogleAuth(), {
-      wrapper: ReduxWrapper,
+      wrapper,
     })
 
     // Act
