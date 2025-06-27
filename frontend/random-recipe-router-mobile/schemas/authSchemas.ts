@@ -32,6 +32,7 @@ export const ReduxAuthStateSchema = z.object({
   user: UserSchema.nullable(),
   isAuthenticated: z.boolean(),
   isLoading: z.boolean(),
+  error: z.string().nullable(),
 })
 
 // Infer TypeScript types
@@ -47,4 +48,5 @@ export const initialReduxAuthState: ReduxAuthState = {
   user: null,
   isAuthenticated: false,
   isLoading: false,
+  error: null,
 }

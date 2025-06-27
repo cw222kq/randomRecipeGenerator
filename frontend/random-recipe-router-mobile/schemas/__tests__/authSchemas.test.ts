@@ -17,6 +17,7 @@ describe('authSchemas', () => {
           },
           isAuthenticated: true,
           isLoading: false,
+          error: null,
         }
 
         // Act
@@ -33,6 +34,7 @@ describe('authSchemas', () => {
           user: null,
           isAuthenticated: false,
           isLoading: false,
+          error: null,
         }
 
         // Act
@@ -49,6 +51,7 @@ describe('authSchemas', () => {
           user: null,
           isAuthenticated: false,
           isLoading: true,
+          error: null,
         }
 
         // Act
@@ -128,7 +131,60 @@ describe('authSchemas', () => {
           user: null,
           isAuthenticated: false,
           isLoading: false,
+          error: null,
         })
+      })
+    })
+
+    describe('error cases', () => {
+      it('should validate redux auth state with error', () => {
+        // Arrange
+        const errorMessage = 'Error message'
+        const validStateWithError = {
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+          error: errorMessage,
+        }
+
+        // Act
+        const result = ReduxAuthStateSchema.safeParse(validStateWithError)
+
+        // Assert
+        expect(result.success).toBe(true)
+        if (result.success) {
+          expect(result.data.error).toBe(errorMessage)
+        }
+      })
+
+      it('should validate redux auth state with null error', () => {
+        // Arrange
+        const validStateWithNullError = {
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+          error: null,
+        }
+
+        // Act
+        const result = ReduxAuthStateSchema.safeParse(validStateWithNullError)
+
+        // Assert
+        expect(result.success).toBe(true)
+        if (result.success) {
+          expect(result.data.error).toBe(null)
+        }
+      })
+
+      it('should validate initial redux auth state includes error', () => {
+        // Arrange & Act
+        const result = ReduxAuthStateSchema.safeParse(initialReduxAuthState)
+
+        // Assert
+        expect(result.success).toBe(true)
+        if (result.success) {
+          expect(result.data.error).toBe(null)
+        }
       })
     })
   })
