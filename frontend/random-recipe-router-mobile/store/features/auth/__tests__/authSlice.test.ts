@@ -1,6 +1,12 @@
 import { initialReduxAuthState } from '@/schemas/authSchemas'
 import { User } from '@/schemas/userSchema'
-import { login, logout, setLoading } from '@/store/features/auth/authSlice'
+import {
+  login,
+  logout,
+  setLoading,
+  setError,
+  clearError,
+} from '@/store/features/auth/authSlice'
 import { createTestStore, TestStore } from '@/test-utils'
 
 describe('authSlice', () => {
@@ -39,6 +45,33 @@ describe('authSlice', () => {
       expect(state.isAuthenticated).toBe(true)
       expect(state.isLoading).toBe(false)
     })
+
+    it('should set the user, isAuthenticated to true, and clear any existing error', () => {
+      // Arrange
+      const mockUser: User = {
+        googleUserId: '123',
+        email: 'test@test.com',
+        firstName: 'John',
+        lastName: 'Doe',
+      }
+
+      const errorMessage = 'test error'
+
+      store.dispatch(setError(errorMessage))
+
+      let state = store.getState().auth
+      expect(state.error).toBe(errorMessage)
+
+      // Act
+      store.dispatch(login(mockUser))
+      state = store.getState().auth
+
+      // Assert
+      expect(state.user).toEqual(mockUser)
+      expect(state.isAuthenticated).toBe(true)
+      expect(state.isLoading).toBe(false)
+      expect(state.error).toBeNull()
+    })
   })
 
   describe('logout action', () => {
@@ -61,6 +94,36 @@ describe('authSlice', () => {
       expect(state.isAuthenticated).toBe(false)
       expect(state.isLoading).toBe(false)
     })
+
+    it('should clear user, set isAuthenticated to false, and clear any existing error', () => {
+      // Arrange
+      const mockUser: User = {
+        googleUserId: '123',
+        email: 'test@test.com',
+        firstName: 'John',
+        lastName: 'Doe',
+      }
+
+      const errorMessage = 'test error'
+
+      store.dispatch(login(mockUser))
+      store.dispatch(setError(errorMessage))
+
+      let state = store.getState().auth
+      expect(state.error).toBe(errorMessage)
+      expect(state.user).toEqual(mockUser)
+      expect(state.isAuthenticated).toBe(true)
+
+      // Act
+      store.dispatch(logout())
+      state = store.getState().auth
+
+      // Assert
+      expect(state.user).toBeNull()
+      expect(state.isAuthenticated).toBe(false)
+      expect(state.isLoading).toBe(false)
+      expect(state.error).toBeNull()
+    })
   })
 
   describe('setLoading action', () => {
@@ -80,6 +143,44 @@ describe('authSlice', () => {
 
       // Assert
       expect(state.isLoading).toBe(false)
+    })
+  })
+
+  describe('setError action', () => {
+    it('should set the error message', () => {
+      // Arrange
+      const errorMessage = 'test error'
+
+      // Act
+      store.dispatch(setError(errorMessage))
+      const state = store.getState().auth
+
+      // Assert
+      expect(state.error).toBe(errorMessage)
+      expect(state.user).toBeNull()
+      expect(state.isAuthenticated).toBe(false)
+      expect(state.isLoading).toBe(false)
+    })
+
+    describe('clearError action', () => {
+      it('should clear the error state', () => {
+        // Arrange
+        const errorMessage = 'test error'
+        store.dispatch(setError(errorMessage))
+
+        let state = store.getState().auth
+        expect(state.error).toBe(errorMessage)
+
+        // Act
+        store.dispatch(clearError())
+        state = store.getState().auth
+
+        // Assert
+        expect(state.error).toBeNull()
+        expect(state.user).toBeNull()
+        expect(state.isAuthenticated).toBe(false)
+        expect(state.isLoading).toBe(false)
+      })
     })
   })
 })
