@@ -161,26 +161,26 @@ describe('authSlice', () => {
       expect(state.isAuthenticated).toBe(false)
       expect(state.isLoading).toBe(false)
     })
+  })
 
-    describe('clearError action', () => {
-      it('should clear the error state', () => {
-        // Arrange
-        const errorMessage = 'test error'
-        store.dispatch(setError(errorMessage))
+  describe('clearError action', () => {
+    it('should clear the error state', () => {
+      // Arrange
+      const errorMessage = 'test error'
+      store.dispatch(setError(errorMessage))
 
-        let state = store.getState().auth
-        expect(state.error).toBe(errorMessage)
+      let state = store.getState().auth
+      expect(state.error).toBe(errorMessage)
 
-        // Act
-        store.dispatch(clearError())
-        state = store.getState().auth
+      // Act
+      store.dispatch(clearError())
+      state = store.getState().auth
 
-        // Assert
-        expect(state.error).toBeNull()
-        expect(state.user).toBeNull()
-        expect(state.isAuthenticated).toBe(false)
-        expect(state.isLoading).toBe(false)
-      })
+      // Assert
+      expect(state.error).toBeNull()
+      expect(state.user).toBeNull()
+      expect(state.isAuthenticated).toBe(false)
+      expect(state.isLoading).toBe(false)
     })
   })
 })
