@@ -1,21 +1,7 @@
-import { configureStore } from '@reduxjs/toolkit'
 import { initialReduxAuthState } from '@/schemas/authSchemas'
 import { User } from '@/schemas/userSchema'
-import authReducer, {
-  login,
-  logout,
-  setLoading,
-} from '@/store/features/auth/authSlice'
-
-const createTestStore = () => {
-  return configureStore({
-    reducer: {
-      auth: authReducer,
-    },
-  })
-}
-
-type TestStore = ReturnType<typeof createTestStore>
+import { login, logout, setLoading } from '@/store/features/auth/authSlice'
+import { createTestStore, TestStore } from '@/test-utils'
 
 describe('authSlice', () => {
   let store: TestStore
