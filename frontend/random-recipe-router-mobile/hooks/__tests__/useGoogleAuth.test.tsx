@@ -31,6 +31,7 @@ jest.mock('@/lib/secureStorage', () => ({
     setAppToken: jest.fn(),
     setUserData: jest.fn(),
     getUserData: jest.fn(),
+    clearAllAuthData: jest.fn(),
   },
 }))
 
@@ -81,148 +82,220 @@ describe('useGoogleAuth Hook', () => {
     expect(result.current.isLoading).toBe(false)
     expect(result.current.error).toBe(null)
     expect(typeof result.current.signInWithGoogle).toBe('function')
+    expect(typeof result.current.signOut).toBe('function')
   })
 
-  it('should set loading state when signInWithGoogle is called', async () => {
-    // Arrange - Setup test data
-    mockAuthService.initializeAuth.mockResolvedValue({
-      authUrl: 'https://mock-url.com',
-      state: 'some-mock-state',
+  describe('signInWithGoogle', () => {
+    it('should set loading state when signInWithGoogle is called', async () => {
+      // Arrange - Setup test data
+      mockAuthService.initializeAuth.mockResolvedValue({
+        authUrl: 'https://mock-url.com',
+        state: 'some-mock-state',
+      })
+
+      mockWebBrowser.openAuthSessionAsync.mockResolvedValue({
+        type: 'cancel',
+      } as WebBrowser.WebBrowserAuthSessionResult)
+
+      const { result } = renderHook(() => useGoogleAuth(), {
+        wrapper,
+      })
+
+      // Act - Call the method that is being tested
+      act(() => {
+        result.current.signInWithGoogle()
+      })
+
+      // Assert - Verify the result
+      expect(result.current.isLoading).toBe(true)
+
+      await act(async () => {})
+
+      expect(result.current.isLoading).toBe(false)
     })
 
-    mockWebBrowser.openAuthSessionAsync.mockResolvedValue({
-      type: 'cancel',
-    } as WebBrowser.WebBrowserAuthSessionResult)
+    it('should handle error when initializeAuth fails', async () => {
+      // Arrange
+      const errorMessage = 'Network error'
+      mockAuthService.initializeAuth.mockRejectedValue(new Error(errorMessage))
 
-    const { result } = renderHook(() => useGoogleAuth(), {
-      wrapper,
+      const { result } = renderHook(() => useGoogleAuth(), {
+        wrapper,
+      })
+
+      // Act
+      await act(async () => {
+        await result.current.signInWithGoogle()
+      })
+
+      // Assert
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.error).toBe(errorMessage)
     })
 
-    // Act - Call the method that is being tested
-    act(() => {
-      result.current.signInWithGoogle()
-    })
+    it('should complete successful OAuth flow', async () => {
+      // Arrange
+      const mockAuthResult = {
+        user: {
+          googleUserId: 'mock-google-user-id',
+          email: 'mock-email@example.com',
+          firstName: 'Mock',
+          lastName: 'User',
+        },
+        token: 'mock-jwt-token',
+        expiresAt: '2025-10-31T23:59:59.000Z',
+      }
 
-    // Assert - Verify the result
-    expect(result.current.isLoading).toBe(true)
+      mockAuthService.initializeAuth.mockResolvedValue({
+        authUrl: 'https://mock-url.com',
+        state: 'some-mock-state',
+      })
 
-    await act(async () => {})
+      mockWebBrowser.openAuthSessionAsync.mockResolvedValue({
+        type: 'success',
+        url: 'https://mock-url.com?code=some-mock-code&state=some-mock-state',
+      } as WebBrowser.WebBrowserAuthSessionResult)
+      mockLinking.parse.mockReturnValue({
+        queryParams: {
+          code: 'some-mock-code',
+          state: 'some-mock-state',
+        } as Record<string, string>,
+      } as Linking.ParsedURL)
+      mockSecureStorage.getItem.mockResolvedValue('some-mock-state')
+      mockAuthService.completeAuth.mockResolvedValue(mockAuthResult)
 
-    expect(result.current.isLoading).toBe(false)
-  })
-
-  it('should handle error when initializeAuth fails', async () => {
-    // Arrange
-    const errorMessage = 'Network error'
-    mockAuthService.initializeAuth.mockRejectedValue(new Error(errorMessage))
-
-    const { result } = renderHook(() => useGoogleAuth(), {
-      wrapper,
-    })
-
-    // Act
-    await act(async () => {
-      await result.current.signInWithGoogle()
-    })
-
-    // Assert
-    expect(result.current.isLoading).toBe(false)
-    expect(result.current.error).toBe(errorMessage)
-  })
-
-  it('should complete successful OAuth flow', async () => {
-    // Arrange
-    const mockAuthResult = {
-      user: {
+      mockSecureStorage.getUserData.mockResolvedValue({
         googleUserId: 'mock-google-user-id',
         email: 'mock-email@example.com',
         firstName: 'Mock',
         lastName: 'User',
-      },
-      token: 'mock-jwt-token',
-      expiresAt: '2025-10-31T23:59:59.000Z',
-    }
+      })
 
-    mockAuthService.initializeAuth.mockResolvedValue({
-      authUrl: 'https://mock-url.com',
-      state: 'some-mock-state',
-    })
+      const { result } = renderHook(() => useGoogleAuth(), {
+        wrapper,
+      })
 
-    mockWebBrowser.openAuthSessionAsync.mockResolvedValue({
-      type: 'success',
-      url: 'https://mock-url.com?code=some-mock-code&state=some-mock-state',
-    } as WebBrowser.WebBrowserAuthSessionResult)
-    mockLinking.parse.mockReturnValue({
-      queryParams: {
+      // Act
+      await act(async () => {
+        await result.current.signInWithGoogle()
+      })
+
+      // Assert
+      expect(mockAuthService.initializeAuth).toHaveBeenCalledTimes(1)
+      expect(mockSecureStorage.setItem).toHaveBeenCalledWith(
+        'oauth_state',
+        'some-mock-state',
+      )
+      expect(mockAuthService.completeAuth).toHaveBeenCalledWith({
         code: 'some-mock-code',
         state: 'some-mock-state',
-      } as Record<string, string>,
-    } as Linking.ParsedURL)
-    mockSecureStorage.getItem.mockResolvedValue('some-mock-state')
-    mockAuthService.completeAuth.mockResolvedValue(mockAuthResult)
+        redirectUri: `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-callback`,
+      })
+      expect(mockSecureStorage.setAppToken).toHaveBeenCalledWith(
+        'mock-jwt-token',
+        '2025-10-31T23:59:59.000Z',
+      )
+      expect(mockSecureStorage.setUserData).toHaveBeenCalledWith({
+        googleUserId: 'mock-google-user-id',
+        email: 'mock-email@example.com',
+        firstName: 'Mock',
+        lastName: 'User',
+      })
+      expect(mockSecureStorage.deleteItem).toHaveBeenCalledWith('oauth_state')
 
-    mockSecureStorage.getUserData.mockResolvedValue({
-      googleUserId: 'mock-google-user-id',
-      email: 'mock-email@example.com',
-      firstName: 'Mock',
-      lastName: 'User',
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.error).toBe(null)
+      expect(mockWebBrowser.openAuthSessionAsync).toHaveBeenCalledTimes(1)
+      expect(mockLinking.parse).toHaveBeenCalledTimes(1)
+      expect(mockSecureStorage.getItem).toHaveBeenCalledTimes(1)
+      expect(mockAuthService.completeAuth).toHaveBeenCalledTimes(1)
+      expect(mockSecureStorage.setItem).toHaveBeenCalledTimes(2)
+      expect(mockSecureStorage.setItem).toHaveBeenNthCalledWith(
+        1,
+        'oauth_state',
+        'some-mock-state',
+      )
+      expect(mockSecureStorage.setItem).toHaveBeenNthCalledWith(
+        2,
+        'post_login_redirect',
+        '/hello',
+      )
+      expect(mockUpdates.reloadAsync).toHaveBeenCalledTimes(1)
+      expect(mockPush).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('signOut', () => {
+    it('should clear auth data and navigate on signOut', async () => {
+      // Arrange
+      mockSecureStorage.clearAllAuthData.mockResolvedValue()
+
+      const { result } = renderHook(() => useGoogleAuth(), {
+        wrapper,
+      })
+
+      // Act
+      await act(async () => {
+        await result.current.signOut()
+      })
+
+      // Assert
+      expect(mockSecureStorage.clearAllAuthData).toHaveBeenCalledTimes(1)
+      expect(mockPush).toHaveBeenCalledWith('/')
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.error).toBe(null)
+
+      expect(store.getState().auth.user).toBe(null)
     })
 
-    const { result } = renderHook(() => useGoogleAuth(), {
-      wrapper,
+    it('should handle signOut errors gracefully', async () => {
+      // Arrange
+      const errorMessage = 'Some error'
+      mockSecureStorage.clearAllAuthData.mockRejectedValue(
+        new Error(errorMessage),
+      )
+
+      const { result } = renderHook(() => useGoogleAuth(), {
+        wrapper,
+      })
+
+      // Act
+      await act(async () => {
+        await result.current.signOut()
+      })
+
+      // Assert
+      expect(result.current.error).toBe(errorMessage)
+      expect(console.error).toHaveBeenCalledWith(
+        'Error signing out:',
+        errorMessage,
+      )
     })
 
-    // Act
-    await act(async () => {
-      await result.current.signInWithGoogle()
-    })
+    it('should clear error state before attempting signOut', async () => {
+      // Arrange
+      const errorMessage = 'Some error'
+      mockSecureStorage.clearAllAuthData.mockResolvedValue()
 
-    // Assert
-    expect(mockAuthService.initializeAuth).toHaveBeenCalledTimes(1)
-    expect(mockSecureStorage.setItem).toHaveBeenCalledWith(
-      'oauth_state',
-      'some-mock-state',
-    )
-    expect(mockAuthService.completeAuth).toHaveBeenCalledWith({
-      code: 'some-mock-code',
-      state: 'some-mock-state',
-      redirectUri: `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/account/mobile-auth-callback`,
-    })
-    expect(mockSecureStorage.setAppToken).toHaveBeenCalledWith(
-      'mock-jwt-token',
-      '2025-10-31T23:59:59.000Z',
-    )
-    expect(mockSecureStorage.setUserData).toHaveBeenCalledWith({
-      googleUserId: 'mock-google-user-id',
-      email: 'mock-email@example.com',
-      firstName: 'Mock',
-      lastName: 'User',
-    })
-    expect(mockSecureStorage.deleteItem).toHaveBeenCalledWith('oauth_state')
+      const { result } = renderHook(() => useGoogleAuth(), {
+        wrapper,
+      })
 
-    expect(result.current.isLoading).toBe(false)
-    expect(result.current.error).toBe(null)
-    expect(mockWebBrowser.openAuthSessionAsync).toHaveBeenCalledTimes(1)
-    expect(mockLinking.parse).toHaveBeenCalledTimes(1)
-    expect(mockSecureStorage.getItem).toHaveBeenCalledTimes(1)
-    expect(mockAuthService.completeAuth).toHaveBeenCalledTimes(1)
-    console.log('setItem calls:', mockSecureStorage.setItem.mock.calls)
-    console.log(
-      'Number of setItem calls:',
-      mockSecureStorage.setItem.mock.calls.length,
-    )
-    expect(mockSecureStorage.setItem).toHaveBeenCalledTimes(2)
-    expect(mockSecureStorage.setItem).toHaveBeenNthCalledWith(
-      1,
-      'oauth_state',
-      'some-mock-state',
-    )
-    expect(mockSecureStorage.setItem).toHaveBeenNthCalledWith(
-      2,
-      'post_login_redirect',
-      '/hello',
-    )
-    expect(mockUpdates.reloadAsync).toHaveBeenCalledTimes(1)
-    expect(mockPush).not.toHaveBeenCalled()
+      // Set initial error state
+      mockAuthService.initializeAuth.mockRejectedValue(new Error(errorMessage))
+      await act(async () => {
+        await result.current.signInWithGoogle()
+      })
+
+      expect(result.current.error).toBe(errorMessage)
+
+      // Act
+      await act(async () => {
+        await result.current.signOut()
+      })
+
+      // Assert
+      expect(result.current.error).toBe(null)
+    })
   })
 })
