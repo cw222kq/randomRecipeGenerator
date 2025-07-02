@@ -10,7 +10,7 @@ import * as Updates from 'expo-updates'
 import { useRouter } from 'expo-router'
 import * as Linking from 'expo-linking'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { login, setLoading } from '@/store/features/auth/authSlice'
+import { login, logout, setLoading } from '@/store/features/auth/authSlice'
 
 interface OAuthCallbackParams {
   code?: string
@@ -183,8 +183,25 @@ export const useGoogleAuth = () => {
     }
   }
 
+  const signOut = async () => {
+    try {
+      setError(null)
+      await secureStorage.clearAllAuthData()
+      dispatch(logout())
+      router.push('/')
+
+      console.log('Successfully signed out')
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error'
+      console.error('Error signing out:', errorMessage)
+      setError(errorMessage)
+    }
+  }
+
   return {
     signInWithGoogle,
+    signOut,
     isLoading,
     error,
   }
