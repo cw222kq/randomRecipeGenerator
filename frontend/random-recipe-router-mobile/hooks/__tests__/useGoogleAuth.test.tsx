@@ -7,6 +7,9 @@ import * as Updates from 'expo-updates'
 import * as Linking from 'expo-linking'
 import { createTestStore, createReduxWrapper, TestStore } from '@/test-utils'
 
+const mockSetError = jest.fn()
+const mockClearError = jest.fn()
+
 // Mock the expo-router and its push function
 const mockPush = jest.fn()
 jest.mock('expo-router', () => ({
@@ -47,6 +50,12 @@ jest.mock('expo-linking', () => ({
   parse: jest.fn(),
 }))
 
+jest.mock('@/store/features/auth/authSlice', () => ({
+  ...jest.requireActual('@/store/features/auth/authSlice'),
+  setError: () => mockSetError,
+  clearError: () => mockClearError,
+}))
+
 // Mock the authService and secureStorage
 const mockAuthService = authService as jest.Mocked<typeof authService>
 const mockSecureStorage = secureStorage as jest.Mocked<typeof secureStorage>
@@ -80,7 +89,6 @@ describe('useGoogleAuth Hook', () => {
 
     // Assert - Verify the result
     expect(result.current.isLoading).toBe(false)
-    expect(result.current.error).toBe(null)
     expect(typeof result.current.signInWithGoogle).toBe('function')
     expect(typeof result.current.signOut).toBe('function')
   })
@@ -130,7 +138,7 @@ describe('useGoogleAuth Hook', () => {
 
       // Assert
       expect(result.current.isLoading).toBe(false)
-      expect(result.current.error).toBe(errorMessage)
+      expect(mockSetError).toHaveBeenCalledWith(errorMessage)
     })
 
     it('should complete successful OAuth flow', async () => {
@@ -204,7 +212,6 @@ describe('useGoogleAuth Hook', () => {
       expect(mockSecureStorage.deleteItem).toHaveBeenCalledWith('oauth_state')
 
       expect(result.current.isLoading).toBe(false)
-      expect(result.current.error).toBe(null)
       expect(mockWebBrowser.openAuthSessionAsync).toHaveBeenCalledTimes(1)
       expect(mockLinking.parse).toHaveBeenCalledTimes(1)
       expect(mockSecureStorage.getItem).toHaveBeenCalledTimes(1)
@@ -222,6 +229,7 @@ describe('useGoogleAuth Hook', () => {
       )
       expect(mockUpdates.reloadAsync).toHaveBeenCalledTimes(1)
       expect(mockPush).not.toHaveBeenCalled()
+      expect(mockSetError).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -243,9 +251,8 @@ describe('useGoogleAuth Hook', () => {
       expect(mockSecureStorage.clearAllAuthData).toHaveBeenCalledTimes(1)
       expect(mockPush).toHaveBeenCalledWith('/')
       expect(result.current.isLoading).toBe(false)
-      expect(result.current.error).toBe(null)
-
       expect(store.getState().auth.user).toBe(null)
+      expect(mockSetError).toHaveBeenCalledTimes(1)
     })
 
     it('should handle signOut errors gracefully', async () => {
@@ -265,7 +272,7 @@ describe('useGoogleAuth Hook', () => {
       })
 
       // Assert
-      expect(result.current.error).toBe(errorMessage)
+      expect(mockSetError).toHaveBeenCalledWith(errorMessage)
       expect(console.error).toHaveBeenCalledWith(
         'Error signing out:',
         errorMessage,
@@ -287,7 +294,7 @@ describe('useGoogleAuth Hook', () => {
         await result.current.signInWithGoogle()
       })
 
-      expect(result.current.error).toBe(errorMessage)
+      expect(mockSetError).toHaveBeenCalledWith(errorMessage)
 
       // Act
       await act(async () => {
@@ -295,7 +302,7 @@ describe('useGoogleAuth Hook', () => {
       })
 
       // Assert
-      expect(result.current.error).toBe(null)
+      expect(mockClearError).toHaveBeenCalledTimes(1)
     })
   })
 })
