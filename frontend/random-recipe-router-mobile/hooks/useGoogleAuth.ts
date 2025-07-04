@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   CompleteAuthResponseSchema,
   CompleteAuthResponse,
@@ -10,7 +9,13 @@ import * as Updates from 'expo-updates'
 import { useRouter } from 'expo-router'
 import * as Linking from 'expo-linking'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { login, logout, setLoading } from '@/store/features/auth/authSlice'
+import {
+  login,
+  logout,
+  setLoading,
+  setError,
+  clearError,
+} from '@/store/features/auth/authSlice'
 
 interface OAuthCallbackParams {
   code?: string
@@ -21,8 +26,7 @@ export const useGoogleAuth = () => {
   const router = useRouter()
   const dispatch = useAppDispatch()
 
-  const { isLoading } = useAppSelector((state) => state.auth)
-  const [error, setError] = useState<string | null>(null)
+  const { isLoading, error } = useAppSelector((state) => state.auth)
 
   const validateOAuthCallback = async (
     params: OAuthCallbackParams,
@@ -151,7 +155,7 @@ export const useGoogleAuth = () => {
 
     try {
       dispatch(setLoading(true))
-      setError(null)
+      dispatch(clearError())
 
       // Returns Google OAuth URL and state
       const response = await authService.initializeAuth()
@@ -176,7 +180,7 @@ export const useGoogleAuth = () => {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error'
       console.error('Error signing in with Google:', errorMessage)
-      setError(errorMessage)
+      dispatch(setError(errorMessage))
       await secureStorage.deleteItem('oauth_state')
     } finally {
       dispatch(setLoading(false))
@@ -185,7 +189,7 @@ export const useGoogleAuth = () => {
 
   const signOut = async () => {
     try {
-      setError(null)
+      dispatch(clearError())
       await secureStorage.clearAllAuthData()
       dispatch(logout())
       router.push('/')
@@ -195,7 +199,7 @@ export const useGoogleAuth = () => {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error'
       console.error('Error signing out:', errorMessage)
-      setError(errorMessage)
+      dispatch(setError(errorMessage))
     }
   }
 

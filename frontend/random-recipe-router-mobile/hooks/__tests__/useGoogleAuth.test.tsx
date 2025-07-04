@@ -6,9 +6,15 @@ import * as WebBrowser from 'expo-web-browser'
 import * as Updates from 'expo-updates'
 import * as Linking from 'expo-linking'
 import { createTestStore, createReduxWrapper, TestStore } from '@/test-utils'
+import { RootState } from '@/store'
+import {
+  setError,
+  clearError,
+  setLoading,
+} from '@/store/features/auth/authSlice'
 
-const mockSetError = jest.fn()
-const mockClearError = jest.fn()
+/*const mockSetError = jest.fn()
+const mockClearError = jest.fn()*/
 
 // Mock the expo-router and its push function
 const mockPush = jest.fn()
@@ -49,12 +55,12 @@ jest.mock('expo-updates', () => ({
 jest.mock('expo-linking', () => ({
   parse: jest.fn(),
 }))
-
+/*
 jest.mock('@/store/features/auth/authSlice', () => ({
   ...jest.requireActual('@/store/features/auth/authSlice'),
   setError: () => mockSetError,
   clearError: () => mockClearError,
-}))
+}))*/
 
 // Mock the authService and secureStorage
 const mockAuthService = authService as jest.Mocked<typeof authService>
@@ -62,6 +68,22 @@ const mockSecureStorage = secureStorage as jest.Mocked<typeof secureStorage>
 const mockWebBrowser = WebBrowser as jest.Mocked<typeof WebBrowser>
 const mockUpdates = Updates as jest.Mocked<typeof Updates>
 const mockLinking = Linking as jest.Mocked<typeof Linking>
+const mockDispatch = jest.fn()
+
+jest.mock('@/store/hooks', () => ({
+  useAppSelector: <T,>(selector: (state: RootState) => T): T => {
+    const mockState: RootState = {
+      auth: {
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+      },
+    }
+    return selector(mockState)
+  },
+  useAppDispatch: () => mockDispatch,
+}))
 
 describe('useGoogleAuth Hook', () => {
   let store: TestStore
@@ -115,11 +137,11 @@ describe('useGoogleAuth Hook', () => {
       })
 
       // Assert - Verify the result
-      expect(result.current.isLoading).toBe(true)
+      expect(mockDispatch).toHaveBeenCalledWith(setLoading(true))
 
       await act(async () => {})
 
-      expect(result.current.isLoading).toBe(false)
+      expect(mockDispatch).toHaveBeenCalledWith(setLoading(false))
     })
 
     it('should handle error when initializeAuth fails', async () => {
@@ -138,7 +160,7 @@ describe('useGoogleAuth Hook', () => {
 
       // Assert
       expect(result.current.isLoading).toBe(false)
-      expect(mockSetError).toHaveBeenCalledWith(errorMessage)
+      expect(mockDispatch).toHaveBeenCalledWith(setError(errorMessage))
     })
 
     it('should complete successful OAuth flow', async () => {
@@ -229,7 +251,7 @@ describe('useGoogleAuth Hook', () => {
       )
       expect(mockUpdates.reloadAsync).toHaveBeenCalledTimes(1)
       expect(mockPush).not.toHaveBeenCalled()
-      expect(mockSetError).toHaveBeenCalledTimes(1)
+      expect(mockDispatch).toHaveBeenCalledWith(clearError())
     })
   })
 
@@ -252,7 +274,7 @@ describe('useGoogleAuth Hook', () => {
       expect(mockPush).toHaveBeenCalledWith('/')
       expect(result.current.isLoading).toBe(false)
       expect(store.getState().auth.user).toBe(null)
-      expect(mockSetError).toHaveBeenCalledTimes(1)
+      expect(mockDispatch).toHaveBeenCalledWith(clearError())
     })
 
     it('should handle signOut errors gracefully', async () => {
@@ -272,7 +294,7 @@ describe('useGoogleAuth Hook', () => {
       })
 
       // Assert
-      expect(mockSetError).toHaveBeenCalledWith(errorMessage)
+      expect(mockDispatch).toHaveBeenCalledWith(setError(errorMessage))
       expect(console.error).toHaveBeenCalledWith(
         'Error signing out:',
         errorMessage,
@@ -294,7 +316,7 @@ describe('useGoogleAuth Hook', () => {
         await result.current.signInWithGoogle()
       })
 
-      expect(mockSetError).toHaveBeenCalledWith(errorMessage)
+      expect(mockDispatch).toHaveBeenCalledWith(setError(errorMessage))
 
       // Act
       await act(async () => {
@@ -302,7 +324,7 @@ describe('useGoogleAuth Hook', () => {
       })
 
       // Assert
-      expect(mockClearError).toHaveBeenCalledTimes(1)
+      expect(mockDispatch).toHaveBeenCalledWith(clearError())
     })
   })
 })
