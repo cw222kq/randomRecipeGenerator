@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import { Link } from 'expo-router'
 import RecipeGeneratorLogo from '@/components/icons/RecipeGeneratorLogo'
 import GoogleSignInButton from '@/components/GoogleSignInButton'
+import SignOutButton from '@/components/SignOutButton'
 
 export const Navbar = () => {
   return (
@@ -18,7 +19,8 @@ export const Navbar = () => {
         </Link>*/}
 
         {/* When logged out => Google Sign In Button */}
-        <GoogleSignInButton />
+        {/*<GoogleSignInButton />*/}
+        <SignOutButton />
       </View>
     </View>
   )
