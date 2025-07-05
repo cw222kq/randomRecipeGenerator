@@ -13,9 +13,6 @@ import {
   setLoading,
 } from '@/store/features/auth/authSlice'
 
-/*const mockSetError = jest.fn()
-const mockClearError = jest.fn()*/
-
 // Mock the expo-router and its push function
 const mockPush = jest.fn()
 jest.mock('expo-router', () => ({
@@ -55,12 +52,6 @@ jest.mock('expo-updates', () => ({
 jest.mock('expo-linking', () => ({
   parse: jest.fn(),
 }))
-/*
-jest.mock('@/store/features/auth/authSlice', () => ({
-  ...jest.requireActual('@/store/features/auth/authSlice'),
-  setError: () => mockSetError,
-  clearError: () => mockClearError,
-}))*/
 
 // Mock the authService and secureStorage
 const mockAuthService = authService as jest.Mocked<typeof authService>
