@@ -317,5 +317,46 @@ describe('useGoogleAuth Hook', () => {
       // Assert
       expect(mockDispatch).toHaveBeenCalledWith(clearError())
     })
+
+    it('should manage loading state during successful signOut', async () => {
+      // Arrange
+      mockSecureStorage.clearAllAuthData.mockResolvedValue()
+
+      const { result } = renderHook(() => useGoogleAuth(), {
+        wrapper,
+      })
+
+      // Act
+      await act(async () => {
+        await result.current.signOut()
+      })
+
+      // Assert
+      expect(mockDispatch).toHaveBeenCalledWith(setLoading(true))
+      expect(mockDispatch).toHaveBeenCalledWith(setLoading(false))
+      expect(mockDispatch).toHaveBeenCalledWith(clearError())
+    })
+
+    it('should manage loading state during signOut errors', async () => {
+      // Arrange
+      const errorMessage = 'Some error'
+      mockSecureStorage.clearAllAuthData.mockRejectedValue(
+        new Error(errorMessage),
+      )
+
+      const { result } = renderHook(() => useGoogleAuth(), {
+        wrapper,
+      })
+
+      // Act
+      await act(async () => {
+        await result.current.signOut()
+      })
+
+      // Assert
+      expect(mockDispatch).toHaveBeenCalledWith(setLoading(true))
+      expect(mockDispatch).toHaveBeenCalledWith(setLoading(false))
+      expect(mockDispatch).toHaveBeenCalledWith(setError(errorMessage))
+    })
   })
 })
