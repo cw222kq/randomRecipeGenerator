@@ -189,6 +189,7 @@ export const useGoogleAuth = () => {
 
   const signOut = async () => {
     try {
+      dispatch(setLoading(true))
       dispatch(clearError())
       await secureStorage.clearAllAuthData()
       dispatch(logout())
@@ -200,6 +201,8 @@ export const useGoogleAuth = () => {
         error instanceof Error ? error.message : 'Unknown error'
       console.error('Error signing out:', errorMessage)
       dispatch(setError(errorMessage))
+    } finally {
+      dispatch(setLoading(false))
     }
   }
 
