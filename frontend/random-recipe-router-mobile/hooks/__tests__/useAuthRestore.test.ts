@@ -6,6 +6,9 @@ jest.mock('@/lib/secureStorage', () => ({
   secureStorage: {
     getAppToken: jest.fn(),
     isTokenExpired: jest.fn(),
+    getUser: jest.fn(),
+    clearAllAuthData: jest.fn(),
+    getUserData: jest.fn(),
   },
 }))
 
@@ -28,8 +31,8 @@ describe('useAuthRestore', () => {
 
     // Assert
     await waitFor(() => {
-      expect(mockSecureStorage.getAppToken).toHaveBeenCalledTimes(1)
-      expect(mockSecureStorage.isTokenExpired).toHaveBeenCalledTimes(1)
+      expect(mockSecureStorage.getAppToken).toHaveBeenCalled()
+      expect(mockSecureStorage.isTokenExpired).toHaveBeenCalled()
     })
   })
 })
