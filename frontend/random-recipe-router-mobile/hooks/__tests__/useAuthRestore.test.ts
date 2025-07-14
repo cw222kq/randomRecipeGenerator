@@ -28,6 +28,7 @@ describe('useAuthRestore', () => {
     jest.clearAllMocks()
     store = createTestStore()
     wrapper = createReduxWrapper(store)
+    jest.spyOn(console, 'error').mockImplementation(() => {})
   })
 
   it('should perform authentication restoration without returning state', () => {
@@ -77,5 +78,58 @@ describe('useAuthRestore', () => {
         }),
       )
     })
+  })
+
+  it('should do nothing when no token exists', async () => {
+    // Arrange
+    mockSecureStorage.getAppToken.mockResolvedValue(null)
+
+    // Act
+    renderHook(() => useAuthRestore(), { wrapper })
+
+    // Assert
+    await waitFor(() => {
+      expect(mockSecureStorage.getAppToken).toHaveBeenCalled()
+    })
+
+    expect(mockSecureStorage.isTokenExpired).not.toHaveBeenCalled()
+    expect(mockSecureStorage.getUserData).not.toHaveBeenCalled()
+    expect(mockSecureStorage.clearAllAuthData).not.toHaveBeenCalled()
+    expect(mockDispatch).not.toHaveBeenCalled()
+  })
+
+  it('should clear auth data when token is expired', async () => {
+    // Arrange
+    mockSecureStorage.getAppToken.mockResolvedValue('expired-token')
+    mockSecureStorage.isTokenExpired.mockResolvedValue(true)
+
+    // Act
+    renderHook(() => useAuthRestore(), { wrapper })
+
+    // Assert
+    await waitFor(() => {
+      expect(mockSecureStorage.clearAllAuthData).toHaveBeenCalled()
+    })
+
+    expect(mockSecureStorage.getUserData).not.toHaveBeenCalled()
+    expect(mockDispatch).not.toHaveBeenCalled()
+  })
+
+  it('should clear auth data when user data is missing', async () => {
+    // Arrange
+    mockSecureStorage.getAppToken.mockResolvedValue('valid-token')
+    mockSecureStorage.isTokenExpired.mockResolvedValue(false)
+    mockSecureStorage.getUserData.mockResolvedValue(null)
+
+    // Act
+    renderHook(() => useAuthRestore(), { wrapper })
+
+    // Assert
+    await waitFor(() => {
+      expect(mockSecureStorage.clearAllAuthData).toHaveBeenCalled()
+      expect(console.error).toHaveBeenCalledWith('User data not found')
+    })
+
+    expect(mockDispatch).not.toHaveBeenCalled()
   })
 })
