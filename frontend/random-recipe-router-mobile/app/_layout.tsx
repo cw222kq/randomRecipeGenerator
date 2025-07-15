@@ -7,6 +7,7 @@ import { secureStorage } from '@/lib/secureStorage'
 import { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from '@/store'
+import { AuthWrapper } from '@/components/AuthWrapper'
 
 export default function RootLayout() {
   const router = useRouter()
@@ -31,11 +32,13 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar style="auto" />
-        <Navbar />
-        <Slot />
-      </SafeAreaView>
+      <AuthWrapper>
+        <SafeAreaView style={{ flex: 1 }}>
+          <StatusBar style="auto" />
+          <Navbar />
+          <Slot />
+        </SafeAreaView>
+      </AuthWrapper>
     </Provider>
   )
 }

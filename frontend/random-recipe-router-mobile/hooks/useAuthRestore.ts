@@ -12,12 +12,14 @@ export const useAuthRestore = () => {
         const token = await secureStorage.getAppToken()
 
         if (!token) {
+          console.log('No token found - user not logged in')
           return
         }
 
         const isExpired = await secureStorage.isTokenExpired()
 
         if (isExpired) {
+          console.log('Token expired - clearing auth data')
           await secureStorage.clearAllAuthData()
           return
         }
@@ -32,6 +34,8 @@ export const useAuthRestore = () => {
         }
 
         dispatch(login(userData))
+        console.log('Auth restored:', userData.email)
+        console.log('Token status: valid locally')
       } catch (error) {
         console.error('Error validating token during auth restore:', error)
         await secureStorage.clearAllAuthData()
