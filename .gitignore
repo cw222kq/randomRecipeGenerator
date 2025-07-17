@@ -488,3 +488,6 @@ RandomRecipeGenerator.API/appsettings.json
 RandomRecipeGenerator.API/appsettings.Development.json
 RandomRecipeGenerator.API/appsettings.Production.json
 RandomRecipeGenerator.API/appsettings.Staging.json
+
+# Cursor
+.cursor/

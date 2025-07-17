@@ -1,23 +1,33 @@
 import { View, Text } from 'react-native'
-import { useEffect, useState } from 'react'
-import { secureStorage } from '@/lib/secureStorage'
-import { User } from '@/schemas/userSchema'
+import { useAppSelector } from '@/store/hooks'
 
 export default function Hello() {
-  const [user, setUser] = useState<User | null>(null)
+  const { user, isLoading, isAuthenticated } = useAppSelector(
+    (state) => state.auth,
+  )
 
-  const fetchUser = async () => {
-    const user = await secureStorage.getUserData()
-    setUser(user)
+  if (isLoading) {
+    return (
+      <View className="py-6">
+        <Text className="text-black dark:text-white text-lg">Loading...</Text>
+      </View>
+    )
   }
 
-  useEffect(() => {
-    fetchUser()
-  }, [])
+  if (!isAuthenticated || !user) {
+    return (
+      <View className="py-6">
+        <Text className="text-black dark:text-white text-lg">
+          Please sign in to continue
+        </Text>
+      </View>
+    )
+  }
+
   return (
     <View className="py-6">
       <Text className="text-black dark:text-white text-3xl font-bold">
-        Welcome {user?.firstName} {user?.lastName}
+        Welcome {user.firstName} {user.lastName}
       </Text>
     </View>
   )

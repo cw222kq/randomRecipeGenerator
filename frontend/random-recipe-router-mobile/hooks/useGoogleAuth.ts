@@ -1,6 +1,4 @@
-import { useState } from 'react'
 import {
-  AuthState,
   CompleteAuthResponseSchema,
   CompleteAuthResponse,
 } from '@/schemas/authSchemas'
@@ -10,6 +8,14 @@ import * as WebBrowser from 'expo-web-browser'
 import * as Updates from 'expo-updates'
 import { useRouter } from 'expo-router'
 import * as Linking from 'expo-linking'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import {
+  login,
+  logout,
+  setLoading,
+  setError,
+  clearError,
+} from '@/store/features/auth/authSlice'
 
 interface OAuthCallbackParams {
   code?: string
@@ -18,11 +24,9 @@ interface OAuthCallbackParams {
 
 export const useGoogleAuth = () => {
   const router = useRouter()
+  const dispatch = useAppDispatch()
 
-  const [authState, setAuthState] = useState<AuthState>({
-    isLoading: false,
-    error: null,
-  })
+  const { isLoading, error } = useAppSelector((state) => state.auth)
 
   const validateOAuthCallback = async (
     params: OAuthCallbackParams,
@@ -124,6 +128,13 @@ export const useGoogleAuth = () => {
         console.log('OAuth redirect URL:', result.url)
         const success = await handleOAuthCallback(result.url)
         if (success) {
+          const userData = await secureStorage.getUserData()
+          if (!userData) {
+            console.error('No user data found')
+            return false
+          }
+          dispatch(login(userData))
+          dispatch(setLoading(false))
           await redirectAfterAuth()
         }
         return false
@@ -143,7 +154,8 @@ export const useGoogleAuth = () => {
     console.log('Signing in with Google')
 
     try {
-      setAuthState({ isLoading: true, error: null })
+      dispatch(setLoading(true))
+      dispatch(clearError())
 
       // Returns Google OAuth URL and state
       const response = await authService.initializeAuth()
@@ -168,16 +180,36 @@ export const useGoogleAuth = () => {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error'
       console.error('Error signing in with Google:', errorMessage)
-      setAuthState({ isLoading: false, error: errorMessage })
+      dispatch(setError(errorMessage))
       await secureStorage.deleteItem('oauth_state')
     } finally {
-      setAuthState((prev) => ({ ...prev, isLoading: false }))
+      dispatch(setLoading(false))
+    }
+  }
+
+  const signOut = async () => {
+    try {
+      dispatch(setLoading(true))
+      dispatch(clearError())
+      await secureStorage.clearAllAuthData()
+      dispatch(logout())
+      router.push('/')
+
+      console.log('Successfully signed out')
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error'
+      console.error('Error signing out:', errorMessage)
+      dispatch(setError(errorMessage))
+    } finally {
+      dispatch(setLoading(false))
     }
   }
 
   return {
     signInWithGoogle,
-    isLoading: authState.isLoading,
-    error: authState.error,
+    signOut,
+    isLoading,
+    error,
   }
 }
