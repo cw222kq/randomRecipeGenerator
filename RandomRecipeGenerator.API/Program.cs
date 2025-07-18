@@ -3,8 +3,8 @@ using RandomRecipeGenerator.API.Services;
 using Serilog;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using RandomRecipeGenerator.API.Models.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using RandomRecipeGenerator.API.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -99,6 +99,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Make the session cookie HTTP only
     options.Cookie.IsEssential = true; // Make the session cookie essential
 });
+
+// Db config
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 
 var app = builder.Build();
