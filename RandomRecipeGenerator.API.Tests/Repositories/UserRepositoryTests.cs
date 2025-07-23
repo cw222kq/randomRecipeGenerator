@@ -130,7 +130,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
         public async Task GetByIdAsync_NonExistingUser_ReturnsNull()
         {
             // Arrange
-            var userId = "non-existing-id";
+            var userId = Guid.NewGuid();
 
             // Act
             var result = await _repository.GetByIdAsync(userId);
@@ -180,7 +180,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
                 LastName = "Doe"
             };
 
-            var duplicatedUser = new User
+            var duplicateUser = new User
             {
                 GoogleUserID = "12345", // Same GoogleUserID
                 Email = "jane.doe@example.com",
@@ -193,7 +193,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.CreateAsync(duplicatedUser);
+            var result = await _repository.CreateAsync(duplicateUser);
 
             // Assert
             Assert.Null(result); // Should return null due to duplicate GoogleUserID
@@ -211,7 +211,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
                 LastName = "Doe"
             };
 
-            var duplicatedUser = new User
+            var duplicateUser = new User
             {
                 GoogleUserID = "67890",
                 Email = "john.doe@example.com", // Same email
@@ -223,7 +223,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.CreateAsync(duplicatedUser);
+            var result = await _repository.CreateAsync(duplicateUser);
 
             // Assert
             Assert.Null(result);
@@ -308,7 +308,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
         public async Task DeleteAsync_NonExistingUser_ReturnsFalse()
         {
             // Arrange
-            var userId = "non-existing-id";
+            var userId = Guid.NewGuid();
 
             // Act
             var result = await _repository.DeleteAsync(userId);
