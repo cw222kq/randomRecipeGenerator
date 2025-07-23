@@ -11,6 +11,12 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<User?> CreateAsync(User user)
         {
+            if (user == null)
+            {
+                _logger.LogError("User cannot be null for creation.");
+                return null;
+            }
+
             try
             {
                 // Check if user already exists
@@ -45,6 +51,11 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<bool> DeleteAsync(Guid id)
         {
+            if (id == Guid.Empty)
+            { 
+                _logger.LogError("User ID cannot be empty for deletion.");
+            }
+
             try 
             {
                 var user = await _context.Users.FindAsync(id);
@@ -69,6 +80,12 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<User?> GetByEmailAsync(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                _logger.LogError("Email cannot be null or empty for retrieval.");
+                return null;
+            }
+
             try
             {
                 return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -83,6 +100,12 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<User?> GetByGoogleUserIdAsync(string googleUserId)
         {
+            if (string.IsNullOrWhiteSpace(googleUserId))
+            {
+                _logger.LogError("Google User ID cannot be null or empty for retrieval.");
+                return null;
+            }
+
             try
             {
                 return await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserID == googleUserId);
@@ -97,6 +120,12 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<User?> GetByIdAsync(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                _logger.LogError("User ID cannot be empty for retrieval.");
+                return null;
+            }
+
             try
             {
                 return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
@@ -110,6 +139,12 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<User?> UpdateAsync(User user)
         {
+            if (user == null)
+            {
+                _logger.LogError("User cannot be null for update.");
+                return null;
+            }
+
             try
             {
                 var existingUser = await _context.Users.FindAsync(user.Id);
