@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using RandomRecipeGenerator.API.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using RandomRecipeGenerator.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<HttpRequestService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
+// Register repositories and their interfaces
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Register services and their interfaces
 builder.Services.AddScoped<IHttpRequestService, HttpRequestService>();
