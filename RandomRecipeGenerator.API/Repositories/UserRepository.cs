@@ -17,11 +17,13 @@ namespace RandomRecipeGenerator.API.Repositories
                 var existingByGoogleId = await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserID == user.GoogleUserID);
                 if (existingByGoogleId != null)
                 {
+                    _logger.LogWarning("User with Google ID {GoogleUserId} already exists.", user.GoogleUserID);
                     return null;
                 }
                 var existingByEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
                 if (existingByEmail != null)
                 {
+                    _logger.LogWarning("User with email {Email} already exists.", user.Email);
                     return null;
                 }
 
@@ -31,10 +33,12 @@ namespace RandomRecipeGenerator.API.Repositories
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
+                _logger.LogInformation("User with ID {UserId} created successfully.", user.Id);
                 return user;
             }
-            catch
+            catch (Exception)
             {
+                _logger.LogError("Error creating user with email {Email}.", user.Email);
                 return null;
             }
         }
@@ -46,32 +50,62 @@ namespace RandomRecipeGenerator.API.Repositories
                 var user = await _context.Users.FindAsync(id);
                 if (user == null)
                 {
+                    _logger.LogWarning("User with ID {UserId} not found for deletion.", id);
                     return false;
                 }
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation("User with ID {UserId} deleted successfully.", id);
                 return true;
             }
-            catch 
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error deleting user with ID {UserId}.", id);
                 return false;
             }
             
         }
 
-        public Task<User?> GetByEmailAsync(string email)
+        public async Task<User?> GetByEmailAsync(string email)
         {
-            return _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            try
+            {
+                return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user with email {Email}.", email);
+                return null;
+            }
+
         }
 
-        public Task<User?> GetByGoogleUserIdAsync(string googleUserId)
+        public async Task<User?> GetByGoogleUserIdAsync(string googleUserId)
         {
-            return _context.Users.FirstOrDefaultAsync(u => u.GoogleUserID == googleUserId);
+            try
+            {
+                return await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserID == googleUserId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user with Google ID {GoogleUserId}.", googleUserId);
+                return null;
+            }
+
         }
 
-        public Task<User?> GetByIdAsync(Guid id)
+        public async Task<User?> GetByIdAsync(Guid id)
         {
-            return _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            try
+            {
+                return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user with ID {UserId}.", id);
+                return null;
+            }
         }
 
         public async Task<User?> UpdateAsync(User user)
@@ -81,15 +115,19 @@ namespace RandomRecipeGenerator.API.Repositories
                 var existingUser = await _context.Users.FindAsync(user.Id);
                 if (existingUser == null)
                 {
+                    _logger.LogWarning("User with ID {UserId} not found for update.", user.Id);
                     return null;
                 }
                 user.UpdatedAt = DateTime.UtcNow;
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation("User with ID {UserId} updated successfully.", user.Id);
                 return user;
             }
-            catch 
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error updating user with ID {UserId}.", user.Id);
                 return null;
             }
             
