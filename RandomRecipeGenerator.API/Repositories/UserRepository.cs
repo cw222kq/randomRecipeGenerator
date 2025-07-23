@@ -11,28 +11,52 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<User?> CreateAsync(User user)
         {
-            // Check if user already exists
-            if (await _context.Users.AnyAsync(u => u.GoogleUserID == user.GoogleUserID || u.Email == user.Email))
+            try
             {
-                return null; 
+                // Check if user already exists
+                var existingByGoogleId = await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserID == user.GoogleUserID);
+                if (existingByGoogleId != null)
+                {
+                    return null;
+                }
+                var existingByEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+                if (existingByEmail != null)
+                {
+                    return null;
+                }
+
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return user;
             }
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return user;
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) 
-            { 
+            try 
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return false;
+                }
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch 
+            {
                 return false;
             }
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return true;
+            
         }
 
         public Task<User?> GetByEmailAsync(string email)
@@ -52,15 +76,23 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<User?> UpdateAsync(User user)
         {
-            var existingUser = await _context.Users.FindAsync(user.Id);
-            if (existingUser == null)
+            try
+            {
+                var existingUser = await _context.Users.FindAsync(user.Id);
+                if (existingUser == null)
+                {
+                    return null;
+                }
+                user.UpdatedAt = DateTime.UtcNow;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            catch 
             {
                 return null;
             }
-            user.UpdatedAt = DateTime.UtcNow;
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-            return user;
+            
         }
     }
 }
