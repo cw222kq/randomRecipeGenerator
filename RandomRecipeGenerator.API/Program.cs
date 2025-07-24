@@ -50,6 +50,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Register services and their interfaces
 builder.Services.AddScoped<IHttpRequestService, HttpRequestService>();
 builder.Services.AddScoped<IOAuthService, OAuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // This configures Google.Apis.Auth.AspNetCore3 for use in this app.
 builder.Services
