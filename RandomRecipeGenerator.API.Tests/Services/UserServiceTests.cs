@@ -3,6 +3,7 @@ using Moq;
 using RandomRecipeGenerator.API.Models.DTO;
 using RandomRecipeGenerator.API.Models.Domain;
 using RandomRecipeGenerator.API.Repositories;
+using RandomRecipeGenerator.API.Services;
 
 namespace RandomRecipeGenerator.API.Tests.Services
 {
