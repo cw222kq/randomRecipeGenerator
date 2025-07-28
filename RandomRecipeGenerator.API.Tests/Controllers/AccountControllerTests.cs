@@ -5,6 +5,7 @@ using RandomRecipeGenerator.API.Controllers;
 using RandomRecipeGenerator.API.Models.DTO;
 using RandomRecipeGenerator.API.Models.Domain;
 using RandomRecipeGenerator.API.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace RandomRecipeGenerator.API.Tests.Controllers
 {
@@ -27,11 +28,31 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
         public async Task CompleteMobileAuth_NewUser_CreatesUserInDatabase()
         {
             // Arrange
+            var mockSession = new Mock<ISession>();
+            var sessionKey = "oauth_state_state_123";
+            var sessionValue = System.Text.Encoding.UTF8.GetBytes("valid_nonce");
+            mockSession.Setup(s => s.TryGetValue(sessionKey, out sessionValue)).Returns(true);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.Setup(c => c.Session).Returns(mockSession.Object);
+
+            _accountController.ControllerContext = new ControllerContext
+            {
+                HttpContext = mockHttpContext.Object
+            };
+
             var request = new MobileAuthCompleteRequestDTO
             {
                 Code = "auth_code_123",
                 State = "state_123",
                 RedirectUri = "randomrecipe://auth"
+            };
+
+            var tokenResponse = new GoogleTokenResponseDTO
+            {
+                AccessToken = "access_token_123",
+                IdToken = "id_token_123",
+                ExpiresIn = "3600"
             };
 
             var googleUser = new UserDTO
@@ -51,7 +72,15 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             };
 
             _oauthServiceMock
-                .Setup(o => o.GetUserProfileAsync(It.IsAny<string>()))
+                .Setup(o => o.ExchangeCodeForTokens(request.Code, request.RedirectUri))
+                .ReturnsAsync(tokenResponse);
+
+            _oauthServiceMock
+                .Setup(o => o.GenerateJwtToken(googleUser))
+                .Returns("jwt_token_123");
+
+            _oauthServiceMock
+                .Setup(o => o.GetUserProfileAsync(tokenResponse.AccessToken))
                 .ReturnsAsync(googleUser);
 
             _userServiceMock
