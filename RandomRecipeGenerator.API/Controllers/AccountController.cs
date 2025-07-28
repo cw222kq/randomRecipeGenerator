@@ -11,10 +11,11 @@ namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IOAuthService oAuthService, ILogger<AccountController> logger) : ControllerBase
+    public class AccountController(IOAuthService oAuthService, ILogger<AccountController> logger, IUserService userService) : ControllerBase
     {
         private readonly IOAuthService _oAuthService = oAuthService;
         private readonly ILogger<AccountController> _logger = logger;
+        private readonly IUserService _userService = userService;
 
         [HttpGet("login-google")]
         public IActionResult LoginGoogle()
@@ -137,6 +138,14 @@ namespace RandomRecipeGenerator.API.Controllers
                 {
                     _logger.LogError("Failed to retrieve user profile from Google API");
                     return BadRequest("Failed to retrieve user profile");
+                }
+
+                // Create or update user in the database, if user does not exist, create a new one
+                var user = await _userService.GetOrCreateUserAsync(userProfileResponse);
+                if (user == null)
+                {
+                    _logger.LogError("Failed to create or retrive user");
+                    return BadRequest("Failed to create or retrieve user profile");
                 }
 
                 _logger.LogInformation("Successfully completed mobile authentication for user: {Email}", userProfileResponse.Email);
