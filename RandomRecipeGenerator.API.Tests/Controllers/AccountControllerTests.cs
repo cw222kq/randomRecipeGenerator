@@ -6,6 +6,7 @@ using RandomRecipeGenerator.API.Models.DTO;
 using RandomRecipeGenerator.API.Models.Domain;
 using RandomRecipeGenerator.API.Services;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace RandomRecipeGenerator.API.Tests.Controllers
 {
@@ -94,7 +95,60 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.NotNull(okResult.Value);
 
-           _userServiceMock.Verify(s => s.GetOrCreateUserAsync(googleUser), Times.Once);
+            _userServiceMock.Verify(s => s.GetOrCreateUserAsync(googleUser), Times.Once);
+        }
+
+        [Fact]
+        public void GoogleLoginCallback_NewUser_CreatesUserInDatabase()
+        {
+            // Arrange
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, "google_web_123"),
+                new(ClaimTypes.Email, "web.user@example.com"),
+                new(ClaimTypes.GivenName, "Web"),
+                new(ClaimTypes.Surname, "User")
+            };
+
+            var identity = new ClaimsIdentity(claims, "Google");
+            var principal = new ClaimsPrincipal(identity);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.Setup(c => c.User).Returns(principal);
+
+            _accountController.ControllerContext = new ControllerContext
+            {
+                HttpContext = mockHttpContext.Object
+            };
+
+            var createdUser = new User
+            {
+                GoogleUserID = "google_web_123",
+                Email = "web.user@example.com",
+                FirstName = "Web",
+                LastName = "User"
+            };
+
+            _userServiceMock
+                .Setup(s => s.GetOrCreateUserAsync(It.Is<UserDTO>(dto =>
+                    dto.GoogleUserId == "google_web_123" &&
+                    dto.Email == "web.user@exapmle.com" &&
+                    dto.FirstName == "Web" &&
+                    dto.LastName == "User")))
+                .ReturnsAsync(createdUser);
+
+            // Act
+            var result = _accountController.GoogleLoginCallback();
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectResult>(result);
+            Assert.Equal("https://localhost:3000/hello", redirectResult.Url);
+
+            _userServiceMock.Verify(s => s.GetOrCreateUserAsync(It.Is<UserDTO>(dto =>
+                dto.GoogleUserId == "google_web_123" &&
+                dto.Email == "web.user@example.com" &&
+                dto.FirstName == "Web" &&
+                dto.LastName == "User")), Times.Once); 
         }
     }
-}
+ }
