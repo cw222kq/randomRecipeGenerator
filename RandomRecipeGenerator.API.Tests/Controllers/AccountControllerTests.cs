@@ -99,7 +99,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
         }
 
         [Fact]
-        public void GoogleLoginCallback_NewUser_CreatesUserInDatabase()
+        public async Task GoogleLoginCallback_NewUser_CreatesUserInDatabase()
         {
             // Arrange
             var claims = new List<Claim>
@@ -138,7 +138,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
                 .ReturnsAsync(createdUser);
 
             // Act
-            var result = _accountController.GoogleLoginCallback();
+            var result = await _accountController.GoogleLoginCallback();
 
             // Assert
             var redirectResult = Assert.IsType<RedirectResult>(result);
