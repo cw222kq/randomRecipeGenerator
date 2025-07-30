@@ -32,7 +32,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Arrange
             var user = new User
             {
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"
@@ -42,11 +42,11 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByGoogleUserIdAsync(user.GoogleUserID);
+            var result = await _repository.GetByGoogleUserIdAsync(user.GoogleUserId);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(user.GoogleUserID, result.GoogleUserID);
+            Assert.Equal(user.GoogleUserId, result.GoogleUserId);
             Assert.Equal(user.Email, result.Email);
             Assert.Equal(user.FirstName, result.FirstName);
             Assert.Equal(user.LastName, result.LastName);
@@ -71,7 +71,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Arrange
             var user = new User
             {
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"
@@ -85,7 +85,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(user.GoogleUserID, result.GoogleUserID);
+            Assert.Equal(user.GoogleUserId, result.GoogleUserId);
             Assert.Equal(user.Email, result.Email);
         }
 
@@ -108,7 +108,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Arrange
             var user = new User
             {
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"
@@ -123,7 +123,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Assert
             Assert.NotNull(result);
             Assert.Equal(user.Id, result.Id);
-            Assert.Equal(user.GoogleUserID, result.GoogleUserID);
+            Assert.Equal(user.GoogleUserId, result.GoogleUserId);
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Arrange
             var user = new User
             {
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"
@@ -156,14 +156,14 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(user.GoogleUserID, result.GoogleUserID);
+            Assert.Equal(user.GoogleUserId, result.GoogleUserId);
             Assert.Equal(user.Email, result.Email);
             Assert.True(result.Id != Guid.Empty); // Ensure Id is generated
             Assert.True(result.CreatedAt != default);
             Assert.True(result.UpdatedAt != default);
 
             // Verify that the user was added to the context
-            var addedUser = await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserID == result.GoogleUserID);
+            var addedUser = await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserId == result.GoogleUserId);
             Assert.NotNull(addedUser);
 
         }
@@ -174,7 +174,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Arrange
             var uniqueUser = new User
             {
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"
@@ -182,7 +182,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
 
             var duplicateUser = new User
             {
-                GoogleUserID = "12345", // Same GoogleUserID
+                GoogleUserId = "12345", // Same GoogleUserID
                 Email = "jane.doe@example.com",
                 FirstName = "Jane",
                 LastName = "Doe"
@@ -205,7 +205,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Arrange
             var uniqueUser = new User
             {
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"
@@ -213,7 +213,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
 
             var duplicateUser = new User
             {
-                GoogleUserID = "67890",
+                GoogleUserId = "67890",
                 Email = "john.doe@example.com", // Same email
                 FirstName = "Jane",
                 LastName = "Doe"
@@ -235,7 +235,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Arrange
             var user = new User
             {
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"
@@ -265,7 +265,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             var user = new User
             {
                 Id = Guid.NewGuid(), // User doesn't exist in database
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"
@@ -284,7 +284,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             // Arrange
             var user = new User
             {
-                GoogleUserID = "12345",
+                GoogleUserId = "12345",
                 Email = "john.doe@example.com",
                 FirstName = "John",
                 LastName = "Doe"

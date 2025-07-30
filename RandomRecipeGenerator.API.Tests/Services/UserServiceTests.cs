@@ -38,7 +38,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
 
             var expectedUser = new User
             {
-                GoogleUserID = userDto.GoogleUserId,
+                GoogleUserId = userDto.GoogleUserId,
                 Email = userDto.Email,
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName
@@ -53,7 +53,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(expectedUser.GoogleUserID, result.GoogleUserID);
+            Assert.Equal(expectedUser.GoogleUserId, result.GoogleUserId);
             Assert.Equal(expectedUser.Email, result.Email);
 
             _userRepositoryMock
@@ -76,7 +76,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
 
             var existingUser = new User
             {
-                GoogleUserID = userDto.GoogleUserId,
+                GoogleUserId = userDto.GoogleUserId,
                 Email = userDto.Email,
                 FirstName = "Jane",
                 LastName = "Smith"

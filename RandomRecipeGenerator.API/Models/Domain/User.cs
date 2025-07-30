@@ -9,7 +9,7 @@ namespace RandomRecipeGenerator.API.Models.Domain
 
         [Required]
         [StringLength(255)]
-        public required string GoogleUserID { get; set; }
+        public required string GoogleUserId { get; set; }
 
         [Required]
         [StringLength(255)]
