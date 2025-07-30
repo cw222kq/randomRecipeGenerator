@@ -21,7 +21,7 @@ namespace RandomRecipeGenerator.API.Services
             // If the user does not exist, create a new user
             var newUser = new User
             {
-                GoogleUserID = userDto.GoogleUserId,
+                GoogleUserId = userDto.GoogleUserId,
                 Email = userDto.Email,
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName

@@ -20,10 +20,10 @@ namespace RandomRecipeGenerator.API.Repositories
             try
             {
                 // Check if user already exists
-                var existingByGoogleId = await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserID == user.GoogleUserID);
+                var existingByGoogleId = await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserId == user.GoogleUserId);
                 if (existingByGoogleId != null)
                 {
-                    _logger.LogWarning("User with Google ID {GoogleUserId} already exists.", user.GoogleUserID);
+                    _logger.LogWarning("User with Google ID {GoogleUserId} already exists.", user.GoogleUserId);
                     return null;
                 }
                 var existingByEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
@@ -108,7 +108,7 @@ namespace RandomRecipeGenerator.API.Repositories
 
             try
             {
-                return await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserID == googleUserId);
+                return await _context.Users.FirstOrDefaultAsync(u => u.GoogleUserId == googleUserId);
             }
             catch (Exception ex)
             {

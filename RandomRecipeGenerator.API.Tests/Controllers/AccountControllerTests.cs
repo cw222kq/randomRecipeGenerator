@@ -66,7 +66,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
 
             var createdUser = new User
             {
-                GoogleUserID = googleUser.GoogleUserId,
+                GoogleUserId = googleUser.GoogleUserId,
                 Email = googleUser.Email,
                 FirstName = googleUser.FirstName,
                 LastName = googleUser.LastName
@@ -123,7 +123,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
 
             var createdUser = new User
             {
-                GoogleUserID = "google_web_123",
+                GoogleUserId = "google_web_123",
                 Email = "web.user@example.com",
                 FirstName = "Web",
                 LastName = "User"
@@ -131,7 +131,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             
             _userServiceMock
                 .Setup(s => s.GetOrCreateUserAsync(It.Is<UserDTO>(dto =>
-                    dto.GoogleUserId == createdUser.GoogleUserID &&
+                    dto.GoogleUserId == createdUser.GoogleUserId &&
                     dto.Email == createdUser.Email &&
                     dto.FirstName == createdUser.FirstName &&
                     dto.LastName == createdUser.LastName)))
@@ -145,7 +145,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             Assert.Equal("https://localhost:3000/hello", redirectResult.Url);
 
             _userServiceMock.Verify(s => s.GetOrCreateUserAsync(It.Is<UserDTO>(dto =>
-                dto.GoogleUserId == createdUser.GoogleUserID &&
+                dto.GoogleUserId == createdUser.GoogleUserId &&
                 dto.Email == createdUser.Email &&
                 dto.FirstName == createdUser.FirstName &&
                 dto.LastName == createdUser.LastName)), Times.Once); 

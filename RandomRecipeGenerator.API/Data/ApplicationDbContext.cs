@@ -20,7 +20,7 @@ namespace RandomRecipeGenerator.API.Data
             modelBuilder.Entity<User>(entity =>
             {
                 // Ensure GoogleUserId is unique across all users
-                entity.HasIndex(u => u.GoogleUserID).IsUnique();
+                entity.HasIndex(u => u.GoogleUserId).IsUnique();
 
                 entity.HasIndex(u => u.Email).IsUnique();
 
