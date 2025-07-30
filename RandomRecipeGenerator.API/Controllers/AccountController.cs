@@ -29,12 +29,23 @@ namespace RandomRecipeGenerator.API.Controllers
         }
 
         [HttpGet("google-login-callback")]
-        public IActionResult GoogleLoginCallback()
+        public async Task<IActionResult> GoogleLoginCallback()
         {
             if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
                 return BadRequest("External login failed.");
             }
+
+            var userDto = new UserDTO
+            {
+                GoogleUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
+                Email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? string.Empty,
+                FirstName = User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value ?? string.Empty,
+                LastName = User.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value ?? string.Empty,
+            };
+
+            // Create or update user in the database
+            await _userService.GetOrCreateUserAsync(userDto);
 
             return Redirect("https://localhost:3000/hello");
         }
