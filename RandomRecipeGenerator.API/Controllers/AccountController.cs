@@ -45,7 +45,14 @@ namespace RandomRecipeGenerator.API.Controllers
             };
 
             // Create or update user in the database
-            await _userService.GetOrCreateUserAsync(userDto);
+            var user = await _userService.GetOrCreateUserAsync(userDto);
+            if (user == null)
+            {
+                _logger.LogError("Failed to create or retrieve user profile, {Email}", userDto.Email);
+                return BadRequest("Failed to create or retrieve user profile.");
+            }
+
+            _logger.LogInformation("User {Email} successfully logged in via Google", userDto.Email);
 
             return Redirect("https://localhost:3000/hello");
         }

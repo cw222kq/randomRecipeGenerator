@@ -128,13 +128,13 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
                 FirstName = "Web",
                 LastName = "User"
             };
-
+            
             _userServiceMock
                 .Setup(s => s.GetOrCreateUserAsync(It.Is<UserDTO>(dto =>
-                    dto.GoogleUserId == "google_web_123" &&
-                    dto.Email == "web.user@exapmle.com" &&
-                    dto.FirstName == "Web" &&
-                    dto.LastName == "User")))
+                    dto.GoogleUserId == createdUser.GoogleUserID &&
+                    dto.Email == createdUser.Email &&
+                    dto.FirstName == createdUser.FirstName &&
+                    dto.LastName == createdUser.LastName)))
                 .ReturnsAsync(createdUser);
 
             // Act
@@ -145,10 +145,10 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             Assert.Equal("https://localhost:3000/hello", redirectResult.Url);
 
             _userServiceMock.Verify(s => s.GetOrCreateUserAsync(It.Is<UserDTO>(dto =>
-                dto.GoogleUserId == "google_web_123" &&
-                dto.Email == "web.user@example.com" &&
-                dto.FirstName == "Web" &&
-                dto.LastName == "User")), Times.Once); 
+                dto.GoogleUserId == createdUser.GoogleUserID &&
+                dto.Email == createdUser.Email &&
+                dto.FirstName == createdUser.FirstName &&
+                dto.LastName == createdUser.LastName)), Times.Once); 
         }
     }
  }
