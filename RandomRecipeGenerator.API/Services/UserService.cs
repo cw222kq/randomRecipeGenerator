@@ -29,10 +29,5 @@ namespace RandomRecipeGenerator.API.Services
 
             return await _userRepository.CreateAsync(newUser);
         }
-
-        public Task<User?> GetUserByIdAsync(Guid userId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
