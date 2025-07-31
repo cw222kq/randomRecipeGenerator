@@ -3,6 +3,7 @@ using Moq;
 using RandomRecipeGenerator.API.Models.DTO;
 using RandomRecipeGenerator.API.Models.Domain;
 using RandomRecipeGenerator.API.Repositories;
+using AutoMapper;
 using RandomRecipeGenerator.API.Services;
 
 namespace RandomRecipeGenerator.API.Tests.Services
@@ -11,13 +12,26 @@ namespace RandomRecipeGenerator.API.Tests.Services
     {
         private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<ILogger<UserService>> _loggerMock;
+        private readonly Mock<IMapper> _mapperMock;
         private readonly UserService _userService;
 
         public UserServiceTests()
         {
             _userRepositoryMock = new Mock<IUserRepository>();
             _loggerMock = new Mock<ILogger<UserService>>();
-            _userService = new UserService(_userRepositoryMock.Object, _loggerMock.Object);
+            _mapperMock = new Mock<IMapper>();
+            _userService = new UserService(_userRepositoryMock.Object, _loggerMock.Object, _mapperMock.Object);
+
+            // Setup mapper behavior
+            _mapperMock
+                .Setup(m => m.Map<User>(It.IsAny<UserDTO>()))
+                .Returns((UserDTO dto) => new User
+                {
+                    GoogleUserId = dto.GoogleUserId,
+                    Email = dto.Email,
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName
+                });
         }
 
         [Fact]
