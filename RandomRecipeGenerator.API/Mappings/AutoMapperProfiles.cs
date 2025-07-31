@@ -9,6 +9,7 @@ namespace RandomRecipeGenerator.API.Mappings
         public AutoMapperProfiles()
         {
             CreateMap<Recipe, RecipeDTO>().ReverseMap();
+            CreateMap<User, UserDTO>().ReverseMap();
         }
     }
 }
