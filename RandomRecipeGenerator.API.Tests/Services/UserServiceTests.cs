@@ -112,5 +112,57 @@ namespace RandomRecipeGenerator.API.Tests.Services
                 .Verify(r => r.GetByGoogleUserIdAsync(userDto.GoogleUserId), Times.Once);
             _userRepositoryMock.Verify(r => r.CreateAsync(It.IsAny<User>()), Times.Never);
         }
+
+        [Fact]
+        public async Task GetOrCreateUserAsync_NullUserDto_ReturnsNull()
+        {
+            // Act
+            var result = await _userService.GetOrCreateUserAsync(null!);
+
+            // Assert
+            Assert.Null(result);
+            _userRepositoryMock.Verify(r => r.GetByGoogleUserIdAsync(It.IsAny<string>()), Times.Never);
+            _userRepositoryMock.Verify(r => r.CreateAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task GetOrCreateUserAsync_EmptyGoogleUserID_ReturnsNull()
+        {
+            // Arrange
+            var userDto = new UserDTO
+            {
+                GoogleUserId = "",
+                Email = "test@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            // Act
+            var result = await _userService.GetOrCreateUserAsync(userDto);
+
+            // Assert
+            Assert.Null(result);
+            _userRepositoryMock.Verify(r => r.GetByGoogleUserIdAsync(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task GetOrCreateUserAsync_EmptyEmail_ResturnsNull()
+        {
+            // Arrange
+            var userDto = new UserDTO
+            {
+                GoogleUserId = "12345",
+                Email = "",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            // Act
+            var result = await _userService.GetOrCreateUserAsync(userDto);
+
+            // Assert
+            Assert.Null(result);
+            _userRepositoryMock.Verify(r => r.GetByGoogleUserIdAsync(It.IsAny<string>()), Times.Never);
+        }
     }
 }
