@@ -13,17 +13,63 @@ namespace RandomRecipeGenerator.API.Services
 
         public async Task<User?> GetOrCreateUserAsync(UserDTO userDto)
         {
-            // Check if the user already exists
-            var existingUser = await _userRepository.GetByGoogleUserIdAsync(userDto.GoogleUserId);
-            if (existingUser != null)
+            if (userDto == null)
             {
-                return existingUser;
+                _logger.LogError("UserDTO is null");
+                return null;
             }
 
-            // If the user does not exist, create a new user
-            var newUser = _mapper.Map<User>(userDto);
+            if (string.IsNullOrWhiteSpace(userDto.GoogleUserId))
+            {
+                _logger.LogError("GoogleUserId is null or empty");
+                return null;
+            }
 
-            return await _userRepository.CreateAsync(newUser);
+            if (string.IsNullOrWhiteSpace(userDto.Email))
+            {
+                _logger.LogError("Email is null or empty");
+                return null;
+            }
+
+            _logger.LogInformation("Attempting to get or create user for Google ID: {GoogleUserId}, Email: {Email}",
+                userDto.GoogleUserId, userDto.Email);
+
+            try
+            {
+                // Check if the user already exists
+                var existingUser = await _userRepository.GetByGoogleUserIdAsync(userDto.GoogleUserId);
+                if (existingUser != null)
+                {
+                    _logger.LogInformation("User already exists for Google ID: {GoogleUserId}, Email: {Email} - returning existing user",
+                        userDto.GoogleUserId, userDto.Email);
+                    return existingUser;
+                }
+
+                _logger.LogInformation("User not found, creating new user for Google ID: { GoogleUserId}, Email: { Email}",
+                    userDto.GoogleUserId, userDto.Email);
+
+                // If the user does not exist, create a new user
+                var newUser = _mapper.Map<User>(userDto);
+                var createdUser = await _userRepository.CreateAsync(newUser);
+
+                if (createdUser == null)
+                {
+                    _logger.LogError("Failed to create user for Google ID: {GoogleUserId}, Email: {Email}",
+                        userDto.GoogleUserId, userDto.Email);
+                    return null;
+                }
+
+                _logger.LogInformation("User created successfully for Google ID: {GoogleUserId}, Email: {Email}",
+                    userDto.GoogleUserId, userDto.Email);
+
+                return createdUser;
+
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting or creating user for Google ID: {GoogleUserId}, Email: {Email}",
+                    userDto.GoogleUserId, userDto.Email);
+                return null;
+            }
         }
     }
 }
