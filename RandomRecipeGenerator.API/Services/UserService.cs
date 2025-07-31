@@ -1,13 +1,15 @@
-﻿using RandomRecipeGenerator.API.Models.Domain;
+﻿using AutoMapper;
+using RandomRecipeGenerator.API.Models.Domain;
 using RandomRecipeGenerator.API.Models.DTO;
 using RandomRecipeGenerator.API.Repositories;
 
 namespace RandomRecipeGenerator.API.Services
 {
-    public class UserService(IUserRepository userRepository, ILogger<UserService> logger) : IUserService
+    public class UserService(IUserRepository userRepository, ILogger<UserService> logger, IMapper mapper) : IUserService
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly ILogger<UserService> _logger = logger;
+        private readonly IMapper _mapper = mapper;
 
         public async Task<User?> GetOrCreateUserAsync(UserDTO userDto)
         {
@@ -19,13 +21,7 @@ namespace RandomRecipeGenerator.API.Services
             }
 
             // If the user does not exist, create a new user
-            var newUser = new User
-            {
-                GoogleUserId = userDto.GoogleUserId,
-                Email = userDto.Email,
-                FirstName = userDto.FirstName,
-                LastName = userDto.LastName
-            };
+            var newUser = _mapper.Map<User>(userDto);
 
             return await _userRepository.CreateAsync(newUser);
         }
