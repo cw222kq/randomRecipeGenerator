@@ -179,7 +179,7 @@ namespace RandomRecipeGenerator.API.Services
 
             try
             {
-                _logger.LogInformation("Fething user profile from Google API");
+                _logger.LogInformation("Fetching user profile from Google API");
 
                 var request = new HttpRequestMessage(HttpMethod.Get, userInfoUrl);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -208,10 +208,10 @@ namespace RandomRecipeGenerator.API.Services
                     GoogleUserId = data.RootElement.GetProperty("sub").GetString() ?? string.Empty,
                     Email = data.RootElement.GetProperty("email").GetString() ?? string.Empty,
                     FirstName = data.RootElement.TryGetProperty("given_name", out var givenName) ? givenName.GetString() : null,
-                    LastName = data.RootElement.TryGetProperty("family_name", out var familyName) ? givenName.GetString() : null
+                    LastName = data.RootElement.TryGetProperty("family_name", out var familyName) ? familyName.GetString() : null
                 };
 
-                _logger.LogInformation("Successfully retrived user profile for: {Email}", userDTO.Email);
+                _logger.LogInformation("Successfully retrieved user profile for: {Email}", userDTO.Email);
                 return userDTO;
             }
             catch (Exception ex)
