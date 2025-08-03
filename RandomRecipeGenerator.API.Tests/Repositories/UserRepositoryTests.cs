@@ -53,7 +53,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
         }
 
         [Fact]
-        public async Task GetByGoogleUserIDAsync_NonExistingUser_ReturnsNull()
+        public async Task GetByGoogleUserIdAsync_NonExistingUser_ReturnsNull()
         {
             // Arrange
             var googleUserId = "non-existing-googleUserId";
@@ -96,14 +96,14 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             var googleUserEmail = "non-existing-email";
 
             // Act
-            var result = await _repository.GetByGoogleUserIdAsync(googleUserEmail);
+            var result = await _repository.GetByEmailAsync(googleUserEmail);
 
             // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task GetByIdAsync_ExisingUser_ReturnsUser()
+        public async Task GetByIdAsync_ExistingUser_ReturnsUser()
         {
             // Arrange
             var user = new User
