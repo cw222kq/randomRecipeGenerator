@@ -31,6 +31,10 @@ namespace RandomRecipeGenerator.API.Models.Domain
         // Optional - null for temporary recipes, set for saved recipes, ToDo: Create different models for temp and saved recipes
         public Guid? UserId { get; set; }
 
+        // Navigation properties -- recipes saved/owned by the user
         public virtual User? User { get; set; }
+
+        // Navigation properties -- users who have favorited this recipe
+        public virtual ICollection<UserFavoriteRecipe> UserFavoriteRecipes { get; set; } = [];
     }
 }
