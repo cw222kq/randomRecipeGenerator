@@ -26,5 +26,8 @@ namespace RandomRecipeGenerator.API.Models.Domain
 
         // Navigation properties - recipes saved/owned by the user
         public ICollection<Recipe> Recipes { get; set; } = [];
+
+        // Navigation properties - favorite recipes of the user
+        public ICollection<UserFavoriteRecipe> FavoriteRecipes { get; set; } = [];
     }
 }
