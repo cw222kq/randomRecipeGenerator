@@ -11,7 +11,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly UserFavoriteRepository _repository;
-        private readonly Mock<ILogger<UserFavoriteRepositoryTests>> _mockLogger;
+        private readonly Mock<ILogger<UserFavoriteRepository>> _mockLogger;
 
         public UserFavoriteRepositoryTests()
         { 
@@ -19,7 +19,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
             _context = new ApplicationDbContext(options);
-            _mockLogger = new Mock<ILogger<UserFavoriteRepositoryTests>>();
+            _mockLogger = new Mock<ILogger<UserFavoriteRepository>>();
             _repository = new UserFavoriteRepository(_context, _mockLogger.Object);
         }
 
@@ -162,6 +162,156 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
 
             // Assert
             Assert.False(result);
+        }
+
+        [Fact]
+        public async Task IsFavoriteAsync_ExistingFavorite_ReturnsTrue()
+        {
+            // Arrange
+            var user = new User
+            {
+                GoogleUserId = "12345",
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            var recipe = new Recipe
+            {
+                SpoonacularId = 12345,
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+            };
+
+            await _context.Users.AddAsync(user);
+            await _context.Recipes.AddAsync(recipe);
+            await _context.SaveChangesAsync();
+
+            // Add the favorite first
+            await _repository.AddFavoriteAsync(user.Id, recipe.Id);
+
+            // Act
+            var result = await _repository.IsFavoriteAsync(user.Id, recipe.Id);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task IsFavoriteAsync_NonExistingFavorite_ReturnsFalse()
+        {
+            // Arrange
+            var user = new User
+            {
+                GoogleUserId = "12345",
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            var recipe = new Recipe
+            {
+                SpoonacularId = 12345,
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+            };
+
+            await _context.Users.AddAsync(user);
+            await _context.Recipes.AddAsync(recipe);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.IsFavoriteAsync(user.Id, recipe.Id);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task GetUserFavoritesAsync_UserWithFavorites_ReturnsRecipes()
+        {
+            // Arrange
+            var user = new User
+            {
+                GoogleUserId = "12345",
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            var firstRecipe = new Recipe
+            {
+                SpoonacularId = 12345,
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+            };
+
+            var secondRecipe = new Recipe
+            {
+                SpoonacularId = 67890,
+                Title = "Another Test Recipe",
+                Ingredients = ["Sugar", "Flour"],
+                Instructions = "Bake ingredients",
+            };
+
+            await _context.Users.AddAsync(user);
+            await _context.Recipes.AddRangeAsync(firstRecipe, secondRecipe);
+            await _context.SaveChangesAsync();
+
+            await _repository.AddFavoriteAsync(user.Id, firstRecipe.Id);
+            await _repository.AddFavoriteAsync(user.Id, secondRecipe.Id);
+
+            // Act
+            var result = await _repository.GetUserFavoritesAsync(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+            Assert.Contains(result, r => r.Title == firstRecipe.Title);
+            Assert.Contains(result, r => r.Title == secondRecipe.Title);
+        }
+
+        [Fact]
+        public async Task GetUserFavoritesAsync_UserWithNoFavorites_ReturnsEmpty()
+        {
+            // Arrange
+            var user = new User
+            {
+                GoogleUserId = "12345",
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            var firstRecipe = new Recipe
+            {
+                SpoonacularId = 12345,
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+            };
+
+            var secondRecipe = new Recipe
+            {
+                SpoonacularId = 67890,
+                Title = "Another Test Recipe",
+                Ingredients = ["Sugar", "Flour"],
+                Instructions = "Bake ingredients",
+            };
+
+            await _context.Users.AddAsync(user);
+            await _context.Recipes.AddRangeAsync(firstRecipe, secondRecipe);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetUserFavoritesAsync(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result);
         }
 
         public void Dispose()
