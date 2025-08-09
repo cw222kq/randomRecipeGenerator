@@ -8,9 +8,19 @@ namespace RandomRecipeGenerator.API.Repositories
         private readonly ApplicationDbContext _context = context;
         private readonly ILogger<UserFavoriteRepository> _logger = logger;
 
-        public Task<UserFavoriteRecipe?> AddFavoriteAsync(Guid UserId, Guid RecipeId)
+        public async Task<UserFavoriteRecipe?> AddFavoriteAsync(Guid UserId, Guid RecipeId)
         {
-            throw new NotImplementedException();
+            var userFavoriteRecipe = new UserFavoriteRecipe
+            {
+                UserId = UserId,
+                RecipeId = RecipeId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.UserFavoriteRecipes.Add(userFavoriteRecipe);
+            await _context.SaveChangesAsync();
+
+            return userFavoriteRecipe;
         }
 
         public Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid UserId)
