@@ -1,4 +1,5 @@
-﻿using RandomRecipeGenerator.API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using RandomRecipeGenerator.API.Data;
 using RandomRecipeGenerator.API.Models.Domain;
 
 namespace RandomRecipeGenerator.API.Repositories
@@ -10,6 +11,15 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<UserFavoriteRecipe?> AddFavoriteAsync(Guid UserId, Guid RecipeId)
         {
+            // Check if favorite allready exists
+            var existingFavorite = await _context.UserFavoriteRecipes
+                .FirstOrDefaultAsync(f => f.UserId == UserId && f.RecipeId == RecipeId);
+
+            if (existingFavorite != null)
+            {
+                return null;
+            }
+
             var userFavoriteRecipe = new UserFavoriteRecipe
             {
                 UserId = UserId,
