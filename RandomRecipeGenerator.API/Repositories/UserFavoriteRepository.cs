@@ -92,12 +92,14 @@ namespace RandomRecipeGenerator.API.Repositories
 
                 if (favorite == null)
                 {
+                    _logger.LogInformation("Favorite recipe {RecipeId} not found for user {UserId}", recipeId, UserId);
                     return false;
                 }
 
                 _context.UserFavoriteRecipes.Remove(favorite);
                 await _context.SaveChangesAsync();
 
+                _logger.LogInformation("Removed favorite recipe {RecipeId} for user {UserId}", recipeId, UserId);
                 return true;
             }
             catch (Exception ex)
