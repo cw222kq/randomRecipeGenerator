@@ -72,18 +72,39 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<bool> RemoveFavoriteAsync(Guid UserId, Guid recipeId)
         {
-            var favorite = await _context.UserFavoriteRecipes
-                .FirstOrDefaultAsync(f => f.UserId == UserId && f.RecipeId == recipeId);
-
-            if (favorite == null)
+            if (UserId == Guid.Empty)
             {
+                _logger.LogError("User ID cannot be empty for removing favorite.");
                 return false;
             }
 
-            _context.UserFavoriteRecipes.Remove(favorite);
-            await _context.SaveChangesAsync();
+            if (recipeId == Guid.Empty)
+            {
+                _logger.LogError("Recipe ID cannot be empty for removing favorite.");
+                return false;
+            }
 
-            return true;
+            try
+            {
+                // Check if favorite exists
+                var favorite = await _context.UserFavoriteRecipes
+               .FirstOrDefaultAsync(f => f.UserId == UserId && f.RecipeId == recipeId);
+
+                if (favorite == null)
+                {
+                    return false;
+                }
+
+                _context.UserFavoriteRecipes.Remove(favorite);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing favorite recipe {RecipeId} for user {UserId}", recipeId, UserId);
+                return false;
+            }
         }
     }
 }
