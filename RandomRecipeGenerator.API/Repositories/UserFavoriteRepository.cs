@@ -57,11 +57,26 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid UserId)
         {
-            return await _context.UserFavoriteRecipes
+            if (UserId == Guid.Empty)
+            {
+                _logger.LogError("User ID cannot be empty for getting favorites.");
+                return Enumerable.Empty<Recipe>();
+            }
+
+            try
+            {
+                return await _context.UserFavoriteRecipes
                 .Where(f => f.UserId == UserId)
                 .Include(f => f.Recipe)
                 .Select(f => f.Recipe)
                 .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting favorites for user {UserId}", UserId);
+                return [];
+            }
+
         }
 
         public async Task<bool> IsFavoriteAsync(Guid UserId, Guid RecipeId)
