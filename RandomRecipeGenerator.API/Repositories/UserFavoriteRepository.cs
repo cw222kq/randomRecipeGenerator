@@ -9,15 +9,15 @@ namespace RandomRecipeGenerator.API.Repositories
         private readonly ApplicationDbContext _context = context;
         private readonly ILogger<UserFavoriteRepository> _logger = logger;
 
-        public async Task<UserFavoriteRecipe?> AddFavoriteAsync(Guid UserId, Guid RecipeId)
+        public async Task<UserFavoriteRecipe?> AddFavoriteAsync(Guid userId, Guid recipeId)
         {
-            if (UserId == Guid.Empty)
+            if (userId == Guid.Empty)
             {
                 _logger.LogError("User ID cannot be empty for adding favorite.");
                 return null;
             }
 
-            if (RecipeId == Guid.Empty)
+            if (recipeId == Guid.Empty)
             {
                 _logger.LogError("Recipe ID cannot be empty for adding favorite.");
                 return null;
@@ -27,67 +27,67 @@ namespace RandomRecipeGenerator.API.Repositories
             {
                 // Check if favorite allready exists
                 var existingFavorite = await _context.UserFavoriteRecipes
-                    .FirstOrDefaultAsync(f => f.UserId == UserId && f.RecipeId == RecipeId);
+                    .FirstOrDefaultAsync(f => f.UserId == userId && f.RecipeId == recipeId);
 
                 if (existingFavorite != null)
                 {
-                    _logger.LogInformation("Favorite recipe {RecipeId} already exists for user {UserId}", RecipeId, UserId);
+                    _logger.LogInformation("Favorite recipe {RecipeId} already exists for user {UserId}", recipeId, userId);
                     return null;
                 }
 
                 var userFavoriteRecipe = new UserFavoriteRecipe
                 {
-                    UserId = UserId,
-                    RecipeId = RecipeId,
+                    UserId = userId,
+                    RecipeId = recipeId,
                     CreatedAt = DateTime.UtcNow
                 };
 
                 _context.UserFavoriteRecipes.Add(userFavoriteRecipe);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Added favorite recipe {RecipeId} for user {UserId}", RecipeId, UserId);
+                _logger.LogInformation("Added favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
                 return userFavoriteRecipe;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error adding favorite recipe {RecipeId} for user {UserId}", RecipeId, UserId);
+                _logger.LogError(ex, "Error adding favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
                 return null;
             }
         }
 
-        public async Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid UserId)
+        public async Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid userId)
         {
-            if (UserId == Guid.Empty)
+            if (userId == Guid.Empty)
             {
                 _logger.LogError("User ID cannot be empty for getting favorites.");
-                return Enumerable.Empty<Recipe>();
+                return [];
             }
 
             try
             {
                 return await _context.UserFavoriteRecipes
-                .Where(f => f.UserId == UserId)
+                .Where(f => f.UserId == userId)
                 .Include(f => f.Recipe)
                 .Select(f => f.Recipe)
                 .ToListAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting favorites for user {UserId}", UserId);
+                _logger.LogError(ex, "Error getting favorites for user {UserId}", userId);
                 return [];
             }
 
         }
 
-        public async Task<bool> IsFavoriteAsync(Guid UserId, Guid RecipeId)
+        public async Task<bool> IsFavoriteAsync(Guid userId, Guid recipeId)
         {
-            if (UserId == Guid.Empty)
+            if (userId == Guid.Empty)
             {
                 _logger.LogError("User ID cannot be empty for checking favorite.");
                 return false;
             }
 
-            if (RecipeId == Guid.Empty)
+            if (recipeId == Guid.Empty)
             {
                 _logger.LogError("Recipe ID cannot be empty for checking favorite.");
                 return false;
@@ -96,18 +96,18 @@ namespace RandomRecipeGenerator.API.Repositories
             try
             {
                 return await _context.UserFavoriteRecipes
-                .AnyAsync(f => f.UserId == UserId && f.RecipeId == RecipeId);
+                .AnyAsync(f => f.UserId == userId && f.RecipeId == recipeId);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error checking if recipe {RecipeId} is favorite for user {UserId}", RecipeId, UserId);
+                _logger.LogError(ex, "Error checking if recipe {RecipeId} is favorite for user {UserId}", recipeId, userId);
                 return false;
             }
         }
 
-        public async Task<bool> RemoveFavoriteAsync(Guid UserId, Guid recipeId)
+        public async Task<bool> RemoveFavoriteAsync(Guid userId, Guid recipeId)
         {
-            if (UserId == Guid.Empty)
+            if (userId == Guid.Empty)
             {
                 _logger.LogError("User ID cannot be empty for removing favorite.");
                 return false;
@@ -123,23 +123,23 @@ namespace RandomRecipeGenerator.API.Repositories
             {
                 // Check if favorite exists
                 var favorite = await _context.UserFavoriteRecipes
-               .FirstOrDefaultAsync(f => f.UserId == UserId && f.RecipeId == recipeId);
+               .FirstOrDefaultAsync(f => f.UserId == userId && f.RecipeId == recipeId);
 
                 if (favorite == null)
                 {
-                    _logger.LogInformation("Favorite recipe {RecipeId} not found for user {UserId}", recipeId, UserId);
+                    _logger.LogInformation("Favorite recipe {RecipeId} not found for user {UserId}", recipeId, userId);
                     return false;
                 }
 
                 _context.UserFavoriteRecipes.Remove(favorite);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Removed favorite recipe {RecipeId} for user {UserId}", recipeId, UserId);
+                _logger.LogInformation("Removed favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error removing favorite recipe {RecipeId} for user {UserId}", recipeId, UserId);
+                _logger.LogError(ex, "Error removing favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
                 return false;
             }
         }

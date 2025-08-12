@@ -4,9 +4,9 @@ namespace RandomRecipeGenerator.API.Repositories
 {
     public interface IUserFavoriteRepository
     {
-        Task<UserFavoriteRecipe?> AddFavoriteAsync(Guid UserId, Guid RecipeId);
-        Task<bool> RemoveFavoriteAsync(Guid UserId, Guid recipeId);
-        Task<bool> IsFavoriteAsync(Guid UserId, Guid RecipeId);
-        Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid UserId);
+        Task<UserFavoriteRecipe?> AddFavoriteAsync(Guid userId, Guid recipeId);
+        Task<bool> RemoveFavoriteAsync(Guid userId, Guid recipeId);
+        Task<bool> IsFavoriteAsync(Guid userId, Guid recipeId);
+        Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid userId);
     }
 }
