@@ -10,12 +10,40 @@ namespace RandomRecipeGenerator.API.Services
 
         public async Task<UserFavoriteRecipe?> AddFavoriteAsync(Guid userId, Guid recipeId)
         {
-            if (userId == Guid.Empty || recipeId == Guid.Empty)
+            if (userId == Guid.Empty)
             {
+                _logger.LogError("User ID cannot be empty for adding favorite.");
                 return null;
             }
 
-            return await _repository.AddFavoriteAsync(userId, recipeId);
+            if (recipeId == Guid.Empty)
+            {
+                _logger.LogWarning("Recipe ID cannot be empty for adding favorite.");
+                return null;
+            }
+
+            _logger.LogInformation("Adding favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
+
+            try
+            {
+                var result = await _repository.AddFavoriteAsync(userId, recipeId);
+
+                if (result != null)
+                {
+                    _logger.LogInformation("Successfully added favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to add favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
+                return null;
+            }
         }
 
         public async Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid userId)
