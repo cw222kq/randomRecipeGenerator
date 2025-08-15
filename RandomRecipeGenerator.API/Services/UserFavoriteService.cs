@@ -28,9 +28,14 @@ namespace RandomRecipeGenerator.API.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> RemoveFavoriteAsync(Guid userId, Guid recipeId)
+        public async Task<bool> RemoveFavoriteAsync(Guid userId, Guid recipeId)
         {
-            throw new NotImplementedException();
+            if (userId == Guid.Empty || recipeId == Guid.Empty)
+            {
+                return false;
+            }
+
+            return await _repository.RemoveFavoriteAsync(userId, recipeId);
         }
     }
 }
