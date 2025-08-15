@@ -18,9 +18,14 @@ namespace RandomRecipeGenerator.API.Services
             return await _repository.AddFavoriteAsync(userId, recipeId);
         }
 
-        public Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid userId)
+        public async Task<IEnumerable<Recipe>> GetUserFavoritesAsync(Guid userId)
         {
-            throw new NotImplementedException();
+           if (userId == Guid.Empty)
+            {
+                return [];
+            }
+
+            return await _repository.GetUserFavoritesAsync(userId);
         }
 
         public async Task<bool> IsFavoriteAsync(Guid userId, Guid recipeId)
