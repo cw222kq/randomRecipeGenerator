@@ -58,12 +58,27 @@ namespace RandomRecipeGenerator.API.Services
 
         public async Task<bool> IsFavoriteAsync(Guid userId, Guid recipeId)
         {
-            if (userId == Guid.Empty || recipeId == Guid.Empty)
+            if (userId == Guid.Empty)
             {
+                _logger.LogError("User ID cannot be empty for checking favorite status.");
                 return false;
             }
 
-            return await _repository.IsFavoriteAsync(userId, recipeId);
+            if (recipeId == Guid.Empty)
+            {
+                _logger.LogWarning("Recipe ID cannot be empty for checking favorite status.");
+                return false;
+            }
+
+            try
+            {
+                return await _repository.IsFavoriteAsync(userId, recipeId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking favorite status for recipe {RecipeId} and user {UserId}", recipeId, userId);
+                return false;
+            }
         }
 
         public async Task<bool> RemoveFavoriteAsync(Guid userId, Guid recipeId)
