@@ -50,10 +50,19 @@ namespace RandomRecipeGenerator.API.Services
         {
            if (userId == Guid.Empty)
             {
+                _logger.LogError("User ID cannot be empty for retrieving favorites.");
                 return [];
             }
 
-            return await _repository.GetUserFavoritesAsync(userId);
+           try 
+           {
+                return await _repository.GetUserFavoritesAsync(userId);
+           }
+           catch (Exception ex)
+           {
+                _logger.LogError(ex, "Error retrieving favorites for user {UserId}", userId);
+                return [];
+           }
         }
 
         public async Task<bool> IsFavoriteAsync(Guid userId, Guid recipeId)
