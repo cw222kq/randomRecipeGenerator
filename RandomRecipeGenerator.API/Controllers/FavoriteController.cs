@@ -14,14 +14,26 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpPost("{userId}/{recipeId}")]
         public async Task<IActionResult> AddFavorite(Guid userId, Guid recipeId)
         {
-            var result = await _userFavoriteService.AddFavoriteAsync(userId, recipeId);
-
-            if (result == null)
+            try
             {
-                return BadRequest("Failed to add favorite.");
-            }
+                _logger.LogInformation("Adding favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
 
-            return Ok(result);
+                var result = await _userFavoriteService.AddFavoriteAsync(userId, recipeId);
+
+                if (result == null)
+                {
+                    _logger.LogWarning("Failed to add favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
+                    return BadRequest("Failed to add favorite.");
+                }
+
+                _logger.LogInformation("Successfully added favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while adding the favorite.");
+            }
         }
 
         [HttpDelete("{userId}/{recipeId}")]
