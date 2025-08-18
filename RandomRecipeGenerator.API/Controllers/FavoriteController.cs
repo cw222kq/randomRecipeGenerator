@@ -39,14 +39,26 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpDelete("{userId}/{recipeId}")]
         public async  Task<IActionResult> RemoveFavorite(Guid userId, Guid recipeId)
         {
-            var result = await _userFavoriteService.RemoveFavoriteAsync(userId, recipeId);
-
-            if (!result)
+            try
             {
-                return NotFound("Favorite not found or could not be removed.");
-            }
+                _logger.LogInformation("Removing favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
 
-            return Ok();
+                var result = await _userFavoriteService.RemoveFavoriteAsync(userId, recipeId);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to remove favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
+                    return NotFound("Favorite not found or could not be removed.");
+                }
+
+                _logger.LogInformation("Successfully removed favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while removing the favorite.");
+            }
         }
 
         [HttpGet("{userId}")]
