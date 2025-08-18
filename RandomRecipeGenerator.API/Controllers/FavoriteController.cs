@@ -64,10 +64,21 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserFavorites(Guid userId)
         {
-            var result = await _userFavoriteService.GetUserFavoritesAsync(userId);
+            try
+            {
+                _logger.LogInformation("Retrieving favorites for user {UserId}", userId);
 
-            return Ok(result);
+                var result = await _userFavoriteService.GetUserFavoritesAsync(userId);
+
+                _logger.LogInformation("Successfully retrieved {Count} favorites for user {UserId}", result.Count(), userId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving favorites for user {UserId}", userId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving favorites.");
+            }
         }
-
     }
 }
