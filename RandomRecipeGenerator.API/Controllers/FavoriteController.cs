@@ -27,7 +27,14 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpDelete("{userId}/{recipeId}")]
         public async  Task<IActionResult> RemoveFavorite(Guid userId, Guid recipeId)
         {
-            throw new NotImplementedException();
+            var result = await _userFavoriteService.RemoveFavoriteAsync(userId, recipeId);
+
+            if (!result)
+            {
+                return NotFound("Favorite not found or could not be removed.");
+            }
+
+            return Ok();
         }
 
         [HttpGet("{userId}")]
