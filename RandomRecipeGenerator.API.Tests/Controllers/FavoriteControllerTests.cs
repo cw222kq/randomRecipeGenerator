@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Castle.Core.Logging;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using RandomRecipeGenerator.API.Models.Domain;
 using RandomRecipeGenerator.API.Services;
+using RandomRecipeGenerator.API.Controllers;
 
 namespace RandomRecipeGenerator.API.Tests.Controllers
 {
@@ -16,7 +11,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
     {
         private readonly Mock<IUserFavoriteService> _serviceMock;
         private readonly Mock<ILogger<FavoriteController>> _loggerMock;
-        private readonly FavoriteControllerTests _controller;
+        private readonly FavoriteController _controller;
 
         public FavoriteControllerTests()
         {
@@ -42,7 +37,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(expectedFavorite, OkResult.Value);
+            Assert.Equal(expectedFavorite, okResult.Value);
         }
 
         [Fact]
