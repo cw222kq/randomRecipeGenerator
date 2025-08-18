@@ -14,7 +14,14 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpPost("{userId}/{recipeId}")]
         public async Task<IActionResult> AddFavorite(Guid userId, Guid recipeId)
         {
-            throw new NotImplementedException();
+            var result = await _userFavoriteService.AddFavoriteAsync(userId, recipeId);
+
+            if (result == null)
+            {
+                return BadRequest("Failed to add favorite.");
+            }
+
+            return Ok(result);
         }
 
         [HttpDelete("{userId}/{recipeId}")]
