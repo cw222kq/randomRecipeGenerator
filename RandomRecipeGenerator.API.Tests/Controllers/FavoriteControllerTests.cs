@@ -73,7 +73,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var result = await _controller.RemoveFavorite(userId, recipeId);
 
             // Assert
-            Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<OkResult>(result);
         }
 
         [Fact]
