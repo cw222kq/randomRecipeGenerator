@@ -40,7 +40,9 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserFavorites(Guid userId)
         {
-            throw new NotImplementedException();
+            var result = await _userFavoriteService.GetUserFavoritesAsync(userId);
+
+            return Ok(result);
         }
 
     }
