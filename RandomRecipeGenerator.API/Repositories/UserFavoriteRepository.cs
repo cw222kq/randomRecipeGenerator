@@ -67,7 +67,6 @@ namespace RandomRecipeGenerator.API.Repositories
             {
                 return await _context.UserFavoriteRecipes
                 .Where(f => f.UserId == userId)
-                .Include(f => f.Recipe)
                 .Select(f => f.Recipe)
                 .ToListAsync();
             }
