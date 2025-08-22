@@ -124,7 +124,7 @@ namespace RandomRecipeGenerator.API.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error removing favorite recipe {RecipeId} for user {UserId}", recipeId, userId);
-                return await _repository.RemoveFavoriteAsync(userId, recipeId);
+                return false;
             }
         }
     }

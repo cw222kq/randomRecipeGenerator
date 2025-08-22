@@ -25,7 +25,7 @@ namespace RandomRecipeGenerator.API.Repositories
 
             try
             {
-                // Check if favorite allready exists
+                // Check if favorite already exists
                 var existingFavorite = await _context.UserFavoriteRecipes
                     .FirstOrDefaultAsync(f => f.UserId == userId && f.RecipeId == recipeId);
 
