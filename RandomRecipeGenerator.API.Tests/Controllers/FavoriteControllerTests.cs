@@ -21,7 +21,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task AddFavorite_ValidIntput_ReturnsOk()
+        public async Task AddFavorite_ValidInput_ReturnsOk()
         {
             // Arrange
             var userId = Guid.NewGuid();
