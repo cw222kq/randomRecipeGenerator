@@ -2,7 +2,7 @@
 
 namespace RandomRecipeGenerator.API.Models.DTO
 {
-    public class CreateRecipeRequestDTO
+    public class RecipeRequestDTO
     {
         [Required]
         [StringLength(255, MinimumLength =1)]
