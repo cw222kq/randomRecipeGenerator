@@ -20,6 +20,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // Use a unique in-memory database for each test run
                 .Options;
+
             _context = new ApplicationDbContext(options);
             _mockLogger = new Mock<ILogger<UserRepository>>();
             _repository = new UserRepository(_context, _mockLogger.Object);
