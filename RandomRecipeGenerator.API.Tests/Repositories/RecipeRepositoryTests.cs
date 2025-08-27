@@ -156,6 +156,177 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             Assert.Contains(resultList, r => r.Title == "Recipe 1");
             Assert.Contains(resultList, r => r.Title == "Recipe 2");
         }
+
+        [Fact]
+        public async Task UpdateRecipeAsync_WithValidRecipe_ReturnsUpdatedRecipe()
+        {
+            // Arrange
+            var user = new User
+            {
+                GoogleUserId = "12345",
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            _context.Users.Add(user);
+
+            var recipe = new Recipe
+            {
+                SpoonacularId = 12345,
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+                ImageUrl = "https://example.com/original.jpg",
+                UserId = user.Id,
+            };
+
+             _context.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+
+            // Modify recipe
+            recipe.Title = "Updated Title";
+            recipe.Ingredients = ["Updated Ingredient"];
+            recipe.Instructions = "Updated instructions";
+            recipe.ImageUrl = "https://example.com/updated.jpg";
+
+            // Act
+            var result = await _repository.UpdateRecipeAsync(recipe);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Updated Title", result.Title);
+            Assert.Equal(["Updated Ingredient"], result.Ingredients);
+            Assert.Equal("Updated instructions", result.Instructions);
+            Assert.Equal("https://example.com/updated.jpg", result.ImageUrl);
+            Assert.Equal(recipe.UserId, result.UserId);
+            Assert.Equal(recipe.SpoonacularId, result.SpoonacularId);
+        }
+
+        [Fact]
+        public async Task DeleteRecipeAsync_WithExistingRecipe_ReturnsTrue()
+        {
+            // Arrange
+            var user = new User
+            {
+                GoogleUserId = "12345",
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            _context.Users.Add(user);
+
+            var recipe = new Recipe
+            {
+                SpoonacularId = 12345,
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+                ImageUrl = "https://example.com/original.jpg",
+                UserId = user.Id,
+            };
+
+            _context.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.DeleteRecipeAsync(recipe.Id);
+
+            // Assert
+            Assert.True(result);
+            var deletedRecipe = await _context.Recipes.FindAsync(recipe.Id);
+            Assert.Null(deletedRecipe);
+        }
+
+        [Fact]
+        public async Task DeleteRecipeAsync_WithNonExistentRecipe_ReturnsFalse()
+        {
+            // Arrange
+            var nonExistentId = Guid.NewGuid();
+
+            // Act
+            var result = await _repository.DeleteRecipeAsync(nonExistentId);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task IsRecipeOwnerAsync_WithValidOwner_ReturnsTrue()
+        {
+            // Arrange
+            var user = new User
+            {
+                GoogleUserId = "12345",
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            _context.Users.Add(user);
+
+            var recipe = new Recipe
+            {
+                SpoonacularId = 12345,
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+                ImageUrl = "https://example.com/original.jpg",
+                UserId = user.Id,
+            };
+
+            _context.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.IsRecipeOwnerAsync(recipe.Id, user.Id);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task IsRecipeOwnerAsync_WithInvalidOwner_ReturnsFalse()
+        {
+            // Arrange
+            var user = new User
+            {
+                GoogleUserId = "12345",
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            var anotherUser = new User
+            {
+                GoogleUserId = "67890",
+                Email = "firstname.lastname@example.com",
+                FirstName = "firstname",
+                LastName = "lastname"
+            };
+
+            _context.Users.Add(user);
+
+            var recipe = new Recipe
+            {
+                SpoonacularId = 12345,
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+                ImageUrl = "https://example.com/original.jpg",
+                UserId = user.Id,
+            };
+
+            _context.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.IsRecipeOwnerAsync(recipe.Id, anotherUser.Id);
+
+            // Assert
+            Assert.False(result);
+        }
         
         public void Dispose()
         {
