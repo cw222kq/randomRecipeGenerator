@@ -133,13 +133,15 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
                     Title = "Test Recipe",
                     Ingredients = ["Salt", "Pepper"],
                     Instructions = "Mix ingredients",
+                    UserId = user.Id
                 },
                 new() {
                     SpoonacularId = 67890,
                     Title = "Another Test Recipe",
                     Ingredients = ["Sugar", "Flour"],
                     Instructions = "Bake ingredients",
-                },   
+                    UserId = user.Id
+                },
             };
 
             _context.Recipes.AddRange(recipes);
@@ -153,8 +155,8 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
             Assert.All(result, r => Assert.Equal(user.Id, r.UserId));
 
             var resultList = result.ToList();
-            Assert.Contains(resultList, r => r.Title == "Recipe 1");
-            Assert.Contains(resultList, r => r.Title == "Recipe 2");
+            Assert.Contains(resultList, r => r.Title == "Test Recipe");
+            Assert.Contains(resultList, r => r.Title == "Another Test Recipe");
         }
 
         [Fact]

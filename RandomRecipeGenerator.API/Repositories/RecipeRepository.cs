@@ -1,4 +1,5 @@
-﻿using RandomRecipeGenerator.API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using RandomRecipeGenerator.API.Data;
 using RandomRecipeGenerator.API.Models.Domain;
 
 namespace RandomRecipeGenerator.API.Repositories
@@ -7,34 +8,64 @@ namespace RandomRecipeGenerator.API.Repositories
     {
         private readonly ApplicationDbContext _context = context;
         private readonly ILogger<RecipeRepository> _logger = logger;
-        public Task<Recipe?> CreateRecipeAsync(Recipe recipe)
+        public async Task<Recipe?> CreateRecipeAsync(Recipe recipe)
         {
-            throw new NotImplementedException();
+            _context.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+            return recipe;
         }
 
-        public Task<bool> DeleteRecipeAsync(Guid id)
+        public async Task<bool> DeleteRecipeAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var recipe = await _context.Recipes.FindAsync(id);
+            if (recipe == null) 
+            {
+                return false;
+            }
+
+            _context.Recipes.Remove(recipe);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
-        public Task<Recipe?> GetRecipeByIdAsync(Guid id)
+        public async Task<Recipe?> GetRecipeByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.Recipes
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public Task<IEnumerable<Recipe>> GetUserRecipesAsync(Guid userId)
+        public async Task<IEnumerable<Recipe>> GetUserRecipesAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            return await _context.Recipes
+                .Where(r => r.UserId == userId)
+                .OrderByDescending(r => r.UpdatedAt)
+                .ToListAsync();
         }
 
-        public Task<bool> IsRecipeOwnerAsync(Guid recipeId, Guid userId)
+        public async Task<bool> IsRecipeOwnerAsync(Guid recipeId, Guid userId)
         {
-            throw new NotImplementedException();
+            return await _context.Recipes
+                .AnyAsync(r => r.Id == recipeId && r.UserId == userId);
         }
 
-        public Task<Recipe?> UpdateRecipeAsync(Recipe recipe)
+        public async Task<Recipe?> UpdateRecipeAsync(Recipe recipe)
         {
-            throw new NotImplementedException();
+            var existingRecipe = await _context.Recipes.FindAsync(recipe.Id);
+            if (existingRecipe == null)
+            {
+                return null;
+            }
+
+            existingRecipe.Title = recipe.Title;
+            existingRecipe.Ingredients = recipe.Ingredients;
+            existingRecipe.Instructions = recipe.Instructions;
+            existingRecipe.ImageUrl = recipe.ImageUrl;
+            existingRecipe.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return existingRecipe;
         }
     }
 }
