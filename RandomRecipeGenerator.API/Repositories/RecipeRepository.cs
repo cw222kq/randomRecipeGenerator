@@ -88,8 +88,28 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<bool> IsRecipeOwnerAsync(Guid recipeId, Guid userId)
         {
-            return await _context.Recipes
+            if (recipeId == Guid.Empty)
+            {
+                _logger.LogError("Recipe ID cannot be empty for ownership check");
+                return false;
+            }
+
+            if (userId == Guid.Empty)
+            {
+                _logger.LogError("User ID cannot be empty for ownnership check");
+                return false;
+            }
+
+            try
+            {
+                return await _context.Recipes
                 .AnyAsync(r => r.Id == recipeId && r.UserId == userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking recipe ownership for recipe {RecipeId} and user {UserId}", recipeId, userId);
+                return false;
+            }      
         }
 
         public async Task<Recipe?> UpdateRecipeAsync(Recipe recipe)
