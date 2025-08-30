@@ -10,9 +10,35 @@ namespace RandomRecipeGenerator.API.Repositories
         private readonly ILogger<RecipeRepository> _logger = logger;
         public async Task<Recipe?> CreateRecipeAsync(Recipe recipe)
         {
-            _context.Recipes.Add(recipe);
-            await _context.SaveChangesAsync();
-            return recipe;
+            if (string.IsNullOrWhiteSpace(recipe.Title))
+            {
+                _logger.LogError("Recipe title cannot be empty for creation");
+                return null;
+                
+            }
+
+            if (recipe.UserId == null || recipe.UserId == Guid.Empty)
+            {
+                _logger.LogError("Recipe must have a valid user Id for creation.");
+                return null;
+            }
+
+            try
+            {
+                recipe.CreatedAt = DateTime.UtcNow;
+                recipe.UpdatedAt = DateTime.UtcNow;
+
+                _context.Recipes.Add(recipe);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Created recipe {RecipeId} for user {UserId}", recipe.Id, recipe.UserId);
+                return recipe;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error creating recipe for user {UserId}", recipe.UserId);
+                return null;
+            }   
         }
 
         public async Task<bool> DeleteRecipeAsync(Guid id)
