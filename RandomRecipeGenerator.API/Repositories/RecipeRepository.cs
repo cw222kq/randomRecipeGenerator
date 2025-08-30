@@ -43,16 +43,32 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<bool> DeleteRecipeAsync(Guid id)
         {
-            var recipe = await _context.Recipes.FindAsync(id);
-            if (recipe == null) 
+            if (id == Guid.Empty) 
             {
+                _logger.LogError("Recipe ID cannot be empty for deletion");
                 return false;
             }
 
-            _context.Recipes.Remove(recipe);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var recipe = await _context.Recipes.FindAsync(id);
+                if (recipe == null)
+                {
+                    _logger.LogWarning("Recipe {RecipeId} not found for deletion", id);
+                    return false;
+                }
 
-            return true;
+                _context.Recipes.Remove(recipe);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Deleted recipe {RecipeId}", id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting recipe {RecipeId}", id);
+                return false;
+            }       
         }
 
         public async Task<Recipe?> GetRecipeByIdAsync(Guid id)
