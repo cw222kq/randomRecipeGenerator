@@ -75,7 +75,7 @@ namespace RandomRecipeGenerator.API.Repositories
         {
             if (id == Guid.Empty) 
             {
-                _logger.LogError("Reecipe ID cannot be empty for retrieval.");
+                _logger.LogError("Recipe ID cannot be empty for retrieval.");
                 return null;
             }
 
@@ -94,7 +94,7 @@ namespace RandomRecipeGenerator.API.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving receipe {RecipeId}", id);
+                _logger.LogError(ex, "Error retrieving recipe {RecipeId}", id);
                 return null;
             }    
         }
@@ -119,7 +119,7 @@ namespace RandomRecipeGenerator.API.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving recipies for user {UserId}", userId);
+                _logger.LogError(ex, "Error retrieving recipes for user {UserId}", userId);
                 return [];
             }  
         }
@@ -134,7 +134,7 @@ namespace RandomRecipeGenerator.API.Repositories
 
             if (userId == Guid.Empty)
             {
-                _logger.LogError("User ID cannot be empty for ownnership check");
+                _logger.LogError("User ID cannot be empty for ownership check");
                 return false;
             }
 
