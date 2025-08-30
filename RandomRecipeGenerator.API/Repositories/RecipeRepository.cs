@@ -114,20 +114,44 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<Recipe?> UpdateRecipeAsync(Recipe recipe)
         {
-            var existingRecipe = await _context.Recipes.FindAsync(recipe.Id);
-            if (existingRecipe == null)
+            if (recipe.Id == Guid.Empty)
             {
+                _logger.LogError("Recipe ID cannot be empty for update.");
                 return null;
             }
 
-            existingRecipe.Title = recipe.Title;
-            existingRecipe.Ingredients = recipe.Ingredients;
-            existingRecipe.Instructions = recipe.Instructions;
-            existingRecipe.ImageUrl = recipe.ImageUrl;
-            existingRecipe.UpdatedAt = DateTime.UtcNow;
+            if (string.IsNullOrWhiteSpace(recipe.Title))
+            {
+                _logger.LogError("Recipe title cannot be empty for update.");
+                return null;
+            }
 
-            await _context.SaveChangesAsync();
-            return existingRecipe;
+            try
+            {
+                var existingRecipe = await _context.Recipes.FindAsync(recipe.Id);
+                if (existingRecipe == null)
+                {
+                    _logger.LogWarning("Recipe {RecipeId} not found for update", recipe.Id);
+                    return null;
+                }
+
+                // Update fields
+                existingRecipe.Title = recipe.Title;
+                existingRecipe.Ingredients = recipe.Ingredients;
+                existingRecipe.Instructions = recipe.Instructions;
+                existingRecipe.ImageUrl = recipe.ImageUrl;
+                existingRecipe.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Updated recipe {RecipeId}", recipe.Id);
+                return existingRecipe;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating recipe {RecipeId}", recipe.Id);
+                return null;
+            }   
         }
     }
 }
