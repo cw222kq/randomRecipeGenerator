@@ -73,9 +73,30 @@ namespace RandomRecipeGenerator.API.Repositories
 
         public async Task<Recipe?> GetRecipeByIdAsync(Guid id)
         {
-            return await _context.Recipes
-                .Include(r => r.User)
-                .FirstOrDefaultAsync(r => r.Id == id);
+            if (id == Guid.Empty) 
+            {
+                _logger.LogError("Reecipe ID cannot be empty for retrieval.");
+                return null;
+            }
+
+            try
+            {
+                var recipe = await _context.Recipes
+               .Include(r => r.User)
+               .FirstOrDefaultAsync(r => r.Id == id);
+
+                if (recipe == null)
+                {
+                    _logger.LogWarning("Recipe {RecipeId} not found", id);
+                }
+
+                return recipe;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving receipe {RecipeId}", id);
+                return null;
+            }    
         }
 
         public async Task<IEnumerable<Recipe>> GetUserRecipesAsync(Guid userId)
