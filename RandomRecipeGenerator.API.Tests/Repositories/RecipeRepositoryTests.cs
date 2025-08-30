@@ -45,6 +45,7 @@ namespace RandomRecipeGenerator.API.Tests.Repositories
                 Title = "Test Recipe",
                 Ingredients = ["Salt", "Pepper"],
                 Instructions = "Mix ingredients",
+                UserId = user.Id,
             };
 
             // Act
