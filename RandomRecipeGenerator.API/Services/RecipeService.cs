@@ -40,9 +40,9 @@ namespace RandomRecipeGenerator.API.Services
             return await _repository.DeleteRecipeAsync(recipeId);
         }
 
-        public Task<Recipe?> GetRecipeByIdAsync(Guid Id)
+        public async Task<Recipe?> GetRecipeByIdAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            return await _repository.GetRecipeByIdAsync(Id);
         }
 
         public Task<IEnumerable<Recipe>> GetUserRecipesAsync(Guid userId)
