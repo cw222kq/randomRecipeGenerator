@@ -50,9 +50,9 @@ namespace RandomRecipeGenerator.API.Services
             return await _repository.GetUserRecipesAsync(userId);
         }
 
-        public Task<bool> IsRecipeOwnerAsync(Guid recipeId, Guid userId)
+        public async Task<bool> IsRecipeOwnerAsync(Guid recipeId, Guid userId)
         {
-            throw new NotImplementedException();
+            return await _repository.IsRecipeOwnerAsync(recipeId, userId);
         }
 
         public Task<Recipe?> UpdateUserRecipeAsync(Guid recipeId, Guid userId, string title, List<string> ingredients, string instructions, string? imageUrl = null)
