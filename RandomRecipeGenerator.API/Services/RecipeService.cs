@@ -45,9 +45,9 @@ namespace RandomRecipeGenerator.API.Services
             return await _repository.GetRecipeByIdAsync(Id);
         }
 
-        public Task<IEnumerable<Recipe>> GetUserRecipesAsync(Guid userId)
+        public async Task<IEnumerable<Recipe>> GetUserRecipesAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            return await _repository.GetUserRecipesAsync(userId);
         }
 
         public Task<bool> IsRecipeOwnerAsync(Guid recipeId, Guid userId)
