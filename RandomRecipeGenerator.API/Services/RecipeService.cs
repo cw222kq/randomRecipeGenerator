@@ -55,9 +55,28 @@ namespace RandomRecipeGenerator.API.Services
             return await _repository.IsRecipeOwnerAsync(recipeId, userId);
         }
 
-        public Task<Recipe?> UpdateUserRecipeAsync(Guid recipeId, Guid userId, string title, List<string> ingredients, string instructions, string? imageUrl = null)
+        public async Task<Recipe?> UpdateUserRecipeAsync(Guid recipeId, Guid userId, string title, List<string> ingredients, string instructions, string? imageUrl = null)
         {
-            throw new NotImplementedException();
+            // Check ownership
+            var isOwner = await _repository.IsRecipeOwnerAsync(recipeId, userId);
+            if (!isOwner)
+            {
+                return null;
+            }
+
+            var existingRecipe = await _repository.GetRecipeByIdAsync(recipeId);
+            if (existingRecipe == null)
+            {
+                return null;
+            }
+
+            // Update recipe
+            existingRecipe.Title = title;
+            existingRecipe.Ingredients = ingredients;
+            existingRecipe.Instructions = instructions;
+            existingRecipe.ImageUrl = imageUrl;
+
+            return await _repository.UpdateRecipeAsync(existingRecipe);
         }
     }
 }
