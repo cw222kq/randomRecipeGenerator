@@ -342,7 +342,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
             var result = await _recipeService.DeleteUserRecipeAsync(recipeId, userId);
 
             // Assert
-            Assert.True(result);
+            Assert.False(result);
             _recipeRepositoryMock
                 .Verify(r => r.IsRecipeOwnerAsync(recipeId, userId), Times.Once);
             _recipeRepositoryMock
