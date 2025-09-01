@@ -28,9 +28,16 @@ namespace RandomRecipeGenerator.API.Services
             return await _repository.CreateRecipeAsync(recipe);
         }
 
-        public Task<bool> DeleteUserRecipeAsync(Guid recipeId, Guid userId)
+        public async Task<bool> DeleteUserRecipeAsync(Guid recipeId, Guid userId)
         {
-            throw new NotImplementedException();
+            // Check ownership
+            var isOwner = await _repository.IsRecipeOwnerAsync(recipeId, userId);
+            if (!isOwner)
+            {
+                return false;
+            }
+
+            return await _repository.DeleteRecipeAsync(recipeId);
         }
 
         public Task<Recipe?> GetRecipeByIdAsync(Guid Id)
