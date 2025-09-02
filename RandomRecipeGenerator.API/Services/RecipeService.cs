@@ -195,26 +195,79 @@ namespace RandomRecipeGenerator.API.Services
 
         public async Task<Recipe?> UpdateUserRecipeAsync(Guid recipeId, Guid userId, string title, List<string> ingredients, string instructions, string? imageUrl = null)
         {
-            // Check ownership
-            var isOwner = await _repository.IsRecipeOwnerAsync(recipeId, userId);
-            if (!isOwner)
+            if (recipeId == Guid.Empty)
             {
+                _logger.LogError("Recipe ID cannot be empty for updating recipe.");
                 return null;
             }
 
-            var existingRecipe = await _repository.GetRecipeByIdAsync(recipeId);
-            if (existingRecipe == null)
+            if (userId == Guid.Empty)
             {
+                _logger.LogError("User ID cannot be empty for updating recipe.");
                 return null;
             }
 
-            // Update recipe
-            existingRecipe.Title = title;
-            existingRecipe.Ingredients = ingredients;
-            existingRecipe.Instructions = instructions;
-            existingRecipe.ImageUrl = imageUrl;
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                _logger.LogWarning("Recipe title cannot be empty for updating recipe.");
+                return null;
+            }
 
-            return await _repository.UpdateRecipeAsync(existingRecipe);
+            if (ingredients == null || ingredients.Count == 0)
+            {
+                _logger.LogWarning("Recipe ingredients cannot be empty for updating recipe.");
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(instructions))
+            {
+                _logger.LogWarning("Recipe instructions cannot be empty for updating recipe.");
+                return null;
+            }
+
+            _logger.LogInformation("Updating recipe {RecipeId} for user {UserId}", recipeId, userId);
+
+            try
+            {
+                // Check ownership
+                var isOwner = await _repository.IsRecipeOwnerAsync(recipeId, userId);
+                if (!isOwner)
+                {
+                    _logger.LogWarning("User {UserId} is not owner of recipe {RecipeId}", userId, recipeId);
+                    return null;
+                }
+
+                var existingRecipe = await _repository.GetRecipeByIdAsync(recipeId);
+                if (existingRecipe == null)
+                {
+                    _logger.LogWarning("Recipe {RecipeId} not found for update", recipeId);
+                    return null;
+                }
+
+                // Update recipe
+                existingRecipe.Title = title;
+                existingRecipe.Ingredients = ingredients;
+                existingRecipe.Instructions = instructions;
+                existingRecipe.ImageUrl = imageUrl;
+
+                var result = await _repository.UpdateRecipeAsync(existingRecipe);
+
+                if (result == null)
+                {
+                    _logger.LogWarning("Failed to update recipe {RecipeId} for user {UserId}", recipeId, userId);
+                    return null;
+                }
+
+                _logger.LogInformation("Successfully updated recipe {RecipeId} for user {UserId}", recipeId, userId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating recipe {RecipeId} for user {UserId}", recipeId, userId);
+                return null;
+            }
+           
         }
     }
 }
