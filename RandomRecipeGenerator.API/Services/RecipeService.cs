@@ -8,24 +8,64 @@ namespace RandomRecipeGenerator.API.Services
         private readonly IRecipeRepository _repository = repository;
         private readonly ILogger<RecipeService> _logger = logger;
 
-        public async Task<Recipe?> CreateUserRecipeAsync(Guid UserId, string title, List<string> ingredients, string instructions, string? imageUrl = null)
+        public async Task<Recipe?> CreateUserRecipeAsync(Guid userId, string title, List<string> ingredients, string instructions, string? imageUrl = null)
         {
-            if (UserId == Guid.Empty || string.IsNullOrWhiteSpace(title) || ingredients == null || ingredients.Count == 0 || string.IsNullOrWhiteSpace(instructions))
+            if (userId == Guid.Empty)
             {
+                _logger.LogError("User ID cannot be empty for creating recipe.");
                 return null;
             }
 
-            var recipe = new Recipe
+            if (string.IsNullOrWhiteSpace(title))
             {
-                Title = title,
-                SpoonacularId = 0,
-                Ingredients = ingredients,
-                Instructions = instructions,
-                ImageUrl = imageUrl,
-                UserId = UserId,
-            };
+                _logger.LogWarning("Recipe title cannot be empty for creating recipe.");
+                return null;
+            }
 
-            return await _repository.CreateRecipeAsync(recipe);
+            if (ingredients == null || ingredients.Count == 0)
+            {
+                _logger.LogWarning("Recipe ingredients cannot be empty for creating recipe.");
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(instructions))
+            {
+                _logger.LogWarning("Recipe instructions cannot be empty for creating recipe.");
+                return null;
+            }
+
+            _logger.LogInformation("Creating user recipe {Title} for user {UserId}", title, userId);
+
+            try
+            {
+                var recipe = new Recipe
+                {
+                    Title = title,
+                    SpoonacularId = 0,
+                    Ingredients = ingredients,
+                    Instructions = instructions,
+                    ImageUrl = imageUrl,
+                    UserId = userId,
+                };
+
+                var result = await _repository.CreateRecipeAsync(recipe);
+
+                if (result == null)
+                {
+                    _logger.LogWarning("Failed to create user recipe {Title} for user {UserId}", title, userId);
+                    return null;
+                }
+
+                _logger.LogInformation("Sucessfully created user recipe {RecipeId} for user {UserId}", title, userId);
+
+                return result;
+
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error creating user recipe {Title} for user {UserId}", title, userId);
+                return null;
+            }   
         }
 
         public async Task<bool> DeleteUserRecipeAsync(Guid recipeId, Guid userId)
