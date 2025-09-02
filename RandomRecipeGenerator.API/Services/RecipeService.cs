@@ -113,9 +113,35 @@ namespace RandomRecipeGenerator.API.Services
             }  
         }
 
-        public async Task<Recipe?> GetRecipeByIdAsync(Guid Id)
+        public async Task<Recipe?> GetRecipeByIdAsync(Guid id)
         {
-            return await _repository.GetRecipeByIdAsync(Id);
+            if (id == Guid.Empty)
+            {
+                _logger.LogError("Recipe ID cannot be empty for retrieval.");
+                return null;
+            }
+
+            _logger.LogInformation("Retrieving recipe {RecipeId}", id);
+
+            try
+            {
+                var result = await _repository.GetRecipeByIdAsync(id);
+
+                if (result == null)
+                {
+                    _logger.LogWarning("Recipe {RecipeId} not found", id);
+                    return null;
+                }
+
+                _logger.LogInformation("Successfully retrieved recipe {RecipeId}", id);
+
+                return result;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error retrieving recipe {RecipeId}", id);
+                return null;
+            }  
         }
 
         public async Task<IEnumerable<Recipe>> GetUserRecipesAsync(Guid userId)
