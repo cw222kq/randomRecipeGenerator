@@ -70,14 +70,47 @@ namespace RandomRecipeGenerator.API.Services
 
         public async Task<bool> DeleteUserRecipeAsync(Guid recipeId, Guid userId)
         {
-            // Check ownership
-            var isOwner = await _repository.IsRecipeOwnerAsync(recipeId, userId);
-            if (!isOwner)
+            if (recipeId == Guid.Empty)
             {
+                _logger.LogError("Recipe ID cannot be empty for deleting recipe.");
                 return false;
             }
 
-            return await _repository.DeleteRecipeAsync(recipeId);
+            if (userId == Guid.Empty)
+            {
+                _logger.LogError("User ID cannot be empty for deleting recipe.");
+                return false;
+            }
+
+            _logger.LogInformation("Deleting recipe {RecipeId} for user {UserId}", recipeId, userId);
+
+            try
+            {
+                // Check ownership
+                var isOwner = await _repository.IsRecipeOwnerAsync(recipeId, userId);
+                if (!isOwner)
+                {
+                    _logger.LogWarning("User {UserId} is not owner of recipe {RecipeId}", userId, recipeId);
+                    return false;
+                }
+
+                var result = await _repository.DeleteRecipeAsync(recipeId);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to delete recipe {RecipeId} for user {UserId}", recipeId, userId);
+                    return false;
+                }
+
+                _logger.LogInformation("Successfully deleted recipe {RecipeId} for user {UserId}", recipeId, userId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting redcipe {RecipeId} for user {UserId}", recipeId, userId);
+                return false;
+            }  
         }
 
         public async Task<Recipe?> GetRecipeByIdAsync(Guid Id)
