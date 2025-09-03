@@ -47,12 +47,14 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 // Register repositories and their interfaces
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 
 // Register services and their interfaces
 builder.Services.AddScoped<IHttpRequestService, HttpRequestService>();
 builder.Services.AddScoped<IOAuthService, OAuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserFavoriteService, UserFavoriteService>();
+builder.Services.AddScoped<IRecipeService, RecipeService>();
 
 // This configures Google.Apis.Auth.AspNetCore3 for use in this app.
 builder.Services
