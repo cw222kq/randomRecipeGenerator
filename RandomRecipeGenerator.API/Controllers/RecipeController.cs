@@ -10,9 +10,10 @@ namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RecipeController(IHttpRequestService httpRequestService, IMapper mapper, ILogger<RecipeController> logger) : ControllerBase
+    public class RecipeController(IHttpRequestService httpRequestService, IRecipeService recipeService, IMapper mapper, ILogger<RecipeController> logger) : ControllerBase
     {
         private readonly IHttpRequestService _httpRequestService = httpRequestService;
+        private readonly IRecipeService _recipeService = recipeService;
         private readonly IMapper _mapper = mapper;
         private readonly ILogger<RecipeController> _logger = logger;
 

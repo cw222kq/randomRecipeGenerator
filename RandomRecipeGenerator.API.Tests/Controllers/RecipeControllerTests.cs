@@ -19,6 +19,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
     public class RecipeControllerTests
     {
         private readonly Mock<IHttpRequestService> _httpRequestServiceMock;
+        private readonly Mock<IRecipeService> _recipeServiceMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILogger<RecipeController>> _loggerMock;
 
@@ -27,11 +28,13 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
         public RecipeControllerTests()
         {
             _httpRequestServiceMock = new Mock<IHttpRequestService>();
+            _recipeServiceMock = new Mock<IRecipeService>();
             _mapperMock = new Mock<IMapper>();
             _loggerMock = new Mock<ILogger<RecipeController>>();
 
             _controller = new RecipeController(
                 _httpRequestServiceMock.Object,
+                _recipeServiceMock.Object,
                 _mapperMock.Object,
                 _loggerMock.Object);
         }
@@ -118,6 +121,49 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             Assert.Equal(500, objectResult.StatusCode);
             var errorResponse = Assert.IsType<ErrorResponseDTO>(objectResult.Value);
             Assert.Equal(fakeRecipeAPIException.Message, errorResponse.Message);    
+        }
+
+        [Fact]
+        public async Task CreateUserRecipe_ValidInput_ReturnsCreated()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var recipeRequest = new RecipeRequestDTO
+            {
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+                ImageUrl = "https://example.com/image.jpg"
+            };
+
+            var createdRecipe = new Recipe
+            {
+                Id = Guid.NewGuid(),
+                Title = recipeRequest.Title,
+                SpoonacularId = 0,
+                Ingredients = recipeRequest.Ingredients,
+                Instructions = recipeRequest.Instructions,
+                ImageUrl = recipeRequest.ImageUrl,
+                UserId = userId
+            };
+
+            var recipeDTO = _mapperMock.Object.Map<RecipeDTO>(createdRecipe);
+
+            _recipeServiceMock
+                .Setup(s => s.CreateUserRecipeAsync(userId, recipeRequest.Title, recipeRequest.Ingredients, recipeRequest.Instructions, recipeRequest.ImageUrl))
+                .ReturnsAsync(createdRecipe);
+
+            _mapperMock
+                .Setup(m => m.Map<RecipeDTO>(createdRecipe))
+                .Returns(recipeDTO);
+
+            // Act
+            var result = await _controller.CreateUserRecipe(userId, recipeRequest);
+
+            // Assert
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal(nameof(RecipeController.GetUserRecipe), createdResult.ActionName);
+            Assert.Equal(recipeDTO, createdResult.Value);
         }
     }
 }
