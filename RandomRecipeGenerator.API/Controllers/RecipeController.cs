@@ -48,5 +48,39 @@ namespace RandomRecipeGenerator.API.Controllers
                 });
             }
         }
+
+        // POST: api/recipe/{userId}
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> CreateUserRecipe(Guid userId, [FromBody] RecipeRequestDTO request)
+        {
+            throw new NotImplementedException();
+        }
+
+        // GET: api/recipe/user/{id}
+        [HttpGet("user/{id}")]
+        public async Task<IActionResult> GetUserRecipe(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        // GET: api/recipe/user/{userId}/all
+        [HttpGet("user/{userId}/all")]
+        public async Task<IActionResult> GetUserRecipes(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        // PUT: api/recipe/{id}/user/{userId}
+        [HttpPut("{id}/user/{userId}")]
+        public async Task<IActionResult> UpdateUserRecipe(Guid id, Guid userId, [FromBody] RecipeRequestDTO request)
+        {
+            throw new NotImplementedException();
+        }
+
+        // DELETE: api/recipe/{id}/user/{userId}
+        public async Task<IActionResult> DeleteUserRecipe(Guid id, Guid userId)
+        { 
+            throw new NotImplementedException();
+        }
     }
 }
