@@ -165,5 +165,212 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             Assert.Equal(nameof(RecipeController.GetUserRecipe), createdResult.ActionName);
             Assert.Equal(recipeDTO, createdResult.Value);
         }
+
+        [Fact]
+        public async Task CreateUserRecipe_ServiceReturnsNull_ReturnsBadRequest()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var recipeRequest = new RecipeRequestDTO
+            {
+                Title = "Test Recipe",
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+                ImageUrl = "https://example.com/image.jpg"
+            };
+
+            _recipeServiceMock
+                .Setup(s => s.CreateUserRecipeAsync(userId, recipeRequest.Title, recipeRequest.Ingredients, recipeRequest.Instructions, recipeRequest.ImageUrl))
+                .ReturnsAsync((Recipe?)null);
+
+            // Act
+            var result = await _controller.CreateUserRecipe(userId, recipeRequest);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task GetUserRecipe_ValidId_ReturnsOk()
+        {
+            // Arrange
+            var recipeId = Guid.NewGuid();
+            var recipe = new Recipe
+            {
+                Id = recipeId,
+                Title = "Test Recipe",
+                SpoonacularId = 0,
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+                ImageUrl = "https://example.com/image.jpg"
+            };
+
+            var recipeDTO = _mapperMock.Object.Map<RecipeDTO>(recipe);
+
+            _recipeServiceMock
+                .Setup(s => s.GetRecipeByIdAsync(recipeId))
+                .ReturnsAsync(recipe);
+
+            _mapperMock
+                .Setup(m => m.Map<RecipeDTO>(recipe))
+                .Returns(recipeDTO);
+
+            // Act
+            var result = await _controller.GetUserRecipe(recipeId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(recipeDTO, okResult.Value);
+        }
+
+        [Fact]
+        public async Task GetUserRecipe_RecipeNotFound_ReturnsNotFound()
+        {
+            // Arrange
+            var recipeId = Guid.NewGuid();
+
+            _recipeServiceMock
+                .Setup(s => s.GetRecipeByIdAsync(recipeId))
+                .ReturnsAsync((Recipe?)null);
+
+            // Act
+            var result = await _controller.GetUserRecipe(recipeId);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task GetUserRecipes_ValidUserId_ReturnsOk()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var recipes = new List<Recipe>
+            {
+                new() { Id = Guid.NewGuid(), SpoonacularId = 0, Title = "Test Recipe", Ingredients = ["Salt", "Pepper" ], Instructions = "Mix ingredients"},
+                new() { Id = Guid.NewGuid(), SpoonacularId = 0, Title = "Another Test Recipe", Ingredients = ["Sugar", "Flour"], Instructions = "Bake ingredients"}
+            };
+
+            var recipeDTOs = _mapperMock.Object.Map<IEnumerable<RecipeDTO>>(recipes);
+
+            _recipeServiceMock
+                .Setup(s => s.GetUserRecipesAsync(userId))
+                .ReturnsAsync(recipes);
+
+            _mapperMock
+                .Setup(m => m.Map<IEnumerable<RecipeDTO>>(recipes))
+                .Returns(recipeDTOs);
+
+            // Act
+            var result = await _controller.GetUserRecipes(userId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(recipeDTOs, okResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdateUserRecipe_ValidInput_ReturnsOk()
+        {
+            // Arrange
+            var recipeId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var updateRequest = new RecipeRequestDTO
+            {
+                Title = "Updated Recipe",
+                Ingredients = ["UpdatedIngredient"],
+                Instructions = "Updated instructions",
+                ImageUrl = "https://updated.com/image.jpg"
+            };
+            
+            var updatedRecipe = new Recipe
+            {
+                Id = recipeId,
+                Title = "Test Recipe",
+                SpoonacularId = 0,
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients",
+                ImageUrl = "https://example.com/image.jpg",
+                UserId = userId
+            };
+
+            var recipeDTO = _mapperMock.Object.Map<RecipeDTO>(updatedRecipe);
+
+            _recipeServiceMock
+                .Setup(s => s.UpdateUserRecipeAsync(recipeId, userId, updateRequest.Title, updateRequest.Ingredients, updateRequest.Instructions, updateRequest.ImageUrl))
+                .ReturnsAsync(updatedRecipe);
+
+            _mapperMock
+                .Setup(m => m.Map<RecipeDTO>(updatedRecipe))
+                .Returns(recipeDTO);
+
+            // Act
+            var result = await _controller.UpdateUserRecipe(recipeId, userId, updateRequest);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(recipeDTO, okResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdateUserRecipe_ServiceReturnsNull_ReturnsNotFound()
+        {
+            // Arrange
+            var recipeId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var updateRequest = new RecipeRequestDTO
+            {
+                Title = "Updated Recipe",
+                Ingredients = ["UpdatedIngredient"],
+                Instructions = "Updated instructions",
+                ImageUrl = "https://updated.com/image.jpg"
+            };
+
+            _recipeServiceMock
+                .Setup(s => s.UpdateUserRecipeAsync(recipeId, userId, updateRequest.Title, updateRequest.Ingredients, updateRequest.Instructions, updateRequest.ImageUrl))
+                .ReturnsAsync((Recipe?)null);
+
+            // Act
+            var result = await _controller.UpdateUserRecipe(recipeId, userId, updateRequest);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteUserRecipe_ValidInput_ReturnsNoContent()
+        {
+            // Arrange
+            var recipeId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+
+            _recipeServiceMock
+                .Setup(s => s.DeleteUserRecipeAsync(recipeId, userId))
+                .ReturnsAsync(true);
+
+            // Act
+            var result = await _controller.DeleteUserRecipe(recipeId, userId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteUserRecipe_ServiceReturnsFalse_ReturnsNotFound()
+        {
+            // Arrange
+            var recipeId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+
+            _recipeServiceMock
+                .Setup(s => s.DeleteUserRecipeAsync(recipeId, userId))
+                .ReturnsAsync(false);
+
+            // Act
+            var result = await _controller.DeleteUserRecipe(recipeId, userId);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
     }
 }
