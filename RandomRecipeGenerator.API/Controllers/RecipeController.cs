@@ -53,7 +53,21 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpPost("{userId}")]
         public async Task<IActionResult> CreateUserRecipe(Guid userId, [FromBody] RecipeRequestDTO request)
         {
-            throw new NotImplementedException();
+            var result = await _recipeService.CreateUserRecipeAsync(
+                userId,
+                request.Title,
+                request.Ingredients,
+                request.Instructions,
+                request.ImageUrl
+            );
+
+            if (result == null)
+            {
+                return BadRequest("Failed to create recipe.");
+            }
+
+            var recipeDTO = _mapper.Map<RecipeDTO>(result);
+            return Ok(recipeDTO);
         }
 
         // GET: api/recipe/user/{id}
