@@ -101,7 +101,23 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpPut("{id}/user/{userId}")]
         public async Task<IActionResult> UpdateUserRecipe(Guid id, Guid userId, [FromBody] RecipeRequestDTO request)
         {
-            throw new NotImplementedException();
+            var result = await _recipeService.UpdateUserRecipeAsync(
+                id,
+                userId,
+                request.Title,
+                request.Ingredients,
+                request.Instructions,
+                request.ImageUrl
+            );
+
+            if (result == null)
+            {
+                return NotFound("Recipe not found or you don't have permission to update it.");
+            }
+
+            var recipeDTO = _mapper.Map<RecipeDTO>(result);
+
+            return Ok(recipeDTO);
         }
 
         // DELETE: api/recipe/{id}/user/{userId}
