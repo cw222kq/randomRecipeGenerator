@@ -123,7 +123,14 @@ namespace RandomRecipeGenerator.API.Controllers
         // DELETE: api/recipe/{id}/user/{userId}
         public async Task<IActionResult> DeleteUserRecipe(Guid id, Guid userId)
         { 
-            throw new NotImplementedException();
+            var result = await _recipeService.DeleteUserRecipeAsync(id, userId);
+
+            if (!result)
+            {
+                return NotFound("Recipe not found or you don't have permission to delete it.");
+            }
+
+            return NoContent();
         }
     }
 }
