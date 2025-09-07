@@ -74,7 +74,16 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetUserRecipe(Guid id)
         {
-            throw new NotImplementedException();
+            var result = await _recipeService.GetRecipeByIdAsync(id);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            var recipeDTO = _mapper.Map<RecipeDTO>(result);
+
+            return Ok(recipeDTO);
         }
 
         // GET: api/recipe/user/{userId}/all
