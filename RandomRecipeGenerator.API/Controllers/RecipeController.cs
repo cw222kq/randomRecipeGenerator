@@ -90,7 +90,11 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpGet("user/{userId}/all")]
         public async Task<IActionResult> GetUserRecipes(Guid userId)
         {
-            throw new NotImplementedException();
+            var result = await _recipeService.GetUserRecipesAsync(userId);
+
+            var recipeDTOs = _mapper.Map<IEnumerable<RecipeDTO>>(result);
+
+            return Ok(recipeDTOs);
         }
 
         // PUT: api/recipe/{id}/user/{userId}
