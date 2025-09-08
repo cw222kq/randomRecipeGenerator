@@ -117,11 +117,22 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpGet("user/{userId}/all")]
         public async Task<IActionResult> GetUserRecipes(Guid userId)
         {
-            var result = await _recipeService.GetUserRecipesAsync(userId);
+            try
+            {
+                _logger.LogInformation("Retrieving all recipes for user {UserId}", userId);
 
-            var recipeDTOs = _mapper.Map<IEnumerable<RecipeDTO>>(result);
+                var result = await _recipeService.GetUserRecipesAsync(userId);
 
-            return Ok(recipeDTOs);
+                var recipeDTOs = _mapper.Map<IEnumerable<RecipeDTO>>(result);
+                _logger.LogInformation("Successfully retrieved {Count} recipes for user {UserId}", result.Count(), userId);
+
+                return Ok(recipeDTOs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving recipes for user {UserId}", userId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while retrieving recipes.");
+            }
         }
 
         // PUT: api/recipe/{id}/user/{userId}
