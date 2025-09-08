@@ -53,7 +53,11 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpPost("{userId}")]
         public async Task<IActionResult> CreateUserRecipe(Guid userId, [FromBody] RecipeRequestDTO request)
         {
-            var result = await _recipeService.CreateUserRecipeAsync(
+            try
+            {
+                _logger.LogInformation("Creating user recipe for user {UserId}", userId);
+
+                var result = await _recipeService.CreateUserRecipeAsync(
                 userId,
                 request.Title,
                 request.Ingredients,
@@ -61,13 +65,22 @@ namespace RandomRecipeGenerator.API.Controllers
                 request.ImageUrl
             );
 
-            if (result == null)
-            {
-                return BadRequest("Failed to create recipe.");
-            }
+                if (result == null)
+                {
+                    _logger.LogWarning("Failed to create user recipe for user {UserId}", userId);
+                    return BadRequest("Failed to create recipe.");
+                }
 
-            var recipeDTO = _mapper.Map<RecipeDTO>(result);
-            return Ok(recipeDTO);
+                var recipeDTO = _mapper.Map<RecipeDTO>(result);
+                _logger.LogInformation("Successfully created user recipe {RecipeId} for user {UserId}", result.Id, userId);
+
+                return Ok(recipeDTO);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error creating user recipe for user {UserId}", userId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while creating the reicpe.");
+            }
         }
 
         // GET: api/recipe/user/{id}
