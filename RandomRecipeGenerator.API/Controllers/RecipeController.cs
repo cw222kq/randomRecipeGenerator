@@ -87,16 +87,30 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetUserRecipe(Guid id)
         {
-            var result = await _recipeService.GetRecipeByIdAsync(id);
-
-            if (result == null)
+            try
             {
-                return NotFound();
+                _logger.LogInformation("Retrieving user recipe {RecipeId}", id);
+
+                var result = await _recipeService.GetRecipeByIdAsync(id);
+
+                if (result == null)
+                {
+                    _logger.LogWarning("User recipe {RecipeId} not found", id);
+                    return NotFound();
+                }
+
+                var recipeDTO = _mapper.Map<RecipeDTO>(result);
+                _logger.LogInformation("Successfully retrieved user recipe {RecipeId}", id);
+
+                return Ok(recipeDTO);
+
             }
-
-            var recipeDTO = _mapper.Map<RecipeDTO>(result);
-
-            return Ok(recipeDTO);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user recipe {RecipeId}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while retrieving the recipe.");
+            }
+            
         }
 
         // GET: api/recipe/user/{userId}/all
