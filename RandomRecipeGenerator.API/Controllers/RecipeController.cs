@@ -139,23 +139,35 @@ namespace RandomRecipeGenerator.API.Controllers
         [HttpPut("{id}/user/{userId}")]
         public async Task<IActionResult> UpdateUserRecipe(Guid id, Guid userId, [FromBody] RecipeRequestDTO request)
         {
-            var result = await _recipeService.UpdateUserRecipeAsync(
-                id,
-                userId,
-                request.Title,
-                request.Ingredients,
-                request.Instructions,
-                request.ImageUrl
-            );
-
-            if (result == null)
+            try
             {
-                return NotFound("Recipe not found or you don't have permission to update it.");
+                _logger.LogInformation("Updating recipe {RecipeId} for user {UserId}", id, userId);
+
+                var result = await _recipeService.UpdateUserRecipeAsync(
+                    id,
+                    userId,
+                    request.Title,
+                    request.Ingredients,
+                    request.Instructions,
+                    request.ImageUrl
+                );
+
+                if (result == null)
+                {
+                    _logger.LogWarning("Failed to update recipe {RecipeId} for user {UserId} - recipe not found or not owned by user", id, userId);
+                    return NotFound("Recipe not found or you don't have permission to update it.");
+                }
+
+                var recipeDTO = _mapper.Map<RecipeDTO>(result);
+                _logger.LogInformation("Successfully updated recipe {RecipeId} for user {UserId}", id, userId);
+
+                return Ok(recipeDTO);
             }
-
-            var recipeDTO = _mapper.Map<RecipeDTO>(result);
-
-            return Ok(recipeDTO);
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error updating recipe {RecipeId} for user {UserId}", id, userId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the recipe.");
+            }
         }
 
         // DELETE: api/recipe/{id}/user/{userId}
