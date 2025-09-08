@@ -173,15 +173,27 @@ namespace RandomRecipeGenerator.API.Controllers
         // DELETE: api/recipe/{id}/user/{userId}
         [HttpDelete("{id}/user/{userId}")]
         public async Task<IActionResult> DeleteUserRecipe(Guid id, Guid userId)
-        { 
-            var result = await _recipeService.DeleteUserRecipeAsync(id, userId);
-
-            if (!result)
+        {
+            try
             {
-                return NotFound("Recipe not found or you don't have permission to delete it.");
-            }
+                _logger.LogInformation("Deleting recipe {RecipeId} for user {UserId}", id, userId);
 
-            return NoContent();
+                var result = await _recipeService.DeleteUserRecipeAsync(id, userId);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to delete recipe {RecipeId} fo user {UserId} - recipe not found or not owned by the user", id, userId);
+                    return NotFound("Recipe not found or you don't have permission to delete it.");
+                }
+
+                _logger.LogInformation("Successfully deleted recipe {RecipeId} for user {UserId}", id, userId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting recipe {RecipeId} for user {UserId}", id, userId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the recipe.");
+            } 
         }
     }
 }
