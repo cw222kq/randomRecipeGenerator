@@ -121,6 +121,7 @@ namespace RandomRecipeGenerator.API.Controllers
         }
 
         // DELETE: api/recipe/{id}/user/{userId}
+        [HttpDelete("{id}/user/{userId}")]
         public async Task<IActionResult> DeleteUserRecipe(Guid id, Guid userId)
         { 
             var result = await _recipeService.DeleteUserRecipeAsync(id, userId);
