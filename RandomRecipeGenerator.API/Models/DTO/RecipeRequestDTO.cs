@@ -5,7 +5,7 @@ namespace RandomRecipeGenerator.API.Models.DTO
     public class RecipeRequestDTO
     {
         [Required]
-        [StringLength(255, MinimumLength =1)]
+        [StringLength(255, MinimumLength = 1)]
         public required string Title { get; set; }
 
         [Required]
