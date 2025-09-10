@@ -35,6 +35,22 @@ namespace RandomRecipeGenerator.API.Repositories
                     return null;
                 }
 
+                // Set ownership when favoriting Spoonacular recipes
+                var recipe = await _context.Recipes.FindAsync(recipeId);
+                if (recipe == null)
+                {
+                    _logger.LogWarning("Recipe {RecipeId} not found when adding to favorites", recipeId);
+                    return null;
+                }
+                if (recipe != null && recipe.UserId == null)
+                {
+                    recipe.UserId = userId;
+                    recipe.UpdatedAt = DateTime.UtcNow;
+                    _logger.LogInformation("Transferred ownership of Spoonacular recipe {RecipeId} SpoonacularId: {SpoonacularId} to user {UserId}",
+                        recipeId, recipe.SpoonacularId, userId);
+                }
+                
+                // Create favorite relationship
                 var userFavoriteRecipe = new UserFavoriteRecipe
                 {
                     UserId = userId,
