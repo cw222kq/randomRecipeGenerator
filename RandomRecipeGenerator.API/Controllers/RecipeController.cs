@@ -74,7 +74,7 @@ namespace RandomRecipeGenerator.API.Controllers
                 var recipeDTO = _mapper.Map<RecipeDTO>(result);
                 _logger.LogInformation("Successfully created user recipe {RecipeId} for user {UserId}", result.Id, userId);
 
-                return Ok(recipeDTO);
+                return CreatedAtAction(nameof(GetUserRecipe), new { id = result.Id }, recipeDTO);
             }
             catch (Exception ex) 
             {

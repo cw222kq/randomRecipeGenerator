@@ -161,8 +161,10 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var result = await _controller.CreateUserRecipe(userId, recipeRequest);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(recipeDTO, okResult.Value);
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal(nameof(RecipeController.GetUserRecipe), createdResult.ActionName);
+            Assert.Equal(createdRecipe.Id, createdResult.RouteValues!["id"]);
+            Assert.Equal(recipeDTO, createdResult.Value);
         }
 
         [Fact]
