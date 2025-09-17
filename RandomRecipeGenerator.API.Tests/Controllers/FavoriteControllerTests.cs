@@ -21,7 +21,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task AddFavorite_ValidInput_ReturnsOk()
+        public async Task AddFavorite_ValidInput_ReturnsCreated()
         {
             // Arrange
             var userId = Guid.NewGuid();
@@ -36,8 +36,8 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var result = await _controller.AddFavorite(userId, recipeId);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(expectedFavorite, okResult.Value);
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal(expectedFavorite, createdResult.Value);
         }
 
         [Fact]

@@ -27,7 +27,7 @@ namespace RandomRecipeGenerator.API.Controllers
                 }
 
                 _logger.LogInformation("Successfully added favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
-                return Ok(result);
+                return CreatedAtAction(nameof(GetUserFavorites), new { UserId = userId }, result);
             }
             catch (Exception ex)
             {

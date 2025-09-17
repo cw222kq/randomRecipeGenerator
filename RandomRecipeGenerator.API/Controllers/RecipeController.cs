@@ -58,12 +58,12 @@ namespace RandomRecipeGenerator.API.Controllers
                 _logger.LogInformation("Creating user recipe for user {UserId}", userId);
 
                 var result = await _recipeService.CreateUserRecipeAsync(
-                userId,
-                request.Title,
-                request.Ingredients,
-                request.Instructions,
-                request.ImageUrl
-            );
+                    userId,
+                    request.Title,
+                    request.Ingredients,
+                    request.Instructions,
+                    request.ImageUrl
+                );
 
                 if (result == null)
                 {
