@@ -59,7 +59,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task RemoveFavorite_ValidInput_ReturnsOk()
+        public async Task RemoveFavorite_ValidInput_ReturnsNoContent()
         {
             // Arrange
             var userId = Guid.NewGuid();
@@ -73,7 +73,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var result = await _controller.RemoveFavorite(userId, recipeId);
 
             // Assert
-            Assert.IsType<OkResult>(result);
+            Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]

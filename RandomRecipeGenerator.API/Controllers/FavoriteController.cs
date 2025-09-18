@@ -52,7 +52,7 @@ namespace RandomRecipeGenerator.API.Controllers
                 }
 
                 _logger.LogInformation("Successfully removed favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
