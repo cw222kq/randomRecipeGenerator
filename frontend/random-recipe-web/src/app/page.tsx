@@ -1,12 +1,41 @@
+'use client'
+import { useEffect, useState } from 'react'
 import getRandomRecipe from '@/services/recipeService'
 import RecipeCard from '@/components/RecipeCard'
 import { Recipe } from '@/schemas/recipeSchema'
+import Spinner from '@/components/common/Spinner'
 
-export default async function HomeRoute() {
-  const result: Recipe | null = await getRandomRecipe()
-  console.log('result', result)
+/* Module-level variable to prevent double initialization in React Strict Mode
+This follows the official React documentation pattern for one-time app initialization
+Reference: https://react.dev/learn/you-might-not-need-an-effect#initializing-the-application */
+let didInit = false
 
-  if (!result) {
+export default function HomeRoute() {
+  const [initialRecipe, setInitialRecipe] = useState<Recipe | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const getInitialRandomRecipe = async () => {
+    setIsLoading(true)
+    const result: Recipe | null = await getRandomRecipe()
+    setInitialRecipe(result)
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    /* Prevent double execution in development mode (React Strict Mode)
+    Uses module-level variable as recommended by React team */
+    if (didInit) {
+      return
+    }
+    getInitialRandomRecipe()
+    didInit = true
+  }, [])
+
+  if (isLoading) {
+    return <Spinner />
+  }
+
+  if (!initialRecipe) {
     return <div className="py-6 text-center">No recipe found</div>
   }
   return (
@@ -14,7 +43,7 @@ export default async function HomeRoute() {
       <h1 className="mb-6 text-2xl font-bold tracking-tight md:mb-8 md:text-3xl">
         Fetched Random Recipe
       </h1>
-      <RecipeCard recipe={result} />
+      <RecipeCard recipe={initialRecipe} />
     </div>
   )
 }
