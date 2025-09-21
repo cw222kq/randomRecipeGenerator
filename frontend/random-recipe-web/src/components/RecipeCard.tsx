@@ -12,9 +12,10 @@ import { Button } from './ui/button'
 
 interface RecipeCardProps {
   recipe: Recipe
+  onNewRecipe: () => void
 }
 
-export default function RecipeCard({ recipe }: RecipeCardProps) {
+export default function RecipeCard({ recipe, onNewRecipe }: RecipeCardProps) {
   return (
     <Card className="mx-auto w-full max-w-3xl overflow-hidden">
       <CardHeader className="pb-4">
@@ -55,7 +56,10 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
 
       <CardFooter className="border-t pt-4">
         <div className="flex w-full flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-center sm:gap-4">
-          <Button className="cursor-pointer transition-all ease-in-out hover:scale-110">
+          <Button
+            onClick={onNewRecipe}
+            className="cursor-pointer transition-all ease-in-out hover:scale-110"
+          >
             New Recipe
           </Button>
           <Button

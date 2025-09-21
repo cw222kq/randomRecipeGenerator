@@ -43,7 +43,7 @@ export default function HomeRoute() {
       <h1 className="mb-6 text-2xl font-bold tracking-tight md:mb-8 md:text-3xl">
         Fetched Random Recipe
       </h1>
-      <RecipeCard recipe={initialRecipe} />
+      <RecipeCard recipe={initialRecipe} onNewRecipe={getInitialRandomRecipe} />
     </div>
   )
 }
