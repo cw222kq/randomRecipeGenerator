@@ -16,7 +16,11 @@ interface RecipeCardProps {
   isAuthenticated: boolean
 }
 
-export default function RecipeCard({ recipe, onNewRecipe }: RecipeCardProps) {
+export default function RecipeCard({
+  recipe,
+  onNewRecipe,
+  isAuthenticated,
+}: RecipeCardProps) {
   return (
     <Card className="mx-auto w-full max-w-3xl overflow-hidden">
       <CardHeader className="pb-4">
@@ -63,12 +67,23 @@ export default function RecipeCard({ recipe, onNewRecipe }: RecipeCardProps) {
           >
             New Recipe
           </Button>
-          <Button
-            className="cursor-pointer transition-all ease-in-out hover:scale-110"
-            variant="secondary"
-          >
-            Save Recipe
-          </Button>
+          {isAuthenticated && (
+            <Button
+              className="cursor-pointer transition-all ease-in-out hover:scale-110"
+              variant="secondary"
+            >
+              Save Recipe
+            </Button>
+          )}
+          {!isAuthenticated && (
+            <Button
+              className="cursor-pointer transition-all ease-in-out hover:scale-110"
+              variant="outline"
+              disabled
+            >
+              Login to Save Recipe
+            </Button>
+          )}
         </div>
       </CardFooter>
     </Card>
