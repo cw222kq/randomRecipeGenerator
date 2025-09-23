@@ -13,6 +13,7 @@ import { Button } from './ui/button'
 interface RecipeCardProps {
   recipe: Recipe
   onNewRecipe: () => void
+  isAuthenticated: boolean
 }
 
 export default function RecipeCard({ recipe, onNewRecipe }: RecipeCardProps) {

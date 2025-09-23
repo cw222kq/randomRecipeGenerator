@@ -4,6 +4,8 @@ import getRandomRecipe from '@/services/recipeService'
 import RecipeCard from '@/components/RecipeCard'
 import { Recipe } from '@/schemas/recipeSchema'
 import Spinner from '@/components/common/Spinner'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store'
 
 /* Module-level variable to prevent double initialization in React Strict Mode
 This follows the official React documentation pattern for one-time app initialization
@@ -11,6 +13,8 @@ Reference: https://react.dev/learn/you-might-not-need-an-effect#initializing-the
 let didInit = false
 
 export default function HomeRoute() {
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth)
+
   const [initialRecipe, setInitialRecipe] = useState<Recipe | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -43,7 +47,11 @@ export default function HomeRoute() {
       <h1 className="mb-6 text-2xl font-bold tracking-tight md:mb-8 md:text-3xl">
         Fetched Random Recipe
       </h1>
-      <RecipeCard recipe={initialRecipe} onNewRecipe={getInitialRandomRecipe} />
+      <RecipeCard
+        recipe={initialRecipe}
+        onNewRecipe={getInitialRandomRecipe}
+        isAuthenticated={isAuthenticated}
+      />
     </div>
   )
 }
