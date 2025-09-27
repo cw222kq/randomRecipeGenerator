@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import getRandomRecipe from '@/services/recipeService'
+import { getRandomRecipe } from '@/services/recipeService'
 import RecipeCard from '@/components/RecipeCard'
 import { Recipe } from '@/schemas/recipeSchema'
 import Spinner from '@/components/common/Spinner'

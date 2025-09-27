@@ -7,4 +7,4 @@ const getRandomRecipe = async (): Promise<Recipe | null> => {
   return validateData(randomRecipe, RecipeSchema, 'random recipe')
 }
 
-export default getRandomRecipe
+export { getRandomRecipe }
