@@ -1,5 +1,5 @@
 import { RecipeSchema, Recipe } from '@/schemas/recipeSchema'
-import get from './baseService'
+import { get } from './baseService'
 import validateData from '@/lib/validation'
 
 const getRandomRecipe = async (): Promise<Recipe | null> => {

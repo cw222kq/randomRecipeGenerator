@@ -64,5 +64,4 @@ const post = async <T>(
   }
 }
 
-export default get
-export { post }
+export { get, post }

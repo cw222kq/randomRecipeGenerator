@@ -1,5 +1,5 @@
 import { userSchema, User } from '@/schemas/userSchema'
-import get from './baseService'
+import { get } from './baseService'
 import validateData from '@/lib/validation'
 
 export const loginWithGoogle = (): void => {
