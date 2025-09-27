@@ -13,7 +13,9 @@ Reference: https://react.dev/learn/you-might-not-need-an-effect#initializing-the
 let didInit = false
 
 export default function HomeRoute() {
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth)
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth,
+  )
 
   const [initialRecipe, setInitialRecipe] = useState<Recipe | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -51,6 +53,7 @@ export default function HomeRoute() {
         recipe={initialRecipe}
         onNewRecipe={getInitialRandomRecipe}
         isAuthenticated={isAuthenticated}
+        user={user}
       />
     </div>
   )

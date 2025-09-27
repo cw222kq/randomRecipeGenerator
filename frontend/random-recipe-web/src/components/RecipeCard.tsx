@@ -9,11 +9,13 @@ import {
 import { Recipe } from '@/schemas/recipeSchema'
 import Image from 'next/image'
 import { Button } from './ui/button'
+import { User } from '@/schemas/userSchema'
 
 interface RecipeCardProps {
   recipe: Recipe
   onNewRecipe: () => void
   isAuthenticated: boolean
+  user: User | null
 }
 
 export default function RecipeCard({
