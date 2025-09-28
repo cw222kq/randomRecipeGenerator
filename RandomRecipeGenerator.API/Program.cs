@@ -26,13 +26,17 @@ builder.Logging.AddSerilog(logger);
 // Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
+    options.AddPolicy("AllowOauthAndFrontend",
         builder =>
         {
-            builder.WithOrigins("https://localhost:3000")
-                   .AllowCredentials()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
+            builder.WithOrigins(
+                "https://localhost:7087",
+                "https://accounts.google.com",
+                "https://localhost:3000"
+            )
+            .AllowCredentials()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
         });
 });
 
@@ -82,7 +86,6 @@ builder.Services
         options.ClientId = clientID;
         options.ClientSecret = clientSecret;
         options.CallbackPath = "/signin-google";
-
     });
 
 // Configure JWT settings
@@ -124,7 +127,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowOauthAndFrontend");
 app.UseHttpsRedirection();
 app.UseSession();
 app.UseAuthentication();
