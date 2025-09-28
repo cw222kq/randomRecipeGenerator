@@ -1,3 +1,4 @@
+'use client'
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import { Recipe } from '@/schemas/recipeSchema'
 import Image from 'next/image'
 import { Button } from './ui/button'
 import { User } from '@/schemas/userSchema'
+import { useRouter } from 'next/navigation'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -22,7 +24,17 @@ export default function RecipeCard({
   recipe,
   onNewRecipe,
   isAuthenticated,
+  user,
 }: RecipeCardProps) {
+  const router = useRouter()
+
+  const handleSaveRecipe = async (user: User) => {
+    if (!user) {
+      return
+    }
+    router.push(`/create-recipe`)
+  }
+
   return (
     <Card className="mx-auto w-full max-w-3xl overflow-hidden">
       <CardHeader className="pb-4">
@@ -69,10 +81,11 @@ export default function RecipeCard({
           >
             New Recipe
           </Button>
-          {isAuthenticated && (
+          {isAuthenticated && user && (
             <Button
               className="cursor-pointer transition-all ease-in-out hover:scale-110"
               variant="secondary"
+              onClick={() => handleSaveRecipe(user)}
             >
               Save Recipe
             </Button>
