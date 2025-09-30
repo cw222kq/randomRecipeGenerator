@@ -2,6 +2,7 @@
 import { useEffect } from 'react'
 import { useAppSelector } from '@/store/hooks'
 import { redirect } from 'next/navigation'
+import RecipeForm from '@/components/RecipeForm'
 
 export default function CreateRecipe() {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth)
@@ -21,7 +22,7 @@ export default function CreateRecipe() {
       <h1 className="mb-6 text-2xl font-bold md:mb-8 md:text-3xl">
         Create Your Own Recipe
       </h1>
-      <p>Recipe creation form will go here</p>
+      <RecipeForm />
     </div>
   )
 }
