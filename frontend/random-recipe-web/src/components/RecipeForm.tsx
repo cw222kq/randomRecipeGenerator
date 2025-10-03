@@ -1,14 +1,28 @@
 'use client'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { User } from '@/schemas/userSchema'
 
-export default function RecipeForm() {
+interface RecipeFormProps {
+  user: User
+}
+
+export default function RecipeForm({}: RecipeFormProps) {
+  const [formData, setFormData] = useState({
+    title: '',
+    ingredients: [] as string[],
+    currentIngredient: '',
+    instructions: '',
+    imageUrl: '',
+  })
+
   return (
     <Card>
-      <CardHeader className="mx-auto w-full max-w-3xl">
+      <CardHeader>
         <CardTitle>Create Recipe</CardTitle>
       </CardHeader>
       <CardContent>
@@ -19,6 +33,10 @@ export default function RecipeForm() {
             <Input
               id="title"
               type="text"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              }
               placeholder="Enter recipe title"
               required
             />
@@ -36,10 +54,31 @@ export default function RecipeForm() {
               <Input
                 id="ingredients"
                 type="text"
+                value={formData.currentIngredient}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    currentIngredient: e.target.value,
+                  }))
+                }
                 placeholder="Enter ingredients"
                 className="flex-1"
               />
-              <Button type="button" variant="secondary">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    ingredients: [
+                      ...prev.ingredients,
+                      prev.currentIngredient.trim(),
+                    ],
+                    currentIngredient: '',
+                  }))
+                  console.log(formData)
+                }}
+              >
                 Add
               </Button>
             </div>
@@ -50,6 +89,13 @@ export default function RecipeForm() {
             <Label htmlFor="instructions">Instructions *</Label>
             <Textarea
               id="instructions"
+              value={formData.instructions}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  instructions: e.target.value,
+                }))
+              }
               placeholder="Enter instructions"
               className="resize-none"
               required
@@ -59,7 +105,18 @@ export default function RecipeForm() {
           {/* Image URL*/}
           <div className="space-y-2">
             <Label htmlFor="imageUrl">Image URL (optional)</Label>
-            <Input id="imageUrl" type="url" placeholder="Enter image URL" />
+            <Input
+              id="imageUrl"
+              type="url"
+              value={formData.imageUrl}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  imageUrl: e.target.value,
+                }))
+              }
+              placeholder="Enter image URL"
+            />
           </div>
 
           <Button type="submit" className="w-full">
