@@ -20,13 +20,20 @@ export default function RecipeForm({}: RecipeFormProps) {
     imageUrl: '',
   })
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log(formData)
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create Recipe</CardTitle>
+    <Card className="mx-auto w-full max-w-3xl overflow-hidden shadow-lg">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl md:text-2xl">
+          Create Your Recipe
+        </CardTitle>
       </CardHeader>
-      <CardContent>
-        <form className="space-y-6">
+      <CardContent className="pt-0">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title">Recipe Title *</Label>
@@ -43,16 +50,48 @@ export default function RecipeForm({}: RecipeFormProps) {
           </div>
 
           {/* Ingredients */}
-          <div>
-            <Label htmlFor="ingredients">Ingredients *</Label>
-            <div className="flex flex-wrap gap-2 p-2">
-              <span className="text-sm">Ingredient 1</span>
-            </div>
+          <div className="space-y-3">
+            <Label htmlFor="add-ingredient">Ingredients *</Label>
+
+            {/* Added ingredients display */}
+            {formData.ingredients.length > 0 && (
+              <div className="bg-muted/50 rounded-lg border p-4">
+                <h3 className="text-muted-foreground mb-3 text-sm font-semibold">
+                  Added Ingredients:
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {formData.ingredients.map((ingredient, index) => (
+                    <span
+                      key={index}
+                      className="bg-secondary inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium"
+                    >
+                      {ingredient}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            ingredients: prev.ingredients.filter(
+                              (_, i) => i !== index,
+                            ),
+                          }))
+                        }
+                        className="hover:text-destructive-foreground h-4 w-4 cursor-pointer p-0"
+                      >
+                        ×
+                      </Button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Input for adding new ingredient */}
             <div className="flex gap-2">
               <Input
-                id="ingredients"
+                id="add-ingredient"
                 type="text"
                 value={formData.currentIngredient}
                 onChange={(e) =>
@@ -61,25 +100,28 @@ export default function RecipeForm({}: RecipeFormProps) {
                     currentIngredient: e.target.value,
                   }))
                 }
-                placeholder="Enter ingredients"
+                placeholder="Enter ingredient (e.g., 2 cups flour)"
                 className="flex-1"
               />
               <Button
                 type="button"
                 variant="secondary"
                 onClick={() => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    ingredients: [
-                      ...prev.ingredients,
-                      prev.currentIngredient.trim(),
-                    ],
-                    currentIngredient: '',
-                  }))
-                  console.log(formData)
+                  if (formData.currentIngredient.trim()) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      ingredients: [
+                        ...prev.ingredients,
+                        prev.currentIngredient.trim(),
+                      ],
+                      currentIngredient: '',
+                    }))
+                  }
                 }}
+                disabled={!formData.currentIngredient.trim()}
+                className="cursor-pointer transition-all ease-in-out hover:scale-105"
               >
-                Add
+                Add Ingredient
               </Button>
             </div>
           </div>
@@ -87,22 +129,24 @@ export default function RecipeForm({}: RecipeFormProps) {
           {/* Instructions */}
           <div className="space-y-2">
             <Label htmlFor="instructions">Instructions *</Label>
-            <Textarea
-              id="instructions"
-              value={formData.instructions}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  instructions: e.target.value,
-                }))
-              }
-              placeholder="Enter instructions"
-              className="resize-none"
-              required
-            />
+            <div className="bg-muted/50 rounded-lg border p-1">
+              <Textarea
+                id="instructions"
+                value={formData.instructions}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    instructions: e.target.value,
+                  }))
+                }
+                placeholder="Describe the cooking process step by step..."
+                className="min-h-[120px] resize-none border-0 bg-transparent focus-visible:ring-0"
+                required
+              />
+            </div>
           </div>
 
-          {/* Image URL*/}
+          {/* Image URL */}
           <div className="space-y-2">
             <Label htmlFor="imageUrl">Image URL (optional)</Label>
             <Input
@@ -115,12 +159,16 @@ export default function RecipeForm({}: RecipeFormProps) {
                   imageUrl: e.target.value,
                 }))
               }
-              placeholder="Enter image URL"
+              placeholder="https://example.com/recipe-image.jpg"
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            Save Recipe
+          <Button
+            type="submit"
+            className="w-full cursor-pointer transition-all ease-in-out hover:scale-105"
+            size="lg"
+          >
+            Create Recipe
           </Button>
         </form>
       </CardContent>
