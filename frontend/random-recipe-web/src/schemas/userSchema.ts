@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Define and export the Zod schema
 export const userSchema = z.object({
+  googleUserId: z.string(),
   email: z.string(),
   firstName: z.string(),
   lastName: z.string(),
