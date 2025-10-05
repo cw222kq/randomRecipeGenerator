@@ -6,5 +6,6 @@ namespace RandomRecipeGenerator.API.Services
     public interface IUserService
     {
         Task<User?> GetOrCreateUserAsync(UserDTO userDto);
+        Task<User?> GetUserByGoogleIdAsync(string googleUserId);
     }
 }
