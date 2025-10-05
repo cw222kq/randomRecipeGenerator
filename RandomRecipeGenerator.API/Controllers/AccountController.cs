@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using RandomRecipeGenerator.API.Models.DTO;
 using RandomRecipeGenerator.API.Services;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace RandomRecipeGenerator.API.Controllers
 {
@@ -58,19 +59,34 @@ namespace RandomRecipeGenerator.API.Controllers
         }
 
         [HttpGet("user")]
-        public IActionResult GetCurrentUser()
+        public async Task<IActionResult> GetCurrentUser()
         {
             if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
                 return Unauthorized();
             }
 
+            var googleUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+            if (string.IsNullOrEmpty(googleUserId))
+            {
+                return BadRequest("Google User ID not found in claims");
+            }
+
+            // Get the actual user from the database
+            var user = await _userService.GetUserByGoogleIdAsync(googleUserId);
+            if (user == null)
+            {
+                return NotFound("User not found in the database");
+            }
+
             var userDTO = new UserDTO
             {
-                GoogleUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
-                Email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? string.Empty,
-                FirstName = User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value ?? string.Empty,
-                LastName = User.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value ?? string.Empty,
+                Id = user.Id,
+                GoogleUserId = user.GoogleUserId,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
             };
 
             return Ok(userDTO);
