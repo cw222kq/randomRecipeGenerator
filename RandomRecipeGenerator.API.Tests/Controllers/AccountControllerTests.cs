@@ -150,5 +150,50 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
                 dto.FirstName == createdUser.FirstName &&
                 dto.LastName == createdUser.LastName)), Times.Once); 
         }
+
+        [Fact]
+        public async Task GetCurrentUser_AuthenticatedUser_ReturnsUserWithDatabaseId()
+        {
+            // Arrange
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, "google_web_123"),
+                new(ClaimTypes.Email, "web.user@example.com"),
+                new(ClaimTypes.GivenName, "Web"),
+                new(ClaimTypes.Surname, "User")
+            };
+
+            var identity = new ClaimsIdentity(claims, "Google");
+            var principal = new ClaimsPrincipal(identity);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.Setup(c => c.User).Returns(principal);
+
+            _accountController.ControllerContext = new ControllerContext
+            {
+                HttpContext = mockHttpContext.Object
+            };
+
+            var databaseUser = new User
+            {
+                GoogleUserId = "google_web_123",
+                Email = "web.user@example.com",
+                FirstName = "Web",
+                LastName = "User"
+            };
+
+            _userServiceMock
+                .Setup(s => s.GetUserByGoogleIdAsync("google_web_123"))
+                .ReturnsAsync(databaseUser);
+
+            // Act
+            var result = await _accountController.GetCurrentUser();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var userDto = Assert.IsType<UserDTO>(okResult.Value);
+            Assert.Equal(databaseUser.Id, userDto.Id);
+            Assert.Equal("google_web_123", userDto.GoogleUserId);
+        }
     }
  }
