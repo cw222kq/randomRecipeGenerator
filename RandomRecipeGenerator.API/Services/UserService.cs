@@ -72,7 +72,7 @@ namespace RandomRecipeGenerator.API.Services
             }
         }
 
-        async Task<User?> IUserService.GetUserByGoogleIdAsync(string googleUserId)
+        public async Task<User?> GetUserByGoogleIdAsync(string googleUserId)
         {
             if (string.IsNullOrWhiteSpace(googleUserId))
             {

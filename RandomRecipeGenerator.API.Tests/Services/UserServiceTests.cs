@@ -164,5 +164,42 @@ namespace RandomRecipeGenerator.API.Tests.Services
             Assert.Null(result);
             _userRepositoryMock.Verify(r => r.GetByGoogleUserIdAsync(It.IsAny<string>()), Times.Never);
         }
+
+        [Fact]
+        public async Task GetUserByGoogleIdAsync_ValidGoogleId_ReturnsUser()
+        {
+            // Arrange
+            var googleUserId = "12345";
+            var expectedUser = new User
+            {
+                Id = Guid.NewGuid(),
+                GoogleUserId = googleUserId,
+                Email = "john.doe@example.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            _userRepositoryMock
+                .Setup(r => r.GetByGoogleUserIdAsync(googleUserId))
+                .ReturnsAsync(expectedUser);
+
+            // Act 
+            var result = await _userService.GetUserByGoogleIdAsync(googleUserId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(expectedUser.Id, result.Id);
+            Assert.Equal(googleUserId, result.GoogleUserId);
+        }
+
+        [Fact]
+        public async Task GetUserByGoogleIdAsync_EmptyGoogleId_ReturnsNull()
+        {
+            // Act
+            var result = await _userService.GetUserByGoogleIdAsync("");
+
+            // Assert
+            Assert.Null(result);
+        }
     }
 }
