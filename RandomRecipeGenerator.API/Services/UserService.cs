@@ -71,5 +71,24 @@ namespace RandomRecipeGenerator.API.Services
                 return null;
             }
         }
+
+        async Task<User?> IUserService.GetUserByGoogleIdAsync(string googleUserId)
+        {
+            if (string.IsNullOrWhiteSpace(googleUserId))
+            {
+                _logger.LogError("GoogleUserId is null or empty");
+                return null;
+            }
+
+            try
+            {
+                return await _userRepository.GetByGoogleUserIdAsync(googleUserId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user by Google ID: {GoogleuserId}", googleUserId);
+                return null;
+            }
+        }
     }
 }
