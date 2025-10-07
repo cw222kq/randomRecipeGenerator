@@ -22,7 +22,7 @@ export default function CreateRecipe() {
       <h1 className="mb-6 text-2xl font-bold md:mb-8 md:text-3xl">
         Create Your Own Recipe
       </h1>
-      <RecipeForm />
+      <RecipeForm user={user} />
     </div>
   )
 }

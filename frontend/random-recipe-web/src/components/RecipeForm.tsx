@@ -6,12 +6,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { User } from '@/schemas/userSchema'
+import { saveRecipe } from '@/services/recipeService'
+import { toast } from 'react-toastify'
 
 interface RecipeFormProps {
   user: User
 }
 
-export default function RecipeForm({}: RecipeFormProps) {
+export default function RecipeForm({ user }: RecipeFormProps) {
   const [formData, setFormData] = useState({
     title: '',
     ingredients: [] as string[],
@@ -19,10 +21,62 @@ export default function RecipeForm({}: RecipeFormProps) {
     instructions: '',
     imageUrl: '',
   })
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      ingredients: [] as string[],
+      currentIngredient: '',
+      instructions: '',
+      imageUrl: '',
+    })
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
+
+    // Validation
+    if (formData.ingredients.length === 0) {
+      toast.error('Please add at least one ingredient')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    /* blocking the UI for 9 seconds */
+    /*const start = Date.now()
+    while (Date.now() - start < 9000) {
+      // Do nothing, just spin
+    }*/
+
+    try {
+      const result = await saveRecipe(user.id, {
+        title: formData.title.trim(),
+        ingredients: formData.ingredients.map((ingredient) =>
+          ingredient.trim(),
+        ),
+        instructions: formData.instructions.trim(),
+        imageUrl: formData.imageUrl.trim() || undefined,
+      })
+
+      if (result) {
+        toast.success('Recipe created successfully')
+        resetForm()
+      } else {
+        setIsSubmitting(false)
+        toast.error('Failed to create recipe')
+      }
+    } catch (error) {
+      console.error('Error saving recipe:', error)
+      toast.error('An error occurred while saving the recipe')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (isSubmitting) {
+    return toast.info('Creating Recipe...')
   }
 
   return (
@@ -168,7 +222,7 @@ export default function RecipeForm({}: RecipeFormProps) {
             className="w-full cursor-pointer transition-all ease-in-out hover:scale-105"
             size="lg"
           >
-            Create Recipe
+            {isSubmitting ? 'Creating Recipe...' : 'Create Recipe'}
           </Button>
         </form>
       </CardContent>
