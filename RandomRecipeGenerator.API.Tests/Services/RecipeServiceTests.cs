@@ -40,7 +40,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
             {
                 Id = Guid.NewGuid(),
                 Title = title,
-                SpoonacularId = 0,
+                SpoonacularId = null,
                 Ingredients = ingredients,
                 Instructions = instructions,
                 ImageUrl = imageUrl,
@@ -58,7 +58,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
             Assert.NotNull(result);
             Assert.Equal(title, result.Title);
             Assert.Equal(userId, result.UserId);
-            Assert.Equal(0, result.SpoonacularId); // User-created recipes have SpoonacularId = 0
+            Assert.Equal(0, result.SpoonacularId); // User-created recipes have SpoonacularId = null
             _recipeRepositoryMock
                 .Verify(r => r.CreateRecipeAsync(It.Is<Recipe>(recipe => 
                     recipe.Title == title &&
@@ -155,7 +155,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
             {
                 Id = recipeId,
                 Title = "Test Recipe",
-                SpoonacularId = 0,
+                SpoonacularId = null,
                 Ingredients = ["Salt", "Pepper"],
                 Instructions = "Mix ingredients",
                 ImageUrl = "https://example.com/image.jpg"
@@ -186,7 +186,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
                 {
                     Id = Guid.NewGuid(),
                     Title = "Test Recipe",
-                    SpoonacularId = 0,
+                    SpoonacularId = null,
                     Ingredients = ["Salt", "Pepper"],
                     Instructions = "Mix ingredients",
                     ImageUrl = "https://example.com/image.jpg"
@@ -195,7 +195,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
                 {
                     Id = Guid.NewGuid(),
                     Title = "Test Recipe 2",
-                    SpoonacularId = 0,
+                    SpoonacularId = null,
                     Ingredients = ["Olives", "Sugar"],
                     Instructions = "Chop the olives",
                     ImageUrl = "https://anotherexample.com/image.jpg"
@@ -231,7 +231,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
             {
                 Id = recipeId,
                 Title = "Old Recipe Title",
-                SpoonacularId = 0,
+                SpoonacularId = null,
                 Ingredients = ["Old Salt", "Old Pepper"],
                 Instructions = "Old Mix ingredients",
                 ImageUrl = "https://oldexample.com/image.jpg",
@@ -242,7 +242,7 @@ namespace RandomRecipeGenerator.API.Tests.Services
             {
                 Id = recipeId,
                 Title = title,
-                SpoonacularId = 0,
+                SpoonacularId = null,
                 Ingredients = ingredients,
                 Instructions = instructions,
                 ImageUrl = imageUrl,
