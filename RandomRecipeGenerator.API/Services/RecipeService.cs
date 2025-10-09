@@ -41,7 +41,7 @@ namespace RandomRecipeGenerator.API.Services
                 var recipe = new Recipe
                 {
                     Title = title,
-                    SpoonacularId = 0,
+                    SpoonacularId = null,
                     Ingredients = ingredients,
                     Instructions = instructions,
                     ImageUrl = imageUrl,

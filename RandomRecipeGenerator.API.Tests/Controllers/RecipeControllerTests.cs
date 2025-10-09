@@ -140,7 +140,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             {
                 Id = Guid.NewGuid(),
                 Title = recipeRequest.Title,
-                SpoonacularId = 0,
+                SpoonacularId = null,
                 Ingredients = recipeRequest.Ingredients,
                 Instructions = recipeRequest.Instructions,
                 ImageUrl = recipeRequest.ImageUrl,
@@ -200,7 +200,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             {
                 Id = recipeId,
                 Title = "Test Recipe",
-                SpoonacularId = 0,
+                SpoonacularId = null,
                 Ingredients = ["Salt", "Pepper"],
                 Instructions = "Mix ingredients",
                 ImageUrl = "https://example.com/image.jpg"
@@ -248,8 +248,8 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var userId = Guid.NewGuid();
             var recipes = new List<Recipe>
             {
-                new() { Id = Guid.NewGuid(), SpoonacularId = 0, Title = "Test Recipe", Ingredients = ["Salt", "Pepper" ], Instructions = "Mix ingredients"},
-                new() { Id = Guid.NewGuid(), SpoonacularId = 0, Title = "Another Test Recipe", Ingredients = ["Sugar", "Flour"], Instructions = "Bake ingredients"}
+                new() { Id = Guid.NewGuid(), SpoonacularId = null, Title = "Test Recipe", Ingredients = ["Salt", "Pepper" ], Instructions = "Mix ingredients"},
+                new() { Id = Guid.NewGuid(), SpoonacularId = null, Title = "Another Test Recipe", Ingredients = ["Sugar", "Flour"], Instructions = "Bake ingredients"}
             };
 
             var recipeDTOs = _mapperMock.Object.Map<IEnumerable<RecipeDTO>>(recipes);
@@ -288,7 +288,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             {
                 Id = recipeId,
                 Title = "Test Recipe",
-                SpoonacularId = 0,
+                SpoonacularId = null,
                 Ingredients = ["Salt", "Pepper"],
                 Instructions = "Mix ingredients",
                 ImageUrl = "https://example.com/image.jpg",

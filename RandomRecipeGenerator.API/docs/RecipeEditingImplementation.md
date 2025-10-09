@@ -153,7 +153,7 @@ public interface IRecipeService
 **Key Implementation Points:**
 - Business validation for all input parameters (GUIDs, strings, collections)
 - Recipe ownership enforcement for update/delete operations
-- Sets SpoonacularId = 0 for user-created recipes
+- Sets SpoonacularId = null for user-created recipes
 - Comprehensive logging at Information/Warning/Error levels
 - Exception handling with detailed error logging
 - Delegates data operations to repository layer
