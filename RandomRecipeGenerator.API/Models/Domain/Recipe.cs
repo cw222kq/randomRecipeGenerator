@@ -8,8 +8,7 @@ namespace RandomRecipeGenerator.API.Models.Domain
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Required]
-        public required int? SpoonacularId { get; set; }
+        public int? SpoonacularId { get; set; }
 
         [Required]
         [StringLength(255)]
