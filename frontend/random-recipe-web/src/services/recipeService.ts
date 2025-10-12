@@ -25,4 +25,20 @@ const saveRecipe = async (
   return validateData(savedRecipe, RecipeSchema, 'saved recipe')
 }
 
-export { getRandomRecipe, saveRecipe }
+const getUserRecipes = async (userId: string): Promise<Recipe[] | null> => {
+  const userRecipes = await get<Recipe[]>(
+    `/api/recipe/user/${userId}/all`,
+    { credentials: 'include' },
+    'user recipes',
+  )
+  if (!userRecipes) {
+    return null
+  }
+
+  // Validate each recipe in the array
+  return userRecipes
+    .map((recipe) => validateData(recipe, RecipeSchema, 'user recipes'))
+    .filter((recipe) => recipe !== null) as Recipe[]
+}
+
+export { getRandomRecipe, saveRecipe, getUserRecipes }
