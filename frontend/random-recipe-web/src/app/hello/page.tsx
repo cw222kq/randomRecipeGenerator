@@ -7,7 +7,8 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { login, setLoading } from '@/store/features/auth/authSlice'
 import Spinner from '@/components/common/Spinner'
 import { toast } from 'react-toastify'
-import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
+import ChevronRight from '@/components/icons/ChevronRight'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -69,19 +70,23 @@ export default function Hello() {
           >
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>My tasty Recipies</span>
-                <span className="text-sm font-normal">
-                  {showRecipes && '▼ Hide'}
-                  {!showRecipes && '▶ Show'}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">My tasty Recipies</span>
+                  <span className="text-2xl">🍳</span>
+                </div>
+                <ChevronRight
+                  className={`h-8 w-8 transition-transform duration-200 ${showRecipes ? 'rotate-90' : ''}`}
+                />
               </CardTitle>
             </CardHeader>
           </Card>
 
           {showRecipes && (
-            <div className="rounded-md bg-gray-100 p-4">
-              <p> All my recipes will go here...</p>
-            </div>
+            <Card className="mb-6 bg-gray-50">
+              <CardContent className="py-8 text-center">
+                <p> All my recipes will go here!</p>
+              </CardContent>
+            </Card>
           )}
         </div>
       )}
