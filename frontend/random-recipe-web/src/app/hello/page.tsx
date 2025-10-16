@@ -9,6 +9,8 @@ import Spinner from '@/components/common/Spinner'
 import { toast } from 'react-toastify'
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import ChevronRight from '@/components/icons/ChevronRight'
+import { getUserRecipes } from '@/services/recipeService'
+import { Recipe } from '@/schemas/recipeSchema'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -16,6 +18,9 @@ export default function Hello() {
   const [error, setError] = useState<string | null>(null)
   const [hasChecked, setHasChecked] = useState<boolean>(false)
   const [showRecipes, setShowRecipes] = useState<boolean>(false)
+  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(false)
+  const [recipesError, setRecipesError] = useState<string | null>(null)
 
   useEffect(() => {
     const setLoggedInUser = async () => {
@@ -43,7 +48,25 @@ export default function Hello() {
     }
   }, [user, dispatch, hasChecked, isLoading])
 
-  const handleToggleRecipes = () => {
+  const handleToggleRecipes = async () => {
+    if (!showRecipes && user) {
+      setIsLoadingRecipes(true)
+      setRecipesError(null)
+
+      try {
+        const userRecipes: Recipe[] | null = await getUserRecipes(user.id)
+        if (!userRecipes) {
+          setRecipesError('Failed to load recipes')
+          return
+        }
+        setRecipes(userRecipes)
+      } catch (error) {
+        console.error('Error loading recipes:', error)
+        setRecipesError('An error occurred while loading the recipes')
+      } finally {
+        setIsLoadingRecipes(false)
+      }
+    }
     setShowRecipes(!showRecipes)
   }
 
@@ -83,8 +106,33 @@ export default function Hello() {
 
           {showRecipes && (
             <Card className="mb-6 bg-gray-50">
-              <CardContent className="py-8 text-center">
-                <p> All my recipes will go here!</p>
+              <CardContent className="py-8">
+                {isLoadingRecipes && (
+                  <div className="text-center">
+                    <Spinner />
+                    <p className="mt-2 text-gray-600">
+                      Loading your recipes...
+                    </p>
+                  </div>
+                )}
+
+                {recipesError && (
+                  <div className="text-center text-red-500">
+                    <p>{recipesError}</p>
+                  </div>
+                )}
+
+                {!isLoadingRecipes && !recipesError && recipes.length === 0 && (
+                  <div className="text-center text-gray-600">
+                    <p>You don not have any created recipes yet.</p>
+                  </div>
+                )}
+
+                {!isLoadingRecipes && !recipesError && recipes.length > 0 && (
+                  <div className="text-center">
+                    <p>Found {recipes.length} recipe(s)!</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
