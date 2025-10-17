@@ -116,11 +116,7 @@ export default function Hello() {
                   </div>
                 )}
 
-                {recipesError && (
-                  <div className="text-center text-red-500">
-                    <p>{recipesError}</p>
-                  </div>
-                )}
+                {recipesError && toast.error(recipesError)}
 
                 {!isLoadingRecipes && !recipesError && recipes.length === 0 && (
                   <div className="text-center text-gray-600">
