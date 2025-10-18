@@ -49,6 +49,12 @@ export default function Hello() {
     }
   }, [user, dispatch, hasChecked, isLoading])
 
+  useEffect(() => {
+    if (recipesError) {
+      toast.error(recipesError)
+    }
+  }, [recipesError])
+
   const handleToggleRecipes = async () => {
     if (!showRecipes && user) {
       setIsLoadingRecipes(true)
@@ -116,8 +122,6 @@ export default function Hello() {
                     </p>
                   </div>
                 )}
-
-                {recipesError && toast.error(recipesError)}
 
                 {!isLoadingRecipes && !recipesError && recipes.length === 0 && (
                   <div className="text-center text-gray-600">
