@@ -4,13 +4,17 @@ import Image from 'next/image'
 
 interface RecipeListItemProps {
   recipe: Recipe
+  onClick: (recipeId: string) => void
 }
 
-export default function RecipeListItem({ recipe }: RecipeListItemProps) {
+export default function RecipeListItem({
+  recipe,
+  onClick,
+}: RecipeListItemProps) {
   return (
     <Card
       className="group cursor-pointer border-l-4 transition-all hover:scale-[1.02] hover:shadow-lg"
-      onClick={() => console.log('View recipe:', recipe.id)}
+      onClick={() => onClick(recipe.id)}
     >
       {/* Recipe image */}
       <CardContent className="p-4">

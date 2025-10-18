@@ -139,7 +139,13 @@ export default function Hello() {
 
                     <div className="space-y-2">
                       {recipes.map((recipe) => (
-                        <RecipeListItem key={recipe.id} recipe={recipe} />
+                        <RecipeListItem
+                          key={recipe.id}
+                          recipe={recipe}
+                          onClick={(recipeId) =>
+                            console.log('View recipe:', recipeId)
+                          }
+                        />
                       ))}
                     </div>
                   </div>
