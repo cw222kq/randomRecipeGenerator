@@ -11,7 +11,7 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import ChevronRight from '@/components/icons/ChevronRight'
 import { getUserRecipes } from '@/services/recipeService'
 import { Recipe } from '@/schemas/recipeSchema'
-import RecipeListItem from '@/components/RecipeListItem'
+import RecipeList from '@/components/RecipeList'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -77,6 +77,10 @@ export default function Hello() {
     setShowRecipes(!showRecipes)
   }
 
+  const handleRecipeClick = (recipeId: string) => {
+    console.log('View recipe:', recipeId)
+  }
+
   return (
     <div className="py-6">
       {error && <div className="mb-8 text-red-500">{error}</div>}
@@ -129,26 +133,10 @@ export default function Hello() {
                 )}
 
                 {!isLoadingRecipes && !recipesError && recipes.length > 0 && (
-                  <div className="space-y-3">
-                    <div className="mb-4 text-center">
-                      <p className="text-sm text-gray-600">
-                        {recipes.length} recipe{recipes.length > 1 ? 's' : ''}{' '}
-                        found!
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      {recipes.map((recipe) => (
-                        <RecipeListItem
-                          key={recipe.id}
-                          recipe={recipe}
-                          onClick={(recipeId) =>
-                            console.log('View recipe:', recipeId)
-                          }
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  <RecipeList
+                    recipes={recipes}
+                    onRecipeClick={handleRecipeClick}
+                  />
                 )}
               </CardContent>
             </Card>
