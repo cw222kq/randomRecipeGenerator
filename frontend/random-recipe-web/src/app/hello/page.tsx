@@ -12,6 +12,7 @@ import ChevronRight from '@/components/icons/ChevronRight'
 import { getUserRecipes } from '@/services/recipeService'
 import { Recipe } from '@/schemas/recipeSchema'
 import RecipeList from '@/components/RecipeList'
+import RecipeDetailModal from '@/components/RecipeDetailModal'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -22,6 +23,8 @@ export default function Hello() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(false)
   const [recipesError, setRecipesError] = useState<string | null>(null)
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
   useEffect(() => {
     const setLoggedInUser = async () => {
@@ -78,7 +81,18 @@ export default function Hello() {
   }
 
   const handleRecipeClick = (recipeId: string) => {
-    console.log('View recipe:', recipeId)
+    const recipe = recipes.find((recipe) => recipe.id === recipeId)
+    if (!recipe) {
+      toast.error('Recipe not found')
+      return
+    }
+    setSelectedRecipe(recipe)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedRecipe(null)
   }
 
   return (
@@ -143,6 +157,11 @@ export default function Hello() {
           )}
         </div>
       )}
+      <RecipeDetailModal
+        recipe={selectedRecipe}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }

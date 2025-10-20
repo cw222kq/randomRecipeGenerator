@@ -32,7 +32,7 @@ export default function RecipeDetailModal({
             </Button>
           </CardHeader>
           <CardContent>
-            <p>The recipe informmation</p>
+            <p>The recipe information</p>
           </CardContent>
         </Card>
       </div>
