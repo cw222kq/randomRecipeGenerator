@@ -17,10 +17,10 @@ export default function RecipeDetailModal({
     return null
   }
   return (
-    <div>
-      <div>
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center">
+      <div className="mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle>{recipe.title}</CardTitle>
             <Button
               variant="ghost"
