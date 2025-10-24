@@ -57,6 +57,31 @@ export default function RecipeDetailModal({
                   </div>
                 )}
               </div>
+
+              {/* Recipe Details */}
+              <div className="space-y-6">
+                {/* Ingredients */}
+                <h3 className="mb-3 text-lg font-semibold text-gray-900">
+                  Ingredients:
+                </h3>
+                <ul className="space-y-2 border-b pb-4 pl-2">
+                  {recipe.ingredients.map((ingredient, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-2 text-gray-700"
+                    >
+                      <span className="text-gray-500">•</span>
+                      {ingredient}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Instructions */}
+                <h3 className="mb-3 text-lg font-semibold text-gray-900">
+                  Instructions:
+                </h3>
+                <p>{recipe.instructions}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
