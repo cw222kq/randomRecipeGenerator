@@ -18,11 +18,11 @@ export default function RecipeDetailModal({
     return null
   }
   return (
-    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
       <div className="mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b pb-4">
-            <CardTitle>{recipe.title}</CardTitle>
+            <CardTitle className="text-2xl font-bold">{recipe.title}</CardTitle>
             <Button
               variant="ghost"
               size="sm"
@@ -32,7 +32,7 @@ export default function RecipeDetailModal({
               X
             </Button>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="grid gap-6 md:grid-cols-2">
               {/* Recipe Image */}
               <div className="space-y-4">
@@ -58,30 +58,48 @@ export default function RecipeDetailModal({
                 )}
               </div>
 
-              {/* Recipe Details */}
+              {/* Ingredients */}
               <div className="space-y-6">
-                {/* Ingredients */}
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">
-                  Ingredients:
-                </h3>
-                <ul className="space-y-2 border-b pb-4 pl-2">
-                  {recipe.ingredients.map((ingredient, index) => (
-                    <li
-                      key={index}
-                      className="flex items-start gap-2 text-gray-700"
-                    >
-                      <span className="text-gray-500">•</span>
-                      {ingredient}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Instructions */}
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">
-                  Instructions:
-                </h3>
-                <p>{recipe.instructions}</p>
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                    Ingredients:
+                  </h3>
+                  {recipe.ingredients && recipe.ingredients.length > 0 && (
+                    <ul className="space-y-2 pb-4 pl-2">
+                      {recipe.ingredients.map((ingredient, index) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-2 text-gray-700"
+                        >
+                          <span className="text-gray-500">•</span>
+                          {ingredient}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {!recipe.ingredients ||
+                    (recipe.ingredients.length === 0 && (
+                      <p className="text-gray-500">No ingredients listed</p>
+                    ))}
+                </div>
               </div>
+            </div>
+
+            {/* Instructions */}
+            <div className="mt-6 border-t pt-6">
+              <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                Instructions:
+              </h3>
+              {recipe.instructions && (
+                <div className="prose prose-sm max-w-none">
+                  <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
+                    {recipe.instructions}
+                  </p>
+                </div>
+              )}
+              {!recipe.instructions && (
+                <p className="text-gray-500">No instructions provided</p>
+              )}
             </div>
           </CardContent>
         </Card>
