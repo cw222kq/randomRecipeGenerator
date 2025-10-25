@@ -2,10 +2,10 @@ interface EditIconProps {
   className?: string
 }
 
-export default function EditIcon({ className = 'h-4 w-4' }: EditIconProps) {
+export default function EditIcon({ className }: EditIconProps) {
   return (
     <svg
-      className={className}
+      className={className || 'h-4 w-4'}
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"

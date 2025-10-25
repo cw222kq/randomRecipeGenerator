@@ -2,6 +2,8 @@ import { Recipe } from '@/schemas/recipeSchema'
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
+import EditIcon from '@/components/icons/EditIcon'
+import DeleteIcon from '@/components/icons/DeleteIcon'
 
 interface RecipeDetailModalProps {
   recipe: Recipe | null
@@ -23,14 +25,36 @@ export default function RecipeDetailModal({
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b pb-4">
             <CardTitle className="text-2xl font-bold">{recipe.title}</CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="cursor-pointer p-2 hover:text-gray-400"
-            >
-              X
-            </Button>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                onClick={() => {}}
+                className="cursor-pointer hover:text-blue-400"
+                title="Edit Recipe"
+              >
+                <EditIcon className="size-5" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={() => {}}
+                className="cursor-pointer hover:text-red-400"
+                title="Delete Recipe"
+              >
+                <DeleteIcon className="size-5" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={onClose}
+                className="cursor-pointer hover:text-blue-400"
+                title="Close Recipe Details"
+              >
+                X
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid gap-6 md:grid-cols-2">
