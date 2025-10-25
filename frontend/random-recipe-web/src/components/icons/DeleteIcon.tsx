@@ -2,10 +2,10 @@ interface DeleteIconProps {
   className?: string
 }
 
-export default function DeleteIcon({ className = 'h-4 w-4' }: DeleteIconProps) {
+export default function DeleteIcon({ className }: DeleteIconProps) {
   return (
     <svg
-      className={className}
+      className={className || 'h-4 w-4'}
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
