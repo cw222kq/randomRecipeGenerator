@@ -49,7 +49,7 @@ export default function RecipeDetailModal({
               <Button
                 variant="ghost"
                 onClick={onClose}
-                className="cursor-pointer hover:text-blue-400"
+                className="text-md cursor-pointer hover:text-blue-400"
                 title="Close Recipe Details"
               >
                 X
