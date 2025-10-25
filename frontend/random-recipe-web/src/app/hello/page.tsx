@@ -95,6 +95,14 @@ export default function Hello() {
     setSelectedRecipe(null)
   }
 
+  const handleEditRecipe = (recipeId: string) => {
+    console.log('Editing recipe:', recipeId)
+  }
+
+  const handleDeleteRecipe = (recipeId: string) => {
+    console.log('Deleting recipe:', recipeId)
+  }
+
   return (
     <div className="py-6">
       {error && <div className="mb-8 text-red-500">{error}</div>}
@@ -161,6 +169,8 @@ export default function Hello() {
         recipe={selectedRecipe}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onEdit={handleEditRecipe}
+        onDelete={handleDeleteRecipe}
       />
     </div>
   )

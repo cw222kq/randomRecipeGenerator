@@ -9,12 +9,16 @@ interface RecipeDetailModalProps {
   recipe: Recipe | null
   isOpen: boolean
   onClose: () => void
+  onEdit: (recipeId: string) => void
+  onDelete: (recipeId: string) => void
 }
 
 export default function RecipeDetailModal({
   recipe,
   isOpen,
   onClose,
+  onEdit,
+  onDelete,
 }: RecipeDetailModalProps) {
   if (!isOpen || !recipe) {
     return null
@@ -30,7 +34,7 @@ export default function RecipeDetailModal({
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
-                onClick={() => {}}
+                onClick={() => onEdit(recipe.id)}
                 className="cursor-pointer hover:text-blue-400"
                 title="Edit Recipe"
               >
@@ -39,7 +43,7 @@ export default function RecipeDetailModal({
 
               <Button
                 variant="ghost"
-                onClick={() => {}}
+                onClick={() => onDelete(recipe.id)}
                 className="cursor-pointer hover:text-red-400"
                 title="Delete Recipe"
               >
