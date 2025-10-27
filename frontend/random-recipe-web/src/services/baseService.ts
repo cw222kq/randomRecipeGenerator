@@ -10,7 +10,7 @@ interface DeleteOptions {
   credentials?: RequestCredentials
 }
 
-const get = async <T>(
+const getRequest = async <T>(
   endpoint: string,
   options: GetOptions = {},
   context: string = 'data',
@@ -35,7 +35,7 @@ const get = async <T>(
   }
 }
 
-const post = async <T>(
+const postRequest = async <T>(
   endpoint: string,
   data: unknown,
   options: PostOptions = {},
@@ -97,4 +97,4 @@ const deleteRequest = async (
   }
 }
 
-export { get, post, deleteRequest }
+export { getRequest, postRequest, deleteRequest }
