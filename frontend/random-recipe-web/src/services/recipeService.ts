@@ -1,9 +1,13 @@
 import { RecipeSchema, Recipe } from '@/schemas/recipeSchema'
-import { get, post, deleteRequest } from './baseService'
+import { getRequest, postRequest, deleteRequest } from './baseService'
 import validateData from '@/lib/validation'
 
 const getRandomRecipe = async (): Promise<Recipe | null> => {
-  const randomRecipe = await get<Recipe>('/api/recipe', {}, 'random recipe')
+  const randomRecipe = await getRequest<Recipe>(
+    '/api/recipe',
+    {},
+    'random recipe',
+  )
   return validateData(randomRecipe, RecipeSchema, 'random recipe')
 }
 
@@ -16,7 +20,7 @@ const saveRecipe = async (
     imageUrl?: string
   },
 ): Promise<Recipe | null> => {
-  const savedRecipe = await post<Recipe>(
+  const savedRecipe = await postRequest<Recipe>(
     `/api/recipe/${userId}`,
     recipeData,
     { credentials: 'include' },
@@ -26,7 +30,7 @@ const saveRecipe = async (
 }
 
 const getUserRecipes = async (userId: string): Promise<Recipe[] | null> => {
-  const userRecipes = await get<Recipe[]>(
+  const userRecipes = await getRequest<Recipe[]>(
     `/api/recipe/user/${userId}/all`,
     { credentials: 'include' },
     'user recipes',
