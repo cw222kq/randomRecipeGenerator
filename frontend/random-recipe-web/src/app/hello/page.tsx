@@ -13,6 +13,7 @@ import { getUserRecipes } from '@/services/recipeService'
 import { Recipe } from '@/schemas/recipeSchema'
 import RecipeList from '@/components/RecipeList'
 import RecipeDetailModal from '@/components/RecipeDetailModal'
+import { deleteRecipe } from '@/services/recipeService'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -99,8 +100,38 @@ export default function Hello() {
     console.log('Editing recipe:', recipeId)
   }
 
-  const handleDeleteRecipe = (recipeId: string) => {
-    console.log('Deleting recipe:', recipeId)
+  const handleDeleteRecipe = async (recipeId: string) => {
+    if (!user) {
+      toast.error('User not authenticated')
+      return
+    }
+
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this recipe? This action cannot be undone.',
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      await deleteRecipe(recipeId, user.id)
+
+      toast.success('Recipe deleted successfully')
+
+      setRecipes((prevRecipes) =>
+        prevRecipes.filter((recipe) => recipe.id !== recipeId),
+      )
+
+      if (selectedRecipe?.id === recipeId) {
+        handleCloseModal()
+      }
+    } catch (error) {
+      console.error('Error deleting recipe:', error)
+      toast.error('Failed to delete recipe')
+    } finally {
+      setIsLoadingRecipes(false)
+    }
   }
 
   return (
