@@ -1,5 +1,5 @@
 import { userSchema, User } from '@/schemas/userSchema'
-import { get } from './baseService'
+import { getRequest } from './baseService'
 import validateData from '@/lib/validation'
 
 export const loginWithGoogle = (): void => {
@@ -11,7 +11,7 @@ export const logoutWithGoogle = (): void => {
 }
 
 export const getLoggedInUser = async (): Promise<User | null> => {
-  const loggedInUser = await get<User>(
+  const loggedInUser = await getRequest<User>(
     '/api/account/user',
     { credentials: 'include' },
     'logged in user',
