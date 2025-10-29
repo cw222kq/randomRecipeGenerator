@@ -10,6 +10,10 @@ interface DeleteOptions {
   credentials?: RequestCredentials
 }
 
+interface PutOptions {
+  credentials?: RequestCredentials
+}
+
 const getRequest = async <T>(
   endpoint: string,
   options: GetOptions = {},
@@ -97,4 +101,37 @@ const deleteRequest = async (
   }
 }
 
-export { getRequest, postRequest, deleteRequest }
+const putRequest = async <T>(
+  endpoint: string,
+  data: unknown,
+  options: PutOptions = {},
+  context: string = 'data',
+): Promise<T | null> => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        ...options,
+      },
+    )
+
+    if (!response.ok) {
+      console.error(
+        `Failed to update ${context}: ${response.status} ${response.statusText}`,
+      )
+      return null
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error(`Error updating ${context}`, error)
+    return null
+  }
+}
+
+export { getRequest, postRequest, deleteRequest, putRequest }
