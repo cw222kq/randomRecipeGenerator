@@ -8,6 +8,7 @@ import Image from 'next/image'
 import EditIcon from '@/components/icons/EditIcon'
 import DeleteIcon from '@/components/icons/DeleteIcon'
 import { Input } from './ui/input'
+import { Textarea } from './ui/textarea'
 
 interface RecipeDetailModalProps {
   recipe: Recipe | null
@@ -102,6 +103,14 @@ export default function RecipeDetailModal({
     setIsEditing(false)
   }
 
+  const handleAddIngredient = () => {
+    console.log('Adding ingredient:', editData.currentIngredient)
+  }
+
+  const handleRemoveIngredient = (index: number) => {
+    console.log('Removing ingredient:', index)
+  }
+
   return (
     <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
       <div className="mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto">
@@ -116,6 +125,7 @@ export default function RecipeDetailModal({
                 }
                 className="border-none p-0 text-2xl font-bold text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder="Recipe title"
+                title="Update Recipe Title"
               />
             )}
             {!isEditing && (
@@ -182,19 +192,32 @@ export default function RecipeDetailModal({
             <div className="grid gap-6 md:grid-cols-2">
               {/* Recipe Image */}
               <div className="space-y-4">
-                {recipe.imageUrl && (
-                  <div className="relative aspect-square w-full overflow-hidden rounded-lg">
-                    <Image
-                      src={
-                        'https://media.istockphoto.com/id/513694246/sv/foto/cocoa-and-coconut-energy-balls.jpg?s=1024x1024&w=is&k=20&c=ZNAZGmFV4mF6DtpY7SR0Ni4F6mmzpOGRyJAE1p_gpK8='
-                      }
-                      alt={recipe.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                {isEditing && (
+                  <Input
+                    value={editData.imageUrl}
+                    onChange={(e) =>
+                      setEditData((prev) => ({
+                        ...prev,
+                        imageUrl: e.target.value,
+                      }))
+                    }
+                    placeholder="Image URL (optional)"
+                    className="text-sm text-gray-400"
+                    title="Update Image URL (optional)"
+                  />
                 )}
-                {!recipe.imageUrl && (
+
+                <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+                  <Image
+                    src={
+                      'https://media.istockphoto.com/id/513694246/sv/foto/cocoa-and-coconut-energy-balls.jpg?s=1024x1024&w=is&k=20&c=ZNAZGmFV4mF6DtpY7SR0Ni4F6mmzpOGRyJAE1p_gpK8='
+                    }
+                    alt={isEditing ? editData.title : recipe.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                {!(isEditing ? editData.imageUrl : recipe.imageUrl) && (
                   <div className="flex aspect-square w-full items-center justify-center rounded-lg bg-gray-100">
                     <div className="text-center text-gray-500">
                       <span className="text-4xl">🍽️</span>
@@ -210,19 +233,65 @@ export default function RecipeDetailModal({
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">
                     Ingredients:
                   </h3>
-                  {recipe.ingredients && recipe.ingredients.length > 0 && (
-                    <ul className="space-y-2 pb-4 pl-2">
-                      {recipe.ingredients.map((ingredient, index) => (
-                        <li
-                          key={index}
-                          className="flex items-start gap-2 text-gray-700"
-                        >
-                          <span className="text-gray-500">•</span>
-                          {ingredient}
-                        </li>
-                      ))}
-                    </ul>
+                  {/* Start of isEditing */}
+                  {isEditing && (
+                    <div className="flex gap-2">
+                      <Input
+                        value={editData.currentIngredient}
+                        onChange={(e) =>
+                          setEditData((prev) => ({
+                            ...prev,
+                            currentIngredient: e.target.value,
+                          }))
+                        }
+                        placeholder="Add an ingredient"
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleAddIngredient}
+                        size="sm"
+                      >
+                        Add
+                      </Button>
+                    </div>
                   )}
+                  {isEditing && editData.ingredients.length > 0 && (
+                    <div className="space-y-2 text-gray-400">
+                      {editData.ingredients.map((ingredient, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between rounded bg-gray-50 p-2"
+                        >
+                          <span className="text-sm">{ingredient}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveIngredient(index)}
+                            className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                          >
+                            X
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {/* End of isEditing */}
+                  {!isEditing &&
+                    recipe.ingredients &&
+                    recipe.ingredients.length > 0 && (
+                      <ul className="space-y-2 pb-4 pl-2">
+                        {recipe.ingredients.map((ingredient, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start gap-2 text-gray-700"
+                          >
+                            <span className="text-gray-500">•</span>
+                            {ingredient}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   {!recipe.ingredients ||
                     (recipe.ingredients.length === 0 && (
                       <p className="text-gray-500">No ingredients listed</p>
@@ -236,14 +305,30 @@ export default function RecipeDetailModal({
               <h3 className="mb-4 text-lg font-semibold text-gray-900">
                 Instructions:
               </h3>
-              {recipe.instructions && (
+
+              {isEditing && (
+                <Textarea
+                  value={editData.instructions}
+                  onChange={(e) =>
+                    setEditData((prev) => ({
+                      ...prev,
+                      instructions: e.target.value,
+                    }))
+                  }
+                  placeholder="Enter cooking instructions"
+                  rows={8}
+                  className="resize-none text-gray-400"
+                />
+              )}
+
+              {!isEditing && recipe.instructions && (
                 <div className="prose prose-sm max-w-none">
                   <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
                     {recipe.instructions}
                   </p>
                 </div>
               )}
-              {!recipe.instructions && (
+              {!isEditing && !recipe.instructions && (
                 <p className="text-gray-500">No instructions provided</p>
               )}
             </div>
