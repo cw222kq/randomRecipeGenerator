@@ -96,10 +96,6 @@ export default function Hello() {
     setSelectedRecipe(null)
   }
 
-  const handleEditRecipe = (recipeId: string) => {
-    console.log('Editing recipe:', recipeId)
-  }
-
   const handleDeleteRecipe = async (recipeId: string) => {
     if (!user) {
       toast.error('User not authenticated')
@@ -239,8 +235,8 @@ export default function Hello() {
         recipe={selectedRecipe}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onEdit={handleEditRecipe}
         onDelete={handleDeleteRecipe}
+        onUpdate={handleUpdateRecipe}
       />
     </div>
   )
