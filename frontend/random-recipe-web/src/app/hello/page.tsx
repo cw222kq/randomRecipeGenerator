@@ -13,7 +13,7 @@ import { getUserRecipes } from '@/services/recipeService'
 import { Recipe } from '@/schemas/recipeSchema'
 import RecipeList from '@/components/RecipeList'
 import RecipeDetailModal from '@/components/RecipeDetailModal'
-import { deleteRecipe } from '@/services/recipeService'
+import { deleteRecipe, updateRecipe } from '@/services/recipeService'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -131,6 +131,45 @@ export default function Hello() {
       toast.error('Failed to delete recipe')
     } finally {
       setIsLoadingRecipes(false)
+    }
+  }
+
+  const handleUpdateRecipe = async (
+    recipeId: string,
+    recipeData: {
+      title: string
+      ingredients: string[]
+      instructions: string
+      imageUrl?: string
+    },
+  ) => {
+    if (!user) {
+      toast.error('User not authenticated')
+      return
+    }
+
+    try {
+      const updatedRecipe = await updateRecipe(recipeId, user.id, recipeData)
+
+      if (!updatedRecipe) {
+        toast.error('Failed to update recipe. Please try again.')
+        return
+      }
+
+      toast.success('Recipe updated successfully!')
+
+      // Update recipe in local state
+      setRecipes((prevRecipes) =>
+        prevRecipes.map((recipe) =>
+          recipe.id === recipeId ? updatedRecipe : recipe,
+        ),
+      )
+
+      // Update selected recipe for the modal
+      setSelectedRecipe(updatedRecipe)
+    } catch (error) {
+      console.error('Error updating recipe:', error)
+      toast.error('An error occurred while updating the recipe.')
     }
   }
 
