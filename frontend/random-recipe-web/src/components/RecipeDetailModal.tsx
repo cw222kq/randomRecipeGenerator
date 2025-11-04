@@ -102,7 +102,13 @@ export default function RecipeDetailModal({
   }
 
   const handleAddIngredient = () => {
-    console.log('Adding ingredient:', editData.currentIngredient)
+    if (editData.currentIngredient.trim()) {
+      setEditData((prev) => ({
+        ...prev,
+        ingredients: [...prev.ingredients, editData.currentIngredient.trim()],
+        currentIngredient: '',
+      }))
+    }
   }
 
   const handleRemoveIngredient = (index: number) => {
