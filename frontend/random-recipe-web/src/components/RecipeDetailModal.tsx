@@ -112,7 +112,10 @@ export default function RecipeDetailModal({
   }
 
   const handleRemoveIngredient = (index: number) => {
-    console.log('Removing ingredient:', index)
+    setEditData((prev) => ({
+      ...prev,
+      ingredients: prev.ingredients.filter((_, i) => i !== index),
+    }))
   }
 
   return (
