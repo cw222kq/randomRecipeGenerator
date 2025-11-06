@@ -257,6 +257,11 @@ export default function RecipeDetailModal({
                             currentIngredient: e.target.value,
                           }))
                         }
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleAddIngredient()
+                          }
+                        }}
                         placeholder="Add an ingredient"
                       />
                       <Button
