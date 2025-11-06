@@ -9,6 +9,7 @@ import EditIcon from '@/components/icons/EditIcon'
 import DeleteIcon from '@/components/icons/DeleteIcon'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
+import { toast } from 'react-toastify'
 
 interface RecipeDetailModalProps {
   recipe: Recipe | null
@@ -79,15 +80,19 @@ export default function RecipeDetailModal({
 
   const handleSaveEdit = async () => {
     if (!editData) {
+      toast.error('Unable to save recipe. Please try again.')
       return
     }
     if (!editData.title.trim()) {
+      toast.error('Recipe title is required')
       return
     }
     if (editData.ingredients.length === 0) {
+      toast.error('At least one ingredient is required')
       return
     }
     if (!editData.instructions.trim()) {
+      toast.error('Cooking instructions are required')
       return
     }
     if (onUpdate) {
