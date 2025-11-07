@@ -56,6 +56,32 @@ export default function RecipeDetailModal({
     }
   }, [recipe])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isEditing) {
+          setIsEditing(false)
+          if (recipe) {
+            setEditData({
+              title: recipe.title,
+              ingredients: [...recipe.ingredients],
+              instructions: recipe.instructions,
+              imageUrl: recipe.imageUrl || '',
+              currentIngredient: '',
+            })
+          }
+        } else {
+          onClose()
+        }
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown)
+      return () => document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen, isEditing, onClose, recipe])
+
   if (!isOpen || !recipe) {
     return null
   }
