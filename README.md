@@ -13,7 +13,7 @@ The multiple frontend clients are both web and mobile.
 
 ## Project Structure & Setup
 
-This repository uses a monorepo structure:
+This repository consists of:
 
 *   **`RandomRecipeGenerator.API/`**: Contains the backend API.
     *   See [API README](./RandomRecipeGenerator.API/README.md) for backend setup and running instructions.
