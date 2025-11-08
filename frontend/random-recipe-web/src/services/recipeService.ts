@@ -80,10 +80,53 @@ const updateRecipe = async (
   return validateData(updatedRecipe, RecipeSchema, 'updated recipe')
 }
 
+const favoriteSpoonacularRecipe = async (
+  userId: string,
+  recipeData: {
+    title: string
+    ingredients: string[]
+    instructions: string
+    imageUrl?: string
+    spoonacularId: number
+  },
+): Promise<Recipe | null> => {
+  // Save the recipe to the database
+  const savedRecipe = await postRequest<Recipe>(
+    `/api/recipe/${userId}`,
+    {
+      title: recipeData.title,
+      ingredients: recipeData.ingredients,
+      instructions: recipeData.instructions,
+      imageUrl: recipeData.imageUrl,
+    },
+    { credentials: 'include' },
+    'saved spoonaculare recipe',
+  )
+
+  if (!savedRecipe) {
+    return null
+  }
+
+  // Add favorite relationship
+  const favoriteRecipe = await postRequest<Recipe>(
+    `/api/favorite/${userId}/${savedRecipe.id}`,
+    {},
+    { credentials: 'include' },
+    'favorite recipe',
+  )
+
+  if (!favoriteRecipe) {
+    return null
+  }
+
+  return validateData(favoriteRecipe, RecipeSchema, 'favorite recipe')
+}
+
 export {
   getRandomRecipe,
   saveRecipe,
   getUserRecipes,
   deleteRecipe,
   updateRecipe,
+  favoriteSpoonacularRecipe,
 }
