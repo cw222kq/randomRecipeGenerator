@@ -122,6 +122,42 @@ const favoriteSpoonacularRecipe = async (
   return validateData(favoriteRecipe, RecipeSchema, 'favorite recipe')
 }
 
+const unfavoriteSpoonacularRecipe = async (
+  userId: string,
+  recipeId: string,
+): Promise<boolean> => {
+  try {
+    const unfavoriteResult = await deleteRequest(
+      `/api/favorite/${userId}/${recipeId}`,
+      { credentials: 'include' },
+      'unfavorite recipe',
+    )
+
+    if (!unfavoriteResult) {
+      return false
+    }
+
+    // Delete the recipe from the database
+    const deleteResult = await deleteRequest(
+      `/api/recipe/${recipeId}/user/${userId}`,
+      { credentials: 'include' },
+      'deleted spoonacular recipe',
+    )
+
+    if (!deleteResult) {
+      return false
+    }
+
+    return deleteResult
+  } catch (error) {
+    console.error(
+      `Error unfavoring spoonacular recipe ${recipeId} for user ${userId}`,
+      error,
+    )
+    return false
+  }
+}
+
 export {
   getRandomRecipe,
   saveRecipe,
@@ -129,4 +165,5 @@ export {
   deleteRecipe,
   updateRecipe,
   favoriteSpoonacularRecipe,
+  unfavoriteSpoonacularRecipe,
 }
