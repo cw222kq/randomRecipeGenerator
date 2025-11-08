@@ -3,18 +3,35 @@ import { useEffect } from 'react'
 import { useAppSelector } from '@/store/hooks'
 import { redirect } from 'next/navigation'
 import RecipeForm from '@/components/RecipeForm'
+import Spinner from '@/components/common/Spinner'
 
 export default function CreateRecipe() {
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth)
+  const { isAuthenticated, user, isLoading } = useAppSelector(
+    (state) => state.auth,
+  )
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       redirect('/')
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, isLoading])
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Spinner />
+      </div>
+    )
+  }
 
   if (!user) {
-    return <div>Loading...</div>
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Please log in to create recipes</p>
+        </div>
+      </div>
+    )
   }
 
   return (
