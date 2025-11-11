@@ -12,12 +12,16 @@ import Image from 'next/image'
 import { Button } from './ui/button'
 import { User } from '@/schemas/userSchema'
 import { useRouter } from 'next/navigation'
+import StarIcon from '@/components/icons/StarIcon'
 
 interface RecipeCardProps {
   recipe: Recipe
   onNewRecipe: () => void
   isAuthenticated: boolean
   user: User | null
+  isFavorited: boolean
+  isFavoriting: boolean
+  onToggleFavorite: () => void
 }
 
 export default function RecipeCard({
@@ -25,6 +29,9 @@ export default function RecipeCard({
   onNewRecipe,
   isAuthenticated,
   user,
+  isFavorited,
+  isFavoriting,
+  onToggleFavorite,
 }: RecipeCardProps) {
   const router = useRouter()
 
@@ -38,8 +45,26 @@ export default function RecipeCard({
   return (
     <Card className="mx-auto w-full max-w-3xl overflow-hidden">
       <CardHeader className="pb-4">
-        <CardTitle className="text-xl md:text-2xl">{recipe.title}</CardTitle>
-        <CardDescription>Description</CardDescription>
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <CardTitle className="text-xl md:text-2xl">
+              {recipe.title}
+            </CardTitle>
+            <CardDescription>Description</CardDescription>
+          </div>
+          {isAuthenticated && user && (
+            <button
+              onClick={onToggleFavorite}
+              disabled={isFavoriting}
+              className="ml-4 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
+              aria-label={
+                isFavorited ? 'Remove from favorites' : 'Add to favorites'
+              }
+            >
+              <StarIcon filled={isFavorited} />
+            </button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="pt-0">
         {/* Image */}
