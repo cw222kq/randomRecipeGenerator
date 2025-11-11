@@ -54,7 +54,7 @@ export default function RecipeCard({
           </div>
           {isAuthenticated && user && (
             <button
-              onClick={onToggleFavorite}
+              onClick={() => console.log('ToDO: toggle favorite')}
               disabled={isFavoriting}
               className="ml-4 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={
