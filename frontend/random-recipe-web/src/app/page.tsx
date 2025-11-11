@@ -114,7 +114,6 @@ export default function HomeRoute() {
         onToggleFavorite={handleToggleFavorite}
         isFavorited={isFavorited}
         isFavoriting={isFavoriting}
-        savedRecipeId={savedRecipeId}
       />
     </div>
   )
