@@ -64,7 +64,7 @@ export default function HomeRoute() {
           ingredients: initialRecipe.ingredients,
           instructions: initialRecipe.instructions,
           imageUrl: initialRecipe.imageUrl,
-          spoonacularId: 12345, // TODO: get the spoonacular id from the initial recipe!!!
+          spoonacularId: initialRecipe.spoonacularId || 0,
         })
 
         if (!savedRecipe) {
