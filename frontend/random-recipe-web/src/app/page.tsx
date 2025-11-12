@@ -38,12 +38,7 @@ export default function HomeRoute() {
   }
 
   const handleToggleFavorite = async () => {
-    if (!user || !initialRecipe) {
-      toast.error('Unable to favorite recipe')
-      return
-    }
-
-    if (!initialRecipe.spoonacularId) {
+    if (!user || !initialRecipe || !initialRecipe.spoonacularId) {
       toast.error('Unable to favorite recipe')
       return
     }
