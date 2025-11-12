@@ -3,6 +3,7 @@
     public class RecipeDTO
     {
         public Guid Id { get; set; }
+        public int? SpoonucularId { get; set; }
         public required string Title { get; set; }
         public required List<string> Ingredients { get; set; }
         public required string Instructions { get; set; }
