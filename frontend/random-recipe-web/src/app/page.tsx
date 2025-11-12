@@ -43,6 +43,11 @@ export default function HomeRoute() {
       return
     }
 
+    if (!initialRecipe.spoonacularId) {
+      toast.error('Unable to favorite recipe')
+      return
+    }
+
     setIsFavoriting(true)
     try {
       if (isFavorited && savedRecipeId) {
@@ -64,7 +69,7 @@ export default function HomeRoute() {
           ingredients: initialRecipe.ingredients,
           instructions: initialRecipe.instructions,
           imageUrl: initialRecipe.imageUrl,
-          spoonacularId: initialRecipe.spoonacularId || 0,
+          spoonacularId: initialRecipe.spoonacularId,
         })
 
         if (!savedRecipe) {
