@@ -1,14 +1,11 @@
 interface StarIconProps {
   className?: string
-  filled?: boolean
 }
 
-export default function StarIcon({ className, filled = false }: StarIconProps) {
+export default function StarIcon({ className }: StarIconProps) {
   return (
     <svg
-      className={className || 'h-5 w-5'}
-      fill={filled ? 'currentColor' : 'none'}
-      stroke="currentColor"
+      className={className || 'h-6 w-6'}
       strokeWidth="2"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
