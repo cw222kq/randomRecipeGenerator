@@ -27,6 +27,7 @@ namespace RandomRecipeGenerator.API.Controllers
                 _logger.LogInformation("Recipe received: {@Recipe}", recipeDomain);
                 var recipeDTO = _mapper.Map<RecipeDTO>(recipeDomain);
                 _logger.LogInformation("Successfully processed recipe request. Recipe ID: {RecipeId}", recipeDTO.Id);
+                _logger.LogInformation("Sending recipe: {RecipeDTO} to the frontend", recipeDTO);
                 return Ok(recipeDTO);
             }
             catch (RecipeParsingException ex)
@@ -62,7 +63,8 @@ namespace RandomRecipeGenerator.API.Controllers
                     request.Title,
                     request.Ingredients,
                     request.Instructions,
-                    request.ImageUrl
+                    request.ImageUrl,
+                    request.SpoonacularId
                 );
 
                 if (result == null)

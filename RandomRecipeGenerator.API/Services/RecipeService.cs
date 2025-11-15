@@ -8,7 +8,7 @@ namespace RandomRecipeGenerator.API.Services
         private readonly IRecipeRepository _repository = repository;
         private readonly ILogger<RecipeService> _logger = logger;
 
-        public async Task<Recipe?> CreateUserRecipeAsync(Guid userId, string title, List<string> ingredients, string instructions, string? imageUrl = null)
+        public async Task<Recipe?> CreateUserRecipeAsync(Guid userId, string title, List<string> ingredients, string instructions, string? imageUrl = null, int? spoonacularId = null)
         {
             if (userId == Guid.Empty)
             {
@@ -41,7 +41,7 @@ namespace RandomRecipeGenerator.API.Services
                 var recipe = new Recipe
                 {
                     Title = title,
-                    SpoonacularId = null,
+                    SpoonacularId = spoonacularId,
                     Ingredients = ingredients,
                     Instructions = instructions,
                     ImageUrl = imageUrl,
