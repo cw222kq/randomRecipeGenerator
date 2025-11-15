@@ -56,12 +56,18 @@ export default function RecipeCard({
             <button
               onClick={onToggleFavorite}
               disabled={isFavoriting}
-              className="ml-4 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
+              className="group ml-4 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={
                 isFavorited ? 'Remove from favorites' : 'Add to favorites'
               }
             >
-              <StarIcon filled={isFavorited} />
+              <StarIcon
+                className={`h-6 w-6 transition-colors ${
+                  isFavorited
+                    ? 'fill-yellow-500 stroke-yellow-500'
+                    : 'fill-none stroke-gray-400 group-hover:fill-yellow-400 group-hover:stroke-yellow-400'
+                }`}
+              />
             </button>
           )}
         </div>
