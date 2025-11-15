@@ -1,15 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RandomRecipeGenerator.API.Models.DTO;
 using RandomRecipeGenerator.API.Services;
 
 namespace RandomRecipeGenerator.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FavoriteController(IUserFavoriteService userFavoriteService, ILogger<FavoriteController> logger) : ControllerBase
+    public class FavoriteController(IUserFavoriteService userFavoriteService, IRecipeService recipeService, ILogger<FavoriteController> logger, IMapper mapper) : ControllerBase
     {
         private readonly IUserFavoriteService _userFavoriteService = userFavoriteService;
+        private readonly IRecipeService _recipeService = recipeService;
         private readonly ILogger<FavoriteController> _logger = logger;
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost("{userId}/{recipeId}")]
         public async Task<IActionResult> AddFavorite(Guid userId, Guid recipeId)
@@ -26,8 +30,12 @@ namespace RandomRecipeGenerator.API.Controllers
                     return BadRequest("Failed to add favorite.");
                 }
 
+                // Get the recipe and return it
+                var recipe = await _recipeService.GetRecipeByIdAsync(recipeId);
+                var recipeDTO = _mapper.Map<RecipeDTO>(recipe);
+
                 _logger.LogInformation("Successfully added favorite for user {UserId} and recipe {RecipeId}", userId, recipeId);
-                return CreatedAtAction(nameof(GetUserFavorites), new { UserId = userId }, result);
+                return CreatedAtAction(nameof(GetUserFavorites), new { UserId = userId }, recipeDTO);
             }
             catch (Exception ex)
             {

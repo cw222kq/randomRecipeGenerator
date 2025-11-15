@@ -98,6 +98,7 @@ const favoriteSpoonacularRecipe = async (
       ingredients: recipeData.ingredients,
       instructions: recipeData.instructions,
       imageUrl: recipeData.imageUrl,
+      spoonacularId: recipeData.spoonacularId,
     },
     { credentials: 'include' },
     'saved spoonaculare recipe',
@@ -116,10 +117,11 @@ const favoriteSpoonacularRecipe = async (
   )
 
   if (!favoriteRecipe) {
+    console.error('Failed to favorite recipe')
     return null
   }
 
-  return validateData(favoriteRecipe, RecipeSchema, 'favorite recipe')
+  return validateData(savedRecipe, RecipeSchema, 'favorite recipe')
 }
 
 const unfavoriteSpoonacularRecipe = async (
