@@ -56,6 +56,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var fakeRecipeDTO = new RecipeDTO
             {
                 Id = fakeDomainRecipe.Id,
+                SpoonacularId = fakeDomainRecipe.SpoonacularId,
                 Title = fakeDomainRecipe.Title,
                 Ingredients = fakeDomainRecipe.Ingredients,
                 Instructions = fakeDomainRecipe.Instructions,
@@ -150,7 +151,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var recipeDTO = _mapperMock.Object.Map<RecipeDTO>(createdRecipe);
 
             _recipeServiceMock
-                .Setup(s => s.CreateUserRecipeAsync(userId, recipeRequest.Title, recipeRequest.Ingredients, recipeRequest.Instructions, recipeRequest.ImageUrl))
+                .Setup(s => s.CreateUserRecipeAsync(userId, recipeRequest.Title, recipeRequest.Ingredients, recipeRequest.Instructions, recipeRequest.ImageUrl, null))
                 .ReturnsAsync(createdRecipe);
 
             _mapperMock
@@ -181,7 +182,7 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             };
 
             _recipeServiceMock
-                .Setup(s => s.CreateUserRecipeAsync(userId, recipeRequest.Title, recipeRequest.Ingredients, recipeRequest.Instructions, recipeRequest.ImageUrl))
+                .Setup(s => s.CreateUserRecipeAsync(userId, recipeRequest.Title, recipeRequest.Ingredients, recipeRequest.Instructions, recipeRequest.ImageUrl, null))
                 .ReturnsAsync((Recipe?)null);
 
             // Act
