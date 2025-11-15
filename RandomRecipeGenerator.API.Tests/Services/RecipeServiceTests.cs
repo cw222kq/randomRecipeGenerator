@@ -35,12 +35,13 @@ namespace RandomRecipeGenerator.API.Tests.Services
             var ingredients = new List<string> { "Salt", "Pepper" };
             var instructions = "Mix ingredients";
             var imageUrl = "https://example.com/image.jpg";
+            int? spoonacularId = null; // User-created recipe
 
             var expectedRecipe = new Recipe
             {
                 Id = Guid.NewGuid(),
                 Title = title,
-                SpoonacularId = null,
+                SpoonacularId = spoonacularId,
                 Ingredients = ingredients,
                 Instructions = instructions,
                 ImageUrl = imageUrl,
@@ -52,18 +53,18 @@ namespace RandomRecipeGenerator.API.Tests.Services
                 .ReturnsAsync(expectedRecipe);
 
             // Act
-            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl);
+            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl, spoonacularId);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(title, result.Title);
             Assert.Equal(userId, result.UserId);
-            Assert.Equal(0, result.SpoonacularId); // User-created recipes have SpoonacularId = null
+            Assert.Null(result.SpoonacularId); // User-created recipes have SpoonacularId = null
             _recipeRepositoryMock
                 .Verify(r => r.CreateRecipeAsync(It.Is<Recipe>(recipe => 
                     recipe.Title == title &&
                     recipe.UserId == userId &&
-                    recipe.SpoonacularId == 0)), Times.Once());
+                    recipe.SpoonacularId == null)), Times.Once());
         }
 
         [Fact]
@@ -75,9 +76,10 @@ namespace RandomRecipeGenerator.API.Tests.Services
             var ingredients = new List<string> { "Salt", "Pepper" };
             var instructions = "Mix ingredients";
             var imageUrl = "https://example.com/image.jpg";
+            int? spoonacularId = null; // User-created recipe
 
             // Act
-            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl);
+            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl, spoonacularId);
 
             // Assert
             Assert.Null(result);
@@ -96,9 +98,10 @@ namespace RandomRecipeGenerator.API.Tests.Services
             var ingredients = new List<string> { "Salt", "Pepper" };
             var instructions = "Mix ingredients";
             var imageUrl = "https://example.com/image.jpg";
+            int? spoonacularId = null;
 
             // Act
-            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl);
+            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl, spoonacularId);
 
             // Assert
             Assert.Null(result);
@@ -115,9 +118,10 @@ namespace RandomRecipeGenerator.API.Tests.Services
             var ingredients = new List<string>();
             var instructions = "Mix ingredients";
             var imageUrl = "https://example.com/image.jpg";
+            int? spoonacularId = null;
 
             // Act
-            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl);
+            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl, spoonacularId);
 
             // Assert
             Assert.Null(result);
@@ -136,9 +140,10 @@ namespace RandomRecipeGenerator.API.Tests.Services
             var title = "Test Recipe";
             var ingredients = new List<string>();
             var imageUrl = "https://example.com/image.jpg";
+            int? spoonacularId = null;
 
             // Act
-            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl);
+            var result = await _recipeService.CreateUserRecipeAsync(userId, title, ingredients, instructions, imageUrl, spoonacularId);
 
             // Assert
             Assert.Null(result);

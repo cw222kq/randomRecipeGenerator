@@ -1,23 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using RandomRecipeGenerator.API.Models.Domain;
-using RandomRecipeGenerator.API.Services;
 using RandomRecipeGenerator.API.Controllers;
+using RandomRecipeGenerator.API.Models.Domain;
+using RandomRecipeGenerator.API.Models.DTO;
+using RandomRecipeGenerator.API.Services;
 
 namespace RandomRecipeGenerator.API.Tests.Controllers
 {
     public class FavoriteControllerTests
     {
         private readonly Mock<IUserFavoriteService> _serviceMock;
+        private readonly Mock<IRecipeService> _recipeServiceMock;
+        private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILogger<FavoriteController>> _loggerMock;
         private readonly FavoriteController _controller;
 
         public FavoriteControllerTests()
         {
             _serviceMock = new Mock<IUserFavoriteService>();
+            _recipeServiceMock = new Mock<IRecipeService>();
+            _mapperMock = new Mock<IMapper>();
             _loggerMock = new Mock<ILogger<FavoriteController>>();
-            _controller = new FavoriteController(_serviceMock.Object, _loggerMock.Object);
+            _controller = new FavoriteController(_serviceMock.Object, _recipeServiceMock.Object, _loggerMock.Object, _mapperMock.Object);
         }
 
         [Fact]
@@ -27,17 +33,41 @@ namespace RandomRecipeGenerator.API.Tests.Controllers
             var userId = Guid.NewGuid();
             var recipeId = Guid.NewGuid();
             var expectedFavorite = new UserFavoriteRecipe { UserId = userId, RecipeId = recipeId };
+            var expectedRecipe = new Recipe
+            {
+                Id = recipeId,
+                Title = "Test Recipe",
+                SpoonacularId = 12345,
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients"
+            };
+            var expectedRecipeDTO = new RecipeDTO
+            {
+                Id = recipeId,
+                Title = "Test Recipe",
+                SpoonacularId = 12345,
+                Ingredients = ["Salt", "Pepper"],
+                Instructions = "Mix ingredients"
+            };
 
             _serviceMock
                 .Setup(s => s.AddFavoriteAsync(userId, recipeId))
                 .ReturnsAsync(expectedFavorite);
+
+            _recipeServiceMock
+                .Setup(s => s.GetRecipeByIdAsync(recipeId))
+                .ReturnsAsync(expectedRecipe);
+
+            _mapperMock
+                .Setup(m => m.Map<RecipeDTO>(expectedRecipe))
+                .Returns(expectedRecipeDTO);
 
             // Act
             var result = await _controller.AddFavorite(userId, recipeId);
 
             // Assert
             var createdResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.Equal(expectedFavorite, createdResult.Value);
+            Assert.Equal(expectedRecipeDTO, createdResult.Value);
         }
 
         [Fact]
