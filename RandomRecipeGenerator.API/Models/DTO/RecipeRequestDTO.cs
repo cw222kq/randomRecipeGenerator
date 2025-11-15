@@ -18,5 +18,7 @@ namespace RandomRecipeGenerator.API.Models.DTO
 
         [StringLength(1000)]
         public string? ImageUrl { get; set; }
+
+        public int? SpoonacularId { get; set; }
     }
 }
