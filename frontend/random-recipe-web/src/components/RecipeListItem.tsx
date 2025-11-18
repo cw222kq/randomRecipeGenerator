@@ -1,6 +1,7 @@
 import { Recipe } from '@/schemas/recipeSchema'
 import { Card, CardContent } from './ui/card'
-import Image from 'next/image'
+//import Image from 'next/image'
+import RecipeImageWithFallback from './RecipeImageWithFallback'
 
 interface RecipeListItemProps {
   recipe: Recipe
@@ -19,18 +20,14 @@ export default function RecipeListItem({
       {/* Recipe image */}
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
-          <div className="flex-shrink-0">
-            {recipe.imageUrl && (
-              <Image
-                src={
-                  'https://media.istockphoto.com/id/513694246/sv/foto/cocoa-and-coconut-energy-balls.jpg?s=1024x1024&w=is&k=20&c=ZNAZGmFV4mF6DtpY7SR0Ni4F6mmzpOGRyJAE1p_gpK8='
-                }
-                alt={recipe.title}
-                className="rounded-xl object-cover shadow-md"
-                width={80}
-                height={80}
-              />
-            )}
+          <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl shadow-md">
+            <RecipeImageWithFallback
+              src={recipe.imageUrl}
+              alt={recipe.title}
+              width={80}
+              height={80}
+              className="h-full w-full object-cover"
+            />
           </div>
 
           {/* Recipe Info */}
