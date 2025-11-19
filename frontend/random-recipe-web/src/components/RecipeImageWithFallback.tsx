@@ -7,16 +7,12 @@ interface RecipeImageWithFallbackProps {
   src: string | null | undefined
   alt: string
   className?: string
-  width?: number
-  height?: number
 }
 
 export default function RecipeImageWithFallback({
   src,
   alt,
   className,
-  width,
-  height,
 }: RecipeImageWithFallbackProps) {
   const [imageError, setImageError] = useState(false)
 
@@ -34,8 +30,8 @@ export default function RecipeImageWithFallback({
       src={src}
       alt={alt}
       className={className}
-      width={width}
-      height={height}
+      fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       onError={handleImageError}
     />
   )
