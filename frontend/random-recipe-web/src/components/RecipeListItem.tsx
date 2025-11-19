@@ -20,13 +20,11 @@ export default function RecipeListItem({
       {/* Recipe image */}
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
-          <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl shadow-md">
+          <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl shadow-md">
             <RecipeImageWithFallback
               src={recipe.imageUrl}
               alt={recipe.title}
-              width={80}
-              height={80}
-              className="h-full w-full object-cover"
+              className="object-cover"
             />
           </div>
 
