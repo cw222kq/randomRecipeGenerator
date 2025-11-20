@@ -10,6 +10,7 @@ The multiple frontend clients are both web and mobile.
 *   **Backend:** C# / ASP.NET Core 8
 *   **Frontend:** TypeScript, React, Next.js (Web), React Native / Expo (Mobile)
 *   **Styling:** Tailwind CSS
+*   **Database:** PostgreSQL - Containerized with Docker Compose for quick, consistent and portable development environment setup.
 
 ## Project Structure & Setup
 
