@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import { Recipe } from '@/schemas/recipeSchema'
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
+//import Image from 'next/image'
 import EditIcon from '@/components/icons/EditIcon'
 import DeleteIcon from '@/components/icons/DeleteIcon'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
 import { toast } from 'react-toastify'
+import RecipeImageWithFallback from './RecipeImageWithFallback'
 
 interface RecipeDetailModalProps {
   recipe: Recipe | null
@@ -246,24 +247,12 @@ export default function RecipeDetailModal({
                 )}
 
                 <div className="relative aspect-square w-full overflow-hidden rounded-lg">
-                  <Image
-                    src={
-                      'https://media.istockphoto.com/id/513694246/sv/foto/cocoa-and-coconut-energy-balls.jpg?s=1024x1024&w=is&k=20&c=ZNAZGmFV4mF6DtpY7SR0Ni4F6mmzpOGRyJAE1p_gpK8='
-                    }
+                  <RecipeImageWithFallback
+                    src={isEditing ? editData.imageUrl : recipe.imageUrl}
                     alt={isEditing ? editData.title : recipe.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover"
                   />
                 </div>
-                {!(isEditing ? editData.imageUrl : recipe.imageUrl) && (
-                  <div className="flex aspect-square w-full items-center justify-center rounded-lg bg-gray-100">
-                    <div className="text-center text-gray-500">
-                      <span className="text-4xl">🍽️</span>
-                      <p className="mt-2 text-sm">No image available</p>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Ingredients */}
