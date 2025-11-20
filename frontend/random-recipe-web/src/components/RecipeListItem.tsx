@@ -25,6 +25,7 @@ export default function RecipeListItem({
               src={recipe.imageUrl}
               alt={recipe.title}
               className="object-cover"
+              size="sm"
             />
           </div>
 

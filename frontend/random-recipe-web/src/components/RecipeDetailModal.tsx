@@ -251,6 +251,7 @@ export default function RecipeDetailModal({
                     src={isEditing ? editData.imageUrl : recipe.imageUrl}
                     alt={isEditing ? editData.title : recipe.title}
                     className="object-cover"
+                    size="lg"
                   />
                 </div>
               </div>

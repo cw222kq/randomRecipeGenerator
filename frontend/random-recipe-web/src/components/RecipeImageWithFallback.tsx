@@ -7,12 +7,14 @@ interface RecipeImageWithFallbackProps {
   src: string | null | undefined
   alt: string
   className?: string
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export default function RecipeImageWithFallback({
   src,
   alt,
   className,
+  size = 'md',
 }: RecipeImageWithFallbackProps) {
   const [imageError, setImageError] = useState(false)
 
@@ -22,7 +24,7 @@ export default function RecipeImageWithFallback({
 
   // If no src provided or error occurred, show FallbackImage
   if (!src || imageError) {
-    return <FallbackImage />
+    return <FallbackImage size={size} />
   }
 
   return (
