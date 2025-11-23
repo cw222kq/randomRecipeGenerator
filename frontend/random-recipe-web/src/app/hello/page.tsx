@@ -26,6 +26,7 @@ export default function Hello() {
   const [recipesError, setRecipesError] = useState<string | null>(null)
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [showCreateRecipe, setShowCreateRecipe] = useState<boolean>(false)
 
   useEffect(() => {
     const setLoggedInUser = async () => {
@@ -169,6 +170,10 @@ export default function Hello() {
     }
   }
 
+  const handleToggleCreateRecipe = () => {
+    setShowCreateRecipe(!showCreateRecipe)
+  }
+
   return (
     <div className="py-6">
       {error && <div className="mb-8 text-red-500">{error}</div>}
@@ -214,6 +219,8 @@ export default function Hello() {
           <CollapsibleSection
             title="Create New Recipe"
             emoji="✨"
+            isOpen={showCreateRecipe}
+            onToggle={handleToggleCreateRecipe}
             showContentCard={true}
           >
             <RecipeForm user={user} />
