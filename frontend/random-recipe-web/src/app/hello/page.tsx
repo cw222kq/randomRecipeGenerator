@@ -13,6 +13,7 @@ import RecipeList from '@/components/RecipeList'
 import RecipeDetailModal from '@/components/RecipeDetailModal'
 import { deleteRecipe, updateRecipe } from '@/services/recipeService'
 import CollapsibleSection from '@/components/CollapsibleSection'
+import RecipeForm from '@/components/RecipeForm'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -207,6 +208,15 @@ export default function Hello() {
             {!isLoadingRecipes && !recipesError && recipes.length > 0 && (
               <RecipeList recipes={recipes} onRecipeClick={handleRecipeClick} />
             )}
+          </CollapsibleSection>
+
+          {/* Create New Recipe Toggle Card */}
+          <CollapsibleSection
+            title="Create New Recipe"
+            emoji="✨"
+            showContentCard={true}
+          >
+            <RecipeForm user={user} />
           </CollapsibleSection>
         </div>
       )}
