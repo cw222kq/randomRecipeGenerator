@@ -11,9 +11,10 @@ import { toast } from 'react-toastify'
 
 interface RecipeFormProps {
   user: User
+  onRecipeCreated: () => void
 }
 
-export default function RecipeForm({ user }: RecipeFormProps) {
+export default function RecipeForm({ user, onRecipeCreated }: RecipeFormProps) {
   const [formData, setFormData] = useState({
     title: '',
     ingredients: [] as string[],
@@ -63,6 +64,9 @@ export default function RecipeForm({ user }: RecipeFormProps) {
       if (result) {
         toast.success('Recipe created successfully')
         resetForm()
+        if (onRecipeCreated) {
+          onRecipeCreated()
+        }
       } else {
         setIsSubmitting(false)
         toast.error('Failed to create recipe')
