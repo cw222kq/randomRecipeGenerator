@@ -7,13 +7,12 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { login, setLoading } from '@/store/features/auth/authSlice'
 import Spinner from '@/components/common/Spinner'
 import { toast } from 'react-toastify'
-import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
-import ChevronRight from '@/components/icons/ChevronRight'
 import { getUserRecipes } from '@/services/recipeService'
 import { Recipe } from '@/schemas/recipeSchema'
 import RecipeList from '@/components/RecipeList'
 import RecipeDetailModal from '@/components/RecipeDetailModal'
 import { deleteRecipe, updateRecipe } from '@/services/recipeService'
+import CollapsibleSection from '@/components/CollapsibleSection'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -185,50 +184,30 @@ export default function Hello() {
           </h1>
 
           {/* My recipies Toggle Card */}
-          <Card
-            className="mb-6 cursor-pointer transition-all hover:shadow-md"
-            onClick={handleToggleRecipes}
+          <CollapsibleSection
+            title="My tasty Recipies"
+            emoji="🍳"
+            isOpen={showRecipes}
+            onToggle={handleToggleRecipes}
+            showContentCard={true}
           >
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">My tasty Recipies</span>
-                  <span className="text-2xl">🍳</span>
-                </div>
-                <ChevronRight
-                  className={`h-8 w-8 transition-transform duration-200 ${showRecipes ? 'rotate-90' : ''}`}
-                />
-              </CardTitle>
-            </CardHeader>
-          </Card>
+            {isLoadingRecipes && (
+              <div className="text-center">
+                <Spinner />
+                <p className="mt-2 text-gray-600">Loading your recipes...</p>
+              </div>
+            )}
 
-          {showRecipes && (
-            <Card className="mb-6 bg-gray-50">
-              <CardContent className="py-8">
-                {isLoadingRecipes && (
-                  <div className="text-center">
-                    <Spinner />
-                    <p className="mt-2 text-gray-600">
-                      Loading your recipes...
-                    </p>
-                  </div>
-                )}
+            {!isLoadingRecipes && !recipesError && recipes.length === 0 && (
+              <div className="text-center text-gray-600">
+                <p>You don not have any created recipes yet.</p>
+              </div>
+            )}
 
-                {!isLoadingRecipes && !recipesError && recipes.length === 0 && (
-                  <div className="text-center text-gray-600">
-                    <p>You don not have any created recipes yet.</p>
-                  </div>
-                )}
-
-                {!isLoadingRecipes && !recipesError && recipes.length > 0 && (
-                  <RecipeList
-                    recipes={recipes}
-                    onRecipeClick={handleRecipeClick}
-                  />
-                )}
-              </CardContent>
-            </Card>
-          )}
+            {!isLoadingRecipes && !recipesError && recipes.length > 0 && (
+              <RecipeList recipes={recipes} onRecipeClick={handleRecipeClick} />
+            )}
+          </CollapsibleSection>
         </div>
       )}
       <RecipeDetailModal
