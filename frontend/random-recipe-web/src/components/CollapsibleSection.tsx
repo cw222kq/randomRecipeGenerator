@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle } from './ui/card'
+import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import ChevronRight from './icons/ChevronRight'
 
 interface CollapsibleSectionProps {
@@ -6,6 +6,8 @@ interface CollapsibleSectionProps {
   emoji?: string
   isOpen?: boolean
   onToggle?: () => void
+  children: React.ReactNode
+  showContentCard?: boolean
 }
 
 export default function CollapsibleSection({
@@ -13,9 +15,12 @@ export default function CollapsibleSection({
   emoji,
   isOpen,
   onToggle,
+  children,
+  showContentCard = true,
 }: CollapsibleSectionProps) {
   return (
     <>
+      {/* Toggle Header Card */}
       <Card
         className="mb-6 cursor-pointer transition-all hover:shadow-md"
         onClick={onToggle}
@@ -32,6 +37,18 @@ export default function CollapsibleSection({
           </CardTitle>
         </CardHeader>
       </Card>
+
+      {/* Collapsible Content */}
+      {isOpen && (
+        <>
+          {showContentCard && (
+            <Card className="mb-6 bg-gray-50">
+              <CardContent className="py-8">{children}</CardContent>
+            </Card>
+          )}
+          {!showContentCard && <div className="mb-6">{children}</div>}
+        </>
+      )}
     </>
   )
 }
