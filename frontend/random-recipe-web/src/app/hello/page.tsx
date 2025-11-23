@@ -174,6 +174,21 @@ export default function Hello() {
     setShowCreateRecipe(!showCreateRecipe)
   }
 
+  const handleRecipeCreated = () => {
+    // Refresh recipe list after creation
+    if (user) {
+      getUserRecipes(user.id).then((userRecipes) => {
+        if (userRecipes) {
+          setRecipes(userRecipes)
+          // Optionally auto-expand the recipes section
+          setShowRecipes(true)
+        }
+      })
+    }
+    // Close the create form
+    setShowCreateRecipe(false)
+  }
+
   return (
     <div className="py-6">
       {error && <div className="mb-8 text-red-500">{error}</div>}
@@ -223,7 +238,7 @@ export default function Hello() {
             onToggle={handleToggleCreateRecipe}
             showContentCard={true}
           >
-            <RecipeForm user={user} />
+            <RecipeForm user={user} onRecipeCreated={handleRecipeCreated} />
           </CollapsibleSection>
         </div>
       )}
