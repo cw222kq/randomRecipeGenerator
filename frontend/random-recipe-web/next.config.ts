@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
+    unoptimized: true, // Disable optimization for user-provided URLs to prevent 400/500 errors
   },
 }
 
