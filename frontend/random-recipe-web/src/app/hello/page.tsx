@@ -233,7 +233,7 @@ export default function Hello() {
           {/* Create New Recipe Toggle Card */}
           <CollapsibleSection
             title="Create New Recipe"
-            emoji="✨"
+            emoji="🧑‍🍳"
             isOpen={showCreateRecipe}
             onToggle={handleToggleCreateRecipe}
             showContentCard={true}
