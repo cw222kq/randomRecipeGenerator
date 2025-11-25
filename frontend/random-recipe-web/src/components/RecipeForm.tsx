@@ -45,12 +45,6 @@ export default function RecipeForm({ user, onRecipeCreated }: RecipeFormProps) {
 
     setIsSubmitting(true)
 
-    /* blocking the UI for 9 seconds */
-    /*const start = Date.now()
-    while (Date.now() - start < 9000) {
-      // Do nothing, just spin
-    }*/
-
     try {
       const result = await saveRecipe(user.id, {
         title: formData.title.trim(),
