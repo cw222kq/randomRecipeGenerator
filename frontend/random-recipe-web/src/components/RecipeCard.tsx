@@ -8,11 +8,11 @@ import {
   CardFooter,
 } from '@/components/ui/card'
 import { Recipe } from '@/schemas/recipeSchema'
-import Image from 'next/image'
 import { Button } from './ui/button'
 import { User } from '@/schemas/userSchema'
 import { useRouter } from 'next/navigation'
 import StarIcon from '@/components/icons/StarIcon'
+import RecipeImageWithFallback from './RecipeImageWithFallback'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -75,13 +75,11 @@ export default function RecipeCard({
       <CardContent className="pt-0">
         {/* Image */}
         <div className="relative mb-4 aspect-video w-full">
-          <Image
+          <RecipeImageWithFallback
             src={recipe.imageUrl}
             alt={recipe.title}
             className="rounded-md object-cover"
-            priority
-            fill
-            sizes="(max-width: 768px) 90vw, (max-width: 1200px) 60vw, 768px"
+            size="lg"
           />
         </div>
 
