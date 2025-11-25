@@ -10,7 +10,6 @@ import {
 import { Recipe } from '@/schemas/recipeSchema'
 import { Button } from './ui/button'
 import { User } from '@/schemas/userSchema'
-import { useRouter } from 'next/navigation'
 import StarIcon from '@/components/icons/StarIcon'
 import RecipeImageWithFallback from './RecipeImageWithFallback'
 
@@ -33,15 +32,6 @@ export default function RecipeCard({
   isFavoriting,
   onToggleFavorite,
 }: RecipeCardProps) {
-  const router = useRouter()
-
-  const handleSaveRecipe = async (user: User) => {
-    if (!user) {
-      return
-    }
-    router.push(`/create-recipe`)
-  }
-
   return (
     <Card className="mx-auto w-full max-w-3xl overflow-hidden">
       <CardHeader className="pb-4">
@@ -110,24 +100,6 @@ export default function RecipeCard({
           >
             New Recipe
           </Button>
-          {isAuthenticated && user && (
-            <Button
-              className="cursor-pointer transition-all ease-in-out hover:scale-110"
-              variant="secondary"
-              onClick={() => handleSaveRecipe(user)}
-            >
-              Save Recipe
-            </Button>
-          )}
-          {!isAuthenticated && (
-            <Button
-              className="cursor-pointer transition-all ease-in-out hover:scale-110"
-              variant="outline"
-              disabled
-            >
-              Login to Save Recipe
-            </Button>
-          )}
         </div>
       </CardFooter>
     </Card>
