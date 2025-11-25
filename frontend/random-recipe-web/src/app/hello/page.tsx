@@ -180,7 +180,7 @@ export default function Hello() {
       getUserRecipes(user.id).then((userRecipes) => {
         if (userRecipes) {
           setRecipes(userRecipes)
-          // Optionally auto-expand the recipes section
+          // Expand the recipes section
           setShowRecipes(true)
         }
       })
