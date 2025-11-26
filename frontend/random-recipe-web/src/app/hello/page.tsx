@@ -206,7 +206,7 @@ export default function Hello() {
 
           {/* My recipies Toggle Card */}
           <CollapsibleSection
-            title="My tasty Recipies"
+            title="My Tasty Recipies"
             emoji="🍳"
             isOpen={showRecipes}
             onToggle={handleToggleRecipes}
@@ -228,6 +228,17 @@ export default function Hello() {
             {!isLoadingRecipes && !recipesError && recipes.length > 0 && (
               <RecipeList recipes={recipes} onRecipeClick={handleRecipeClick} />
             )}
+          </CollapsibleSection>
+
+          {/* My Favorite Recipes Toggle Card */}
+          <CollapsibleSection
+            title="My Favorite Recipes"
+            emoji="⭐"
+            isOpen={false}
+            onToggle={() => console.log('My Favorite Recipes')}
+            showContentCard={true}
+          >
+            <p>My Favorite Recipes</p>
           </CollapsibleSection>
 
           {/* Create New Recipe Toggle Card */}
