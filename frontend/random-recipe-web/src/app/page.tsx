@@ -63,7 +63,7 @@ export default function HomeRoute() {
           title: initialRecipe.title,
           ingredients: initialRecipe.ingredients,
           instructions: initialRecipe.instructions,
-          imageUrl: initialRecipe.imageUrl,
+          imageUrl: initialRecipe.imageUrl ?? undefined,
           spoonacularId: initialRecipe.spoonacularId,
         })
 
