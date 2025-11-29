@@ -14,7 +14,11 @@ import {
 import { Recipe } from '@/schemas/recipeSchema'
 import RecipeList from '@/components/RecipeList'
 import RecipeDetailModal from '@/components/RecipeDetailModal'
-import { deleteRecipe, updateRecipe } from '@/services/recipeService'
+import {
+  deleteRecipe,
+  updateRecipe,
+  unfavoriteSpoonacularRecipe,
+} from '@/services/recipeService'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import RecipeForm from '@/components/RecipeForm'
 import FavoriteRecipeListItem from '@/components/FavoriteRecipeListItem'
@@ -204,7 +208,42 @@ export default function Hello() {
   }
 
   const handleUnfavoriteRecipe = async (recipeId: string) => {
-    console.log('Unfavorite recipe:', recipeId)
+    if (!user) {
+      toast.error('User not authenticated')
+      return
+    }
+
+    const confirmed = window.confirm(
+      'Are you sure you want to remove this recipe from favorites? This will also delete the recipe from your collection.',
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      const result = await unfavoriteSpoonacularRecipe(user.id, recipeId)
+
+      if (!result) {
+        toast.error('Failed to unfavorite recipe')
+        return
+      }
+
+      toast.success('Recipe removed from favorites')
+
+      // Remove from local state
+      setFavoriteRecipes((prevFavorites) =>
+        prevFavorites.filter((recipe) => recipe.id !== recipeId),
+      )
+
+      // Close modal if it's open for this recipe
+      if (selectedRecipe?.id === recipeId) {
+        handleCloseModal()
+      }
+    } catch (error) {
+      console.error('Error unfavoriting recipe:', error)
+      toast.error('Failed to unfavorite recipe')
+    }
   }
 
   const handleToggleCreateRecipe = () => {
