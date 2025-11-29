@@ -10,8 +10,8 @@ import {
 import { Recipe } from '@/schemas/recipeSchema'
 import { Button } from './ui/button'
 import { User } from '@/schemas/userSchema'
-import StarIcon from '@/components/icons/StarIcon'
 import RecipeImageWithFallback from './RecipeImageWithFallback'
+import FavoriteButton from './FavoriteButton'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -43,22 +43,11 @@ export default function RecipeCard({
             <CardDescription>Description</CardDescription>
           </div>
           {isAuthenticated && user && (
-            <button
+            <FavoriteButton
+              isFavorited={isFavorited}
               onClick={onToggleFavorite}
               disabled={isFavoriting}
-              className="group ml-4 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
-              aria-label={
-                isFavorited ? 'Remove from favorites' : 'Add to favorites'
-              }
-            >
-              <StarIcon
-                className={`h-6 w-6 transition-colors ${
-                  isFavorited
-                    ? 'fill-yellow-500 stroke-yellow-500'
-                    : 'fill-none stroke-gray-400 group-hover:fill-yellow-400 group-hover:stroke-yellow-400'
-                }`}
-              />
-            </button>
+            />
           )}
         </div>
       </CardHeader>
