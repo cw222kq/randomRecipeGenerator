@@ -7,7 +7,10 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { login, setLoading } from '@/store/features/auth/authSlice'
 import Spinner from '@/components/common/Spinner'
 import { toast } from 'react-toastify'
-import { getUserRecipes } from '@/services/recipeService'
+import {
+  getUserRecipes,
+  getUserFavoriteRecipes,
+} from '@/services/recipeService'
 import { Recipe } from '@/schemas/recipeSchema'
 import RecipeList from '@/components/RecipeList'
 import RecipeDetailModal from '@/components/RecipeDetailModal'
@@ -27,6 +30,10 @@ export default function Hello() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [showCreateRecipe, setShowCreateRecipe] = useState<boolean>(false)
+  const [showFavorites, setShowFavorites] = useState<boolean>(false)
+  const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([])
+  const [isLoadingFavorites, setIsLoadingFavorites] = useState<boolean>(false)
+  const [favoritesError, setFavoritesError] = useState<string | null>(null)
 
   useEffect(() => {
     const setLoggedInUser = async () => {
@@ -80,6 +87,31 @@ export default function Hello() {
       }
     }
     setShowRecipes(!showRecipes)
+  }
+
+  const handleToggleFavorite = async () => {
+    if (!showRecipes && user) {
+      setIsLoadingFavorites(true)
+      setFavoritesError(null)
+
+      try {
+        const userFavoriteRecipes: Recipe[] | null =
+          await getUserFavoriteRecipes(user.id)
+        if (!userFavoriteRecipes) {
+          setFavoritesError('Failed to load favorite recipes')
+          return
+        }
+        setFavoriteRecipes(userFavoriteRecipes)
+      } catch (error) {
+        console.error('Error loading favorite recipes:', error)
+        setFavoritesError(
+          'An error occurred while loading the favorite recipes',
+        )
+      } finally {
+        setIsLoadingFavorites(false)
+      }
+    }
+    setShowFavorites(!showFavorites)
   }
 
   const handleRecipeClick = (recipeId: string) => {
@@ -234,11 +266,35 @@ export default function Hello() {
           <CollapsibleSection
             title="My Favorite Recipes"
             emoji="⭐"
-            isOpen={false}
-            onToggle={() => console.log('My Favorite Recipes')}
+            isOpen={showFavorites}
+            onToggle={handleToggleFavorite}
             showContentCard={true}
           >
-            <p>My Favorite Recipes</p>
+            {isLoadingFavorites && (
+              <div className="text-center">
+                <Spinner />
+                <p className="mt-2 text-gray-600">Loading your favorites...</p>
+              </div>
+            )}
+
+            {!isLoadingFavorites &&
+              !favoritesError &&
+              favoriteRecipes.length === 0 && (
+                <div className="text-center text-gray-600">
+                  <p>You don not have any favorite recipes yet.</p>
+                  <p className="mt-1 text-sm">
+                    Favorite recipes from the home page to see them here!
+                  </p>
+                </div>
+              )}
+
+            {!isLoadingFavorites &&
+              !favoritesError &&
+              favoriteRecipes.length > 0 && (
+                <div className="space-y-2">
+                  <p>Should print your favorite recipes here</p>
+                </div>
+              )}
           </CollapsibleSection>
 
           {/* Create New Recipe Toggle Card */}
