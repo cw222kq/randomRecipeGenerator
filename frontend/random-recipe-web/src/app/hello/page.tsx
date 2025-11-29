@@ -21,7 +21,7 @@ import {
 } from '@/services/recipeService'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import RecipeForm from '@/components/RecipeForm'
-import FavoriteRecipeListItem from '@/components/FavoriteRecipeListItem'
+import FavoriteRecipeList from '@/components/FavoriteRecipeList'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -335,16 +335,11 @@ export default function Hello() {
             {!isLoadingFavorites &&
               !favoritesError &&
               favoriteRecipes.length > 0 && (
-                <div className="space-y-2">
-                  {favoriteRecipes.map((recipe) => (
-                    <FavoriteRecipeListItem
-                      key={recipe.id}
-                      recipe={recipe}
-                      onClick={handleRecipeClick}
-                      onUnfavorite={handleUnfavoriteRecipe}
-                    />
-                  ))}
-                </div>
+                <FavoriteRecipeList
+                  recipes={favoriteRecipes}
+                  onRecipeClick={handleRecipeClick}
+                  onUnfavorite={handleUnfavoriteRecipe}
+                />
               )}
           </CollapsibleSection>
 
