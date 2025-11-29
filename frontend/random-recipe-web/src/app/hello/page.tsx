@@ -17,6 +17,7 @@ import RecipeDetailModal from '@/components/RecipeDetailModal'
 import { deleteRecipe, updateRecipe } from '@/services/recipeService'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import RecipeForm from '@/components/RecipeForm'
+import FavoriteRecipeListItem from '@/components/FavoriteRecipeListItem'
 
 export default function Hello() {
   const dispatch = useAppDispatch()
@@ -202,6 +203,10 @@ export default function Hello() {
     }
   }
 
+  const handleUnfavoriteRecipe = async (recipeId: string) => {
+    console.log('Unfavorite recipe:', recipeId)
+  }
+
   const handleToggleCreateRecipe = () => {
     setShowCreateRecipe(!showCreateRecipe)
   }
@@ -292,7 +297,14 @@ export default function Hello() {
               !favoritesError &&
               favoriteRecipes.length > 0 && (
                 <div className="space-y-2">
-                  <p>Should print your favorite recipes here</p>
+                  {favoriteRecipes.map((recipe) => (
+                    <FavoriteRecipeListItem
+                      key={recipe.id}
+                      recipe={recipe}
+                      onClick={handleRecipeClick}
+                      onUnfavorite={handleUnfavoriteRecipe}
+                    />
+                  ))}
                 </div>
               )}
           </CollapsibleSection>
