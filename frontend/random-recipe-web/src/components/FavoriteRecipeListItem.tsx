@@ -49,7 +49,11 @@ export default function FavoriteRecipeListItem({
           </div>
 
           {/* Favorite Button - Always favorited in this list */}
-          <FavoriteButton isFavorited={true} onClick={handleStarClick} />
+          <FavoriteButton
+            isFavorited={true}
+            onClick={handleStarClick}
+            className="mr-4"
+          />
         </div>
       </CardContent>
     </Card>
