@@ -72,6 +72,12 @@ export default function Hello() {
     }
   }, [recipesError])
 
+  useEffect(() => {
+    if (favoritesError) {
+      toast.error(favoritesError)
+    }
+  }, [favoritesError])
+
   const handleToggleRecipes = async () => {
     if (!showRecipes && user) {
       setIsLoadingRecipes(true)
