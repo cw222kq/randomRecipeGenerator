@@ -89,7 +89,10 @@ export default function Hello() {
           setRecipesError('Failed to load recipes')
           return
         }
-        setRecipes(userRecipes)
+        const userCreatedRecipes = userRecipes.filter(
+          (recipe) => recipe.spoonacularId === null,
+        )
+        setRecipes(userCreatedRecipes)
       } catch (error) {
         console.error('Error loading recipes:', error)
         setRecipesError('An error occurred while loading the recipes')
