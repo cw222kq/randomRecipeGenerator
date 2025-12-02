@@ -266,7 +266,10 @@ export default function Hello() {
     if (user) {
       getUserRecipes(user.id).then((userRecipes) => {
         if (userRecipes) {
-          setRecipes(userRecipes)
+          const userCreatedRecipes = userRecipes.filter(
+            (recipe) => recipe.spoonacularId === null,
+          )
+          setRecipes(userCreatedRecipes)
           // Expand the recipes section
           setShowRecipes(true)
         }
