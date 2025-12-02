@@ -101,7 +101,7 @@ export default function Hello() {
   }
 
   const handleToggleFavorite = async () => {
-    if (!showRecipes && user) {
+    if (!showFavorites && user) {
       setIsLoadingFavorites(true)
       setFavoritesError(null)
 
