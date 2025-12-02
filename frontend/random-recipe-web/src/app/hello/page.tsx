@@ -291,7 +291,7 @@ export default function Hello() {
 
           {/* My recipies Toggle Card */}
           <CollapsibleSection
-            title="My Tasty Recipies"
+            title="My Tasty Recipes"
             emoji="🍳"
             isOpen={showRecipes}
             onToggle={handleToggleRecipes}
