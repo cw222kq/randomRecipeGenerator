@@ -129,7 +129,9 @@ export default function Hello() {
   }
 
   const handleRecipeClick = (recipeId: string) => {
-    const recipe = recipes.find((recipe) => recipe.id === recipeId)
+    const recipe =
+      recipes.find((recipe) => recipe.id === recipeId) ||
+      favoriteRecipes.find((recipe) => recipe.id === recipeId)
     if (!recipe) {
       toast.error('Recipe not found')
       return
