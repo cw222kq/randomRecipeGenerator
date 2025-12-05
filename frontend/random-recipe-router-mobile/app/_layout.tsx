@@ -1,6 +1,6 @@
 import '../global.css'
 import { Slot, useRouter } from 'expo-router'
-import { SafeAreaView } from 'react-native'
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
 import { Navbar } from '@/components/Navbar'
 import { secureStorage } from '@/lib/secureStorage'
@@ -32,13 +32,15 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <AuthWrapper>
-        <SafeAreaView style={{ flex: 1 }}>
-          <StatusBar style="auto" />
-          <Navbar />
-          <Slot />
-        </SafeAreaView>
-      </AuthWrapper>
+      <SafeAreaProvider>
+        <AuthWrapper>
+          <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar style="auto" />
+            <Navbar />
+            <Slot />
+          </SafeAreaView>
+        </AuthWrapper>
+      </SafeAreaProvider>
     </Provider>
   )
 }
