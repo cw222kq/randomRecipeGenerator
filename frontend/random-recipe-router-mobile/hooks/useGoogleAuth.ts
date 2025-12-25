@@ -16,6 +16,7 @@ import {
   setError,
   clearError,
 } from '@/store/features/auth/authSlice'
+import { reloadAppAsync } from 'expo'
 
 interface OAuthCallbackParams {
   code?: string
@@ -114,9 +115,12 @@ export const useGoogleAuth = () => {
     await secureStorage.setItem('post_login_redirect', '/hello')
 
     if (__DEV__) {
-      Updates.reloadAsync()
+      // Reload app in development to apply the styles from NativeWind
+      console.log('Reloading app in development')
+      await reloadAppAsync()
     } else {
-      router.push('/hello')
+      console.log('Reloading app in production')
+      await Updates.reloadAsync()
     }
   }
 
