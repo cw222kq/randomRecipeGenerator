@@ -60,4 +60,33 @@ const postRequest = async <T>(
   }
 }
 
-export { getRequest, postRequest }
+const deleteRequest = async (
+  endpoint: string,
+  options: RequestOptions = {},
+  context: string = 'data',
+): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_API_BASE_URL}${endpoint}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+        ...options,
+      },
+    )
+
+    if (!response.ok) {
+      console.error(
+        `Failed to delete ${context}: ${response.status} ${response.statusText}`,
+      )
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error(`Error deleting ${context}`, error)
+    return false
+  }
+}
+
+export { getRequest, postRequest, deleteRequest }
