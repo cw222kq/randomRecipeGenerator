@@ -1,4 +1,6 @@
 import { RecipeSchema, Recipe } from '@/schemas/recipeSchema'
+import { getRequest } from './baseService'
+import validateData from '@/lib/validation'
 
 const getRandomRecipe = async (): Promise<Recipe | null> => {
   try {
@@ -31,4 +33,19 @@ const getRandomRecipe = async (): Promise<Recipe | null> => {
   }
 }
 
-export default getRandomRecipe
+const getUserRecipes = async (userId: string): Promise<Recipe[] | null> => {
+  const recipes = await getRequest<Recipe[]>(
+    `/api/recipe/user/${userId}/all`,
+    {},
+    'user recipes',
+  )
+  if (!recipes) {
+    return null
+  }
+
+  return recipes
+    .map((recipe) => validateData(recipe, RecipeSchema, 'user recipes'))
+    .filter((recipe): recipe is Recipe => recipe !== null)
+}
+
+export { getRandomRecipe, getUserRecipes }
