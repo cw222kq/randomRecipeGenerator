@@ -1,5 +1,5 @@
 import { RecipeSchema, Recipe } from '@/schemas/recipeSchema'
-import { getRequest, postRequest } from './baseService'
+import { getRequest, postRequest, deleteRequest } from './baseService'
 import validateData from '@/lib/validation'
 
 const getRandomRecipe = async (): Promise<Recipe | null> => {
@@ -66,4 +66,16 @@ const createRecipe = async (
   return validateData(createdRecipe, RecipeSchema, 'created recipe')
 }
 
-export { getRandomRecipe, getUserRecipes, createRecipe }
+const deleteRecipe = async (
+  userId: string,
+  recipeId: string,
+): Promise<boolean> => {
+  const deletedRecipe = await deleteRequest(
+    `/api/recipe/${userId}/${recipeId}`,
+    {},
+    'deleted recipe',
+  )
+  return deletedRecipe
+}
+
+export { getRandomRecipe, getUserRecipes, createRecipe, deleteRecipe }
