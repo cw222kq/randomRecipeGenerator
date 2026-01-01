@@ -102,10 +102,30 @@ const updateRecipe = async (
   return validateData(updatedRecipe, RecipeSchema, 'updated recipe')
 }
 
+const favoriteSpoonacularRecipe = async (
+  userId: string,
+  recipeData: {
+    spoonacularId: number
+    title: string
+    ingredients: string[]
+    instructions: string
+    imageUrl?: string
+  },
+): Promise<Recipe | null> => {
+  const savedRecipe = await postRequest<Recipe>(
+    `/api/recipe/${userId}`,
+    recipeData,
+    {},
+    'favorite spoonacular recipe',
+  )
+  return validateData(savedRecipe, RecipeSchema, 'saved spoonacular recipe')
+}
+
 export {
   getRandomRecipe,
   getUserRecipes,
   createRecipe,
   deleteRecipe,
   updateRecipe,
+  favoriteSpoonacularRecipe,
 }
