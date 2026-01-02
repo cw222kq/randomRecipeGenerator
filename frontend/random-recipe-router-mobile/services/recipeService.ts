@@ -121,6 +121,18 @@ const favoriteSpoonacularRecipe = async (
   return validateData(savedRecipe, RecipeSchema, 'saved spoonacular recipe')
 }
 
+const unfavoriteSpoonacularReicpe = async (
+  userId: string,
+  recipeId: string,
+): Promise<boolean> => {
+  const deletedRecipe = await deleteRequest(
+    `/api/recipe/${userId}/${recipeId}`,
+    {},
+    'deleted recipe',
+  )
+  return deletedRecipe
+}
+
 export {
   getRandomRecipe,
   getUserRecipes,
@@ -128,4 +140,5 @@ export {
   deleteRecipe,
   updateRecipe,
   favoriteSpoonacularRecipe,
+  unfavoriteSpoonacularReicpe,
 }
