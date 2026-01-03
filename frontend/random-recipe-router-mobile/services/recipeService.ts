@@ -121,7 +121,7 @@ const favoriteSpoonacularRecipe = async (
   return validateData(savedRecipe, RecipeSchema, 'saved spoonacular recipe')
 }
 
-const unfavoriteSpoonacularReicpe = async (
+const unfavoriteSpoonacularRecipe = async (
   userId: string,
   recipeId: string,
 ): Promise<boolean> => {
@@ -140,5 +140,5 @@ export {
   deleteRecipe,
   updateRecipe,
   favoriteSpoonacularRecipe,
-  unfavoriteSpoonacularReicpe,
+  unfavoriteSpoonacularRecipe,
 }
