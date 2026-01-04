@@ -38,6 +38,24 @@ const getRandomRecipe = async (): Promise<Recipe | null> => {
   }
 }
 
+const saveRecipe = async (
+  userId: string,
+  recipeData: {
+    title: string
+    ingredients: string[]
+    instructions: string
+    imageUrl?: string
+  },
+): Promise<Recipe | null> => {
+  const savedRecipe = await postRequest<Recipe>(
+    `/api/recipe/${userId}`,
+    recipeData,
+    {},
+    'saved recipe',
+  )
+  return validateData(savedRecipe, RecipeSchema, 'saved recipe')
+}
+
 const getUserRecipes = async (userId: string): Promise<Recipe[] | null> => {
   const recipes = await getRequest<Recipe[]>(
     `/api/recipe/user/${userId}/all`,
@@ -135,6 +153,7 @@ const unfavoriteSpoonacularRecipe = async (
 
 export {
   getRandomRecipe,
+  saveRecipe,
   getUserRecipes,
   createRecipe,
   deleteRecipe,
