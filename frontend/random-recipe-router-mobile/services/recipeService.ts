@@ -93,12 +93,11 @@ const deleteRecipe = async (
   userId: string,
   recipeId: string,
 ): Promise<boolean> => {
-  const deletedRecipe = await deleteRequest(
-    `/api/recipe/${userId}/${recipeId}`,
+  return await deleteRequest(
+    `/api/recipe/${recipeId}/user/${userId}`,
     {},
-    'deleted recipe',
+    'recipe',
   )
-  return deletedRecipe
 }
 
 const updateRecipe = async (
