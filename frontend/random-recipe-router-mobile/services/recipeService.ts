@@ -111,7 +111,7 @@ const updateRecipe = async (
   },
 ): Promise<Recipe | null> => {
   const updatedRecipe = await putRequest<Recipe>(
-    `/api/recipe/${userId}/${recipeId}`,
+    `/api/recipe/${recipeId}/user/${userId}`,
     recipeData,
     {},
     'updated recipe',
