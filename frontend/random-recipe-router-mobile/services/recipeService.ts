@@ -150,6 +150,25 @@ const unfavoriteSpoonacularRecipe = async (
   return deletedRecipe
 }
 
+const getUserFavoriteRecipes = async (
+  userId: string,
+): Promise<Recipe[] | null> => {
+  const favoriteRecipes = await getRequest<Recipe[]>(
+    `/api/favorite/user/${userId}`,
+    {},
+    'user favorite recipes',
+  )
+  if (!favoriteRecipes) {
+    return null
+  }
+
+  return favoriteRecipes
+    .map((recipe) =>
+      validateData(recipe, RecipeSchema, 'user favorite recipes'),
+    )
+    .filter((recipe) => recipe !== null) as Recipe[]
+}
+
 export {
   getRandomRecipe,
   saveRecipe,
@@ -159,4 +178,5 @@ export {
   updateRecipe,
   favoriteSpoonacularRecipe,
   unfavoriteSpoonacularRecipe,
+  getUserFavoriteRecipes,
 }
