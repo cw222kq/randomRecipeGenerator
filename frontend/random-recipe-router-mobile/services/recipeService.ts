@@ -90,8 +90,8 @@ const createRecipe = async (
 }
 
 const deleteRecipe = async (
-  userId: string,
   recipeId: string,
+  userId: string,
 ): Promise<boolean> => {
   return await deleteRequest(
     `/api/recipe/${recipeId}/user/${userId}`,
@@ -101,8 +101,8 @@ const deleteRecipe = async (
 }
 
 const updateRecipe = async (
-  userId: string,
   recipeId: string,
+  userId: string,
   recipeData: {
     title: string
     ingredients: string[]
