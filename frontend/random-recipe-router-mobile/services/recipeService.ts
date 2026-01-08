@@ -113,11 +113,35 @@ const favoriteSpoonacularRecipe = async (
 ): Promise<Recipe | null> => {
   const savedRecipe = await postRequest<Recipe>(
     `/api/recipe/${userId}`,
-    recipeData,
+    {
+      title: recipeData.title,
+      ingredients: recipeData.ingredients,
+      instructions: recipeData.instructions,
+      imageUrl: recipeData.imageUrl,
+      spoonacularId: recipeData.spoonacularId,
+    },
     {},
     'favorite spoonacular recipe',
   )
-  return validateData(savedRecipe, RecipeSchema, 'saved spoonacular recipe')
+
+  if (!savedRecipe) {
+    return null
+  }
+
+  // Add favorite relationship
+  const favoriteRecipe = await postRequest<Recipe>(
+    `/api/favorite/${userId}/${savedRecipe.id}`,
+    {},
+    {},
+    'favorite recipe',
+  )
+
+  if (!favoriteRecipe) {
+    console.error('Failed to favorite recipe')
+    return null
+  }
+
+  return validateData(savedRecipe, RecipeSchema, 'favorite recipe')
 }
 
 const unfavoriteSpoonacularRecipe = async (
