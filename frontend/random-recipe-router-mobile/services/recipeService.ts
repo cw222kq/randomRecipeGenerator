@@ -121,7 +121,7 @@ const favoriteSpoonacularRecipe = async (
       spoonacularId: recipeData.spoonacularId,
     },
     {},
-    'favorite spoonacular recipe',
+    'saved spoonacular recipe',
   )
 
   if (!savedRecipe) {
@@ -148,12 +148,36 @@ const unfavoriteSpoonacularRecipe = async (
   userId: string,
   recipeId: string,
 ): Promise<boolean> => {
-  const deletedRecipe = await deleteRequest(
-    `/api/recipe/${userId}/${recipeId}`,
-    {},
-    'deleted recipe',
-  )
-  return deletedRecipe
+  try {
+    const unfavoriteResult = await deleteRequest(
+      `/api/favorite/${userId}/${recipeId}`,
+      {},
+      'unfavorite recipe',
+    )
+
+    if (!unfavoriteResult) {
+      return false
+    }
+
+    // Delete the recipe from the database
+    const deletedResult = await deleteRequest(
+      `/api/recipe/${recipeId}/user/${userId}`,
+      {},
+      'deleted spoonacular recipe',
+    )
+
+    if (!deletedResult) {
+      return false
+    }
+
+    return deletedResult
+  } catch (error) {
+    console.error(
+      `Error unfavoring spoonacular recipe ${recipeId} for user ${userId}`,
+      error,
+    )
+    return false
+  }
 }
 
 const getUserFavoriteRecipes = async (
