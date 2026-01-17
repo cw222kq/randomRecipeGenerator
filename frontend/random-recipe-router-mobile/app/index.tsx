@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import getRandomRecipe from '../services/recipeService'
+import { getRandomRecipe } from '../services/recipeService'
 import { useEffect, useState } from 'react'
 import RecipeCard from '../components/RecipeCard'
 import { Recipe } from '@/schemas/recipeSchema'
