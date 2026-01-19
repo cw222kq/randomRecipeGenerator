@@ -1,5 +1,5 @@
 interface RequestOptions {
-  credentials?: RequestCredentials
+  headers?: Record<string, string>
 }
 
 const getRequest = async <T>(
