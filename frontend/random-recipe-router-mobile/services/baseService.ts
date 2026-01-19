@@ -40,9 +40,9 @@ const postRequest = async <T>(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...options.headers,
         },
         body: JSON.stringify(data),
-        ...options,
       },
     )
 
@@ -70,8 +70,9 @@ const deleteRequest = async (
       `${process.env.EXPO_PUBLIC_API_BASE_URL}${endpoint}`,
       {
         method: 'DELETE',
-        credentials: 'include',
-        ...options,
+        headers: {
+          ...options.headers,
+        },
       },
     )
 
@@ -102,6 +103,7 @@ const putRequest = async <T>(
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...options.headers,
         },
         body: JSON.stringify(data),
         ...options,
