@@ -116,7 +116,7 @@ const favoriteSpoonacularRecipe = async (
   const favoriteRecipe = await postRequest<Recipe>(
     `/api/favorite/${userId}/${savedRecipe.id}`,
     {},
-    {},
+    { headers: authHeaders },
     'favorite recipe',
   )
 
@@ -147,7 +147,7 @@ const unfavoriteSpoonacularRecipe = async (
     // Delete the recipe from the database
     const deletedResult = await deleteRequest(
       `/api/recipe/${recipeId}/user/${userId}`,
-      {},
+      { headers: authHeaders },
       'deleted spoonacular recipe',
     )
 
