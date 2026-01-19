@@ -6,6 +6,7 @@ import {
   putRequest,
 } from './baseService'
 import validateData from '@/lib/validation'
+import { getAuthHeaders } from '@/lib/authHeaders'
 
 const getRandomRecipe = async (): Promise<Recipe | null> => {
   const randomRecipe = await getRequest<Recipe>(
@@ -25,19 +26,21 @@ const saveRecipe = async (
     imageUrl?: string
   },
 ): Promise<Recipe | null> => {
+  const authHeaders = await getAuthHeaders()
   const savedRecipe = await postRequest<Recipe>(
     `/api/recipe/${userId}`,
     recipeData,
-    {},
+    { headers: authHeaders },
     'saved recipe',
   )
   return validateData(savedRecipe, RecipeSchema, 'saved recipe')
 }
 
 const getUserRecipes = async (userId: string): Promise<Recipe[] | null> => {
+  const authHeaders = await getAuthHeaders()
   const recipes = await getRequest<Recipe[]>(
     `/api/recipe/user/${userId}/all`,
-    {},
+    { headers: authHeaders },
     'user recipes',
   )
   if (!recipes) {
@@ -53,9 +56,10 @@ const deleteRecipe = async (
   recipeId: string,
   userId: string,
 ): Promise<boolean> => {
+  const authHeaders = await getAuthHeaders()
   return await deleteRequest(
     `/api/recipe/${recipeId}/user/${userId}`,
-    {},
+    { headers: authHeaders },
     'recipe',
   )
 }
@@ -70,10 +74,11 @@ const updateRecipe = async (
     imageUrl?: string
   },
 ): Promise<Recipe | null> => {
+  const authHeaders = await getAuthHeaders()
   const updatedRecipe = await putRequest<Recipe>(
     `/api/recipe/${recipeId}/user/${userId}`,
     recipeData,
-    {},
+    { headers: authHeaders },
     'updated recipe',
   )
   return validateData(updatedRecipe, RecipeSchema, 'updated recipe')
@@ -89,6 +94,7 @@ const favoriteSpoonacularRecipe = async (
     imageUrl?: string
   },
 ): Promise<Recipe | null> => {
+  const authHeaders = await getAuthHeaders()
   const savedRecipe = await postRequest<Recipe>(
     `/api/recipe/${userId}`,
     {
@@ -98,7 +104,7 @@ const favoriteSpoonacularRecipe = async (
       imageUrl: recipeData.imageUrl,
       spoonacularId: recipeData.spoonacularId,
     },
-    {},
+    { headers: authHeaders },
     'saved spoonacular recipe',
   )
 
@@ -127,9 +133,10 @@ const unfavoriteSpoonacularRecipe = async (
   recipeId: string,
 ): Promise<boolean> => {
   try {
+    const authHeaders = await getAuthHeaders()
     const unfavoriteResult = await deleteRequest(
       `/api/favorite/${userId}/${recipeId}`,
-      {},
+      { headers: authHeaders },
       'unfavorite recipe',
     )
 
@@ -161,9 +168,10 @@ const unfavoriteSpoonacularRecipe = async (
 const getUserFavoriteRecipes = async (
   userId: string,
 ): Promise<Recipe[] | null> => {
+  const authHeaders = await getAuthHeaders()
   const favoriteRecipes = await getRequest<Recipe[]>(
     `/api/favorite/user/${userId}`,
-    {},
+    { headers: authHeaders },
     'user favorite recipes',
   )
   if (!favoriteRecipes) {
