@@ -6,6 +6,20 @@ import { Recipe } from '@/schemas/recipeSchema'
 
 export default function HomeScreen() {
   const [recipe, setRecipe] = useState<Recipe | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isFavorited, setIsFavorited] = useState<boolean>(false)
+  const [savedRecipeId, setSavedRecipeId] = useState<string | null>(null)
+  const [isFavoriting, setIsFavoriting] = useState<boolean>(false)
+
+  const fetchRandomRecipe = async () => {
+    setIsLoading(true)
+    const result: Recipe | null = await getRandomRecipe()
+    setRecipe(result)
+    setIsFavorited(false)
+    setSavedRecipeId(null)
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     const resultGetRandomRecipe = async () => {
       const result: Recipe | null = await getRandomRecipe()
