@@ -21,11 +21,7 @@ export default function HomeScreen() {
   }
 
   useEffect(() => {
-    const resultGetRandomRecipe = async () => {
-      const result: Recipe | null = await getRandomRecipe()
-      setRecipe(result)
-    }
-    resultGetRandomRecipe()
+    fetchRandomRecipe()
   }, [])
 
   if (!recipe) {
@@ -37,7 +33,7 @@ export default function HomeScreen() {
       <Text className="text-black dark:text-white text-3xl font-bold">
         Fetched Random Recipe
       </Text>
-      <RecipeCard recipe={recipe} />
+      <RecipeCard recipe={recipe} onNewRecipe={fetchRandomRecipe} />
     </View>
   )
 }
