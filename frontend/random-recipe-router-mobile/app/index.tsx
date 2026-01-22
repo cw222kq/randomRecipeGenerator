@@ -30,7 +30,7 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 py-6">
-      <Text className="text-black dark:text-white text-3xl font-bold">
+      <Text className="text-black dark:text-white text-2xl font-bold px-4">
         Fetched Random Recipe
       </Text>
       <RecipeCard recipe={recipe} onNewRecipe={fetchRandomRecipe} />
