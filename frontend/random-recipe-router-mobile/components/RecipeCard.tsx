@@ -53,12 +53,12 @@ export default function RecipeCard({ recipe, onNewRecipe }: RecipeCardProps) {
         </ScrollView>
       </CardContent>
       <CardFooter>
-        <View className="flex-row justify-between w-full">
+        <View className="flex-row justify-center w-full">
           {/* When logged in
           <Button color="black" title="Save Recipe" />
           */}
           {/* When logged out */}
-          <Button color="gray" title="New Recipe" onPress={onNewRecipe} />
+          <Button color="gray-900" title="New Recipe" onPress={onNewRecipe} />
         </View>
       </CardFooter>
     </Card>
