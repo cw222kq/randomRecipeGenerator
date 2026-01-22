@@ -12,9 +12,10 @@ import { Image } from 'react-native'
 
 interface RecipeCardProps {
   recipe: Recipe
+  onNewRecipe: () => void
 }
 
-export default function RecipeCard({ recipe }: RecipeCardProps) {
+export default function RecipeCard({ recipe, onNewRecipe }: RecipeCardProps) {
   return (
     <Card className="m-4 flex-1">
       <CardHeader>
@@ -57,7 +58,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
           <Button color="black" title="Save Recipe" />
           */}
           {/* When logged out */}
-          <Button color="gray" title="New Recipe" />
+          <Button color="gray" title="New Recipe" onPress={onNewRecipe} />
         </View>
       </CardFooter>
     </Card>
