@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, ActivityIndicator } from 'react-native'
 import { getRandomRecipe } from '../services/recipeService'
 import { useEffect, useState } from 'react'
 import RecipeCard from '../components/RecipeCard'
@@ -24,8 +24,22 @@ export default function HomeScreen() {
     fetchRandomRecipe()
   }, [])
 
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
   if (!recipe) {
-    return <Text>No recipe found</Text>
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-black dark:text-white text-2xl font-bold px-4">
+          No recipe found
+        </Text>
+      </View>
+    )
   }
 
   return (
