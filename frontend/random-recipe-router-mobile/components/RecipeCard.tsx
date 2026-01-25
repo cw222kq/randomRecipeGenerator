@@ -9,18 +9,45 @@ import {
 } from './ui/card'
 import { Recipe } from '../schemas/recipeSchema'
 import { Image } from 'react-native'
+import { User } from '../schemas/userSchema'
+import FavoriteButton from './FavoriteButton'
 
 interface RecipeCardProps {
   recipe: Recipe
   onNewRecipe: () => void
+  isAuthenticated: boolean
+  user: User | null
+  isFavorited: boolean
+  isFavoriting: boolean
+  onToggleFavorite: () => void
 }
 
-export default function RecipeCard({ recipe, onNewRecipe }: RecipeCardProps) {
+export default function RecipeCard({
+  recipe,
+  onNewRecipe,
+  isAuthenticated,
+  user,
+  isFavorited,
+  isFavoriting,
+  onToggleFavorite,
+}: RecipeCardProps) {
   return (
     <Card className="m-4 flex-1">
       <CardHeader>
-        <CardTitle>{recipe.title}</CardTitle>
-        <CardDescription>Description</CardDescription>
+        <View className="flex-row items-start justify-between">
+          <View className="flex-1">
+            <CardTitle>{recipe.title}</CardTitle>
+            <CardDescription>Description</CardDescription>
+          </View>
+          {isAuthenticated && user && (
+            <FavoriteButton
+              isFavorited={isFavorited}
+              onPress={onToggleFavorite}
+              disabled={isFavoriting}
+              isLoading={isFavoriting}
+            />
+          )}
+        </View>
       </CardHeader>
       <CardContent className="flex-1">
         <ScrollView>

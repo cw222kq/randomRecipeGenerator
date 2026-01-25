@@ -101,7 +101,15 @@ export default function HomeScreen() {
       <Text className="text-black dark:text-white text-2xl font-bold px-4">
         Fetched Random Recipe
       </Text>
-      <RecipeCard recipe={recipe} onNewRecipe={fetchRandomRecipe} />
+      <RecipeCard
+        recipe={recipe}
+        onNewRecipe={fetchRandomRecipe}
+        isAuthenticated={isAuthenticated}
+        user={user}
+        isFavorited={isFavorited}
+        isFavoriting={isFavoriting}
+        onToggleFavorite={handleToggleFavorite}
+      />
     </View>
   )
 }
