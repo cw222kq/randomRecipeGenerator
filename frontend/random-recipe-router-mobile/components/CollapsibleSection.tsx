@@ -30,9 +30,9 @@ export default function CollapsibleSection({
           <Text className="text-2xl">{title}</Text>
           {emoji && <Text className="text-2xl">{emoji}</Text>}
         </View>
-        <ChevronRight
-          className={`h-8 w-8 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
-        />
+        <View style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}>
+          <ChevronRight size={32} color="#6b7280" />
+        </View>
       </TouchableOpacity>
 
       {/* Collapsible Content */}
