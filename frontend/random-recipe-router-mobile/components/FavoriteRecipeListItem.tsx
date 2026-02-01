@@ -24,7 +24,7 @@ export default function FavoriteRecipeListItem({
         <CardContent className="p-4">
           <View className="flex-row items-center gap-4">
             {/* Recipe Image */}
-            <View className="h-20 w-20 overflow-hidden rounded-xl bg-gray-100">
+            <View className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100 shadow-md">
               {recipe.imageUrl ? (
                 <Image
                   source={{ uri: recipe.imageUrl }}
@@ -53,7 +53,9 @@ export default function FavoriteRecipeListItem({
             </View>
 
             {/* Favorite Button */}
-            <FavoriteButton isFavorited={true} onPress={handleStarPress} />
+            <View className="mr-4">
+              <FavoriteButton isFavorited={true} onPress={handleStarPress} />
+            </View>
           </View>
         </CardContent>
       </Card>
