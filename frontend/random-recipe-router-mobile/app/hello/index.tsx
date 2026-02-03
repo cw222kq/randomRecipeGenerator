@@ -1,10 +1,43 @@
 import { View, Text } from 'react-native'
 import { useAppSelector } from '@/store/hooks'
+import { useState } from 'react'
+import { Recipe } from '@/schemas/recipeSchema'
+import { getUserFavoriteRecipes } from '@/services/recipeService'
 
 export default function Hello() {
   const { user, isLoading, isAuthenticated } = useAppSelector(
     (state) => state.auth,
   )
+
+  const [showFavorites, setShowFavorites] = useState<boolean>(false)
+  const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([])
+  const [isLoadingFavorites, setIsLoadingFavorites] = useState<boolean>(false)
+  const [favoritesError, setFavoritesError] = useState<string | null>(null)
+
+  const handleToggleFavorite = async () => {
+    if (!showFavorites && user) {
+      setIsLoadingFavorites(true)
+      setFavoritesError(null)
+
+      try {
+        const userFavoriteRecipes: Recipe[] | null =
+          await getUserFavoriteRecipes(user.id)
+        if (!userFavoriteRecipes) {
+          setFavoritesError('Failed to load favorite recipes')
+          return
+        }
+        setFavoriteRecipes(userFavoriteRecipes)
+      } catch (error) {
+        console.error('Error loading favorite recipes:', error)
+        setFavoritesError(
+          'An error occurred while loading the favorite recipes',
+        )
+      } finally {
+        setIsLoadingFavorites(false)
+      }
+    }
+    setShowFavorites(!showFavorites)
+  }
 
   if (isLoading) {
     return (
