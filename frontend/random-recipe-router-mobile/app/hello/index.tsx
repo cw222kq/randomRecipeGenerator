@@ -39,6 +39,15 @@ export default function Hello() {
     setShowFavorites(!showFavorites)
   }
 
+  const handleRecipeClick = (recipeId: string) => {
+    const recipe = favoriteRecipes.find((recipe) => recipe.id === recipeId)
+    if (!recipe) {
+      console.error('Recipe not found')
+      return
+    }
+    console.log('Recipe clicked:', recipe)
+  }
+
   if (isLoading) {
     return (
       <View className="py-6">
