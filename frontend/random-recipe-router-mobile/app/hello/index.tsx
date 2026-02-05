@@ -1,8 +1,11 @@
-import { View, Text } from 'react-native'
+import { View, Text, Alert } from 'react-native'
 import { useAppSelector } from '@/store/hooks'
 import { useState } from 'react'
 import { Recipe } from '@/schemas/recipeSchema'
-import { getUserFavoriteRecipes } from '@/services/recipeService'
+import {
+  getUserFavoriteRecipes,
+  unfavoriteSpoonacularRecipe,
+} from '@/services/recipeService'
 
 export default function Hello() {
   const { user, isLoading, isAuthenticated } = useAppSelector(
@@ -46,6 +49,29 @@ export default function Hello() {
       return
     }
     console.log('Recipe clicked:', recipe)
+  }
+
+  const handleUnfavoriteRecipe = async (recipeId: string) => {
+    if (!user) {
+      console.error('User not authenticated')
+      return
+    }
+
+    try {
+      const result = await unfavoriteSpoonacularRecipe(user.id, recipeId)
+
+      if (!result) {
+        console.error('Failed to unfavorite recipe')
+        return
+      }
+
+      // Remove from local state
+      setFavoriteRecipes((prevFavorites) =>
+        prevFavorites.filter((recipe) => recipe.id !== recipeId),
+      )
+    } catch (error) {
+      console.error('Error unfavoriting recipe:', error)
+    }
   }
 
   if (isLoading) {
