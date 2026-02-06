@@ -74,29 +74,21 @@ export default function Hello() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <View className="py-6">
+  return (
+    <View className="py-6">
+      {user && (
+        <Text className="text-black dark:text-white text-3xl font-bold">
+          Welcome {user.firstName} {user.lastName}
+        </Text>
+      )}
+      {isLoading && (
         <Text className="text-black dark:text-white text-lg">Loading...</Text>
-      </View>
-    )
-  }
-
-  if (!isAuthenticated || !user) {
-    return (
-      <View className="py-6">
+      )}
+      {!isLoading && !user && (
         <Text className="text-black dark:text-white text-lg">
           Please sign in to continue
         </Text>
-      </View>
-    )
-  }
-
-  return (
-    <View className="py-6">
-      <Text className="text-black dark:text-white text-3xl font-bold">
-        Welcome {user.firstName} {user.lastName}
-      </Text>
+      )}
     </View>
   )
 }
