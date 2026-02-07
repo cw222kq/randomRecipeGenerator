@@ -1,5 +1,6 @@
 import '../global.css'
 import { Slot, useRouter } from 'expo-router'
+import { View } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
 import { Navbar } from '@/components/Navbar'
@@ -8,6 +9,7 @@ import { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from '@/store'
 import { AuthWrapper } from '@/components/AuthWrapper'
+import BottomTabBar from '@/components/BottomTabBar'
 
 export default function RootLayout() {
   const router = useRouter()
@@ -37,7 +39,10 @@ export default function RootLayout() {
           <SafeAreaView style={{ flex: 1 }}>
             <StatusBar style="auto" />
             <Navbar />
-            <Slot />
+            <View className="flex-1">
+              <Slot />
+            </View>
+            <BottomTabBar />
           </SafeAreaView>
         </AuthWrapper>
       </SafeAreaProvider>
