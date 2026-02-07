@@ -13,14 +13,6 @@ export const Navbar = () => {
       <RecipeGeneratorLogo />
 
       <View className="flex-row items-center gap-6">
-        {/* When logged in
-        <Link href="/">
-          <Text className="text-black dark:text-white">Home</Text>
-        </Link> 
-        <Link href="/hello">
-          <Text className="text-black dark:text-white">Another Page</Text>
-        </Link>*/}
-
         {/* When logged out => Google Sign In Button */}
         {!user && <GoogleSignInButton />}
         {!isLoading && user && <SignOutButton />}
