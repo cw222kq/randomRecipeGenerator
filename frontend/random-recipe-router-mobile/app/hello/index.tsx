@@ -1,4 +1,4 @@
-import { View, Text, Alert } from 'react-native'
+import { View, Text, Alert, ActivityIndicator } from 'react-native'
 import { useAppSelector } from '@/store/hooks'
 import { useState } from 'react'
 import { Recipe } from '@/schemas/recipeSchema'
@@ -6,6 +6,8 @@ import {
   getUserFavoriteRecipes,
   unfavoriteSpoonacularRecipe,
 } from '@/services/recipeService'
+import CollapsibleSection from '@/components/CollapsibleSection'
+import FavoriteRecipeList from '@/components/FavoriteRecipeList'
 
 export default function Hello() {
   const { user, isLoading, isAuthenticated } = useAppSelector(
@@ -75,19 +77,63 @@ export default function Hello() {
   }
 
   return (
-    <View className="py-6">
-      {user && (
-        <Text className="text-black dark:text-white text-3xl font-bold">
-          Welcome {user.firstName} {user.lastName}
-        </Text>
-      )}
+    <View className="flex-1 px-4 py-6">
       {isLoading && (
         <Text className="text-black dark:text-white text-lg">Loading...</Text>
       )}
+
       {!isLoading && !user && (
         <Text className="text-black dark:text-white text-lg">
           Please sign in to continue
         </Text>
+      )}
+
+      {!isLoading && user && (
+        <>
+          <Text className="mb-8 text-black dark:text-white text-2xl font-bold">
+            Hello {user.firstName} {user.lastName}!
+          </Text>
+
+          <CollapsibleSection
+            title="My Favorite Recipes"
+            emoji="⭐"
+            isOpen={showFavorites}
+            onToggle={handleToggleFavorite}
+            showContentCard={true}
+          >
+            {isLoadingFavorites && (
+              <View className="items-center py-4">
+                <ActivityIndicator size="small" />
+                <Text className="mt-2 text-gray-600">
+                  Loading your favorites...
+                </Text>
+              </View>
+            )}
+
+            {!isLoadingFavorites &&
+              !favoritesError &&
+              favoriteRecipes.length === 0 && (
+                <View className="items-center py-4">
+                  <Text className="text-center text-gray-600">
+                    You don't have any favorite recipes yet.
+                  </Text>
+                  <Text className="mt-1 text-center text-sm text-gray-500">
+                    Favorite recipes from the home page to see them here!
+                  </Text>
+                </View>
+              )}
+
+            {!isLoadingFavorites &&
+              !favoritesError &&
+              favoriteRecipes.length > 0 && (
+                <FavoriteRecipeList
+                  recipes={favoriteRecipes}
+                  onRecipeClick={handleRecipeClick}
+                  onUnfavorite={handleUnfavoriteRecipe}
+                />
+              )}
+          </CollapsibleSection>
+        </>
       )}
     </View>
   )

@@ -170,7 +170,7 @@ const getUserFavoriteRecipes = async (
 ): Promise<Recipe[] | null> => {
   const authHeaders = await getAuthHeaders()
   const favoriteRecipes = await getRequest<Recipe[]>(
-    `/api/favorite/user/${userId}`,
+    `/api/favorite/${userId}`,
     { headers: authHeaders },
     'user favorite recipes',
   )
