@@ -110,6 +110,14 @@ export default function Hello() {
               </View>
             )}
 
+            {!isLoadingFavorites && favoritesError && (
+              <View className="items-center py-4">
+                <Text className="text-red-500 text-center">
+                  {favoritesError}
+                </Text>
+              </View>
+            )}
+
             {!isLoadingFavorites &&
               !favoritesError &&
               favoriteRecipes.length === 0 && (
