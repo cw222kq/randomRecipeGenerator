@@ -186,7 +186,14 @@ namespace RandomRecipeGenerator.API.Controllers
 
                 return Ok(new MobileAuthCompleteResponseDTO
                 {
-                    User = userProfileResponse,
+                    User = new UserDTO
+                    {
+                        Id = user.Id,
+                        GoogleUserId = user.GoogleUserId,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
+                    },
                     Token = _oAuthService.GenerateJwtToken(userProfileResponse),
                     ExpiresAt = DateTime.UtcNow.AddDays(30).ToString("O")
                 });
