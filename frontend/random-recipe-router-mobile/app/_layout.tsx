@@ -39,9 +39,7 @@ export default function RootLayout() {
           <SafeAreaView style={{ flex: 1 }}>
             <StatusBar style="auto" />
             <Navbar />
-            <View className="flex-1">
-              <Slot />
-            </View>
+            <Slot />
             <BottomTabBar />
           </SafeAreaView>
         </AuthWrapper>

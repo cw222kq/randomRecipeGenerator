@@ -1,4 +1,4 @@
-import { View, Text, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, Alert, ActivityIndicator, ScrollView } from 'react-native'
 import { useAppSelector } from '@/store/hooks'
 import { useState } from 'react'
 import { Recipe } from '@/schemas/recipeSchema'
@@ -77,7 +77,7 @@ export default function Hello() {
   }
 
   return (
-    <View className="flex-1 px-4 py-6">
+    <ScrollView className="flex-1 px-4 py-6">
       {isLoading && (
         <Text className="text-black dark:text-white text-lg">Loading...</Text>
       )}
@@ -143,6 +143,6 @@ export default function Hello() {
           </CollapsibleSection>
         </>
       )}
-    </View>
+    </ScrollView>
   )
 }
