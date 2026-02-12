@@ -104,7 +104,7 @@ export default function Hello() {
             {isLoadingFavorites && (
               <View className="items-center py-4">
                 <ActivityIndicator size="small" />
-                <Text className="mt-2 text-gray-600">
+                <Text className="mt-2 text-gray-600 dark:text-gray-400">
                   Loading your favorites...
                 </Text>
               </View>
@@ -122,7 +122,7 @@ export default function Hello() {
               !favoritesError &&
               favoriteRecipes.length === 0 && (
                 <View className="items-center py-4">
-                  <Text className="text-center text-gray-600">
+                  <Text className="text-center text-gray-600 dark:text-gray-400">
                     You don't have any favorite recipes yet.
                   </Text>
                   <Text className="mt-1 text-center text-sm text-gray-500">

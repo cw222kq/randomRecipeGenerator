@@ -16,7 +16,7 @@ export default function FavoriteRecipeList({
   return (
     <View className="gap-3">
       <View className="mb-4">
-        <Text className="text-center text-sm text-gray-600">
+        <Text className="text-center text-sm text-gray-600 dark:text-gray-400">
           {recipes.length} favorite{recipes.length !== 1 ? 's' : ''} found!
         </Text>
       </View>

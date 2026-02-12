@@ -32,12 +32,16 @@ export default function RecipeCard({
   onToggleFavorite,
 }: RecipeCardProps) {
   return (
-    <Card className="m-4 flex-1">
+    <Card className="m-4 flex-1 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
       <CardHeader>
         <View className="flex-row items-start justify-between">
           <View className="flex-1">
-            <CardTitle>{recipe.title}</CardTitle>
-            <CardDescription>Description</CardDescription>
+            <CardTitle className="text-black dark:text-white">
+              {recipe.title}
+            </CardTitle>
+            <CardDescription className="text-gray-500 dark:text-gray-400">
+              Description
+            </CardDescription>
           </View>
           {isAuthenticated && user && (
             <FavoriteButton
@@ -62,10 +66,12 @@ export default function RecipeCard({
           </View>
 
           {/* Ingredients */}
-          <View className="mt-4 rounded-lg border px-4 py-4">
-            <Text className="mb-2 text-lg font-semibold">Ingredients:</Text>
+          <View className="mt-4 rounded-lg border border-gray-200 px-4 py-4 dark:border-gray-700">
+            <Text className="mb-2 text-lg font-semibold text-black dark:text-white">
+              Ingredients:
+            </Text>
             {recipe.ingredients.map((ingredient, i) => (
-              <Text key={i}>
+              <Text key={i} className="text-black dark:text-gray-300">
                 {'• '}
                 {ingredient}
               </Text>
@@ -73,9 +79,13 @@ export default function RecipeCard({
           </View>
 
           {/* Instructions */}
-          <View className="mt-4 rounded-lg border px-4 py-4">
-            <Text className="mb-2 text-lg font-semibold">Instructions:</Text>
-            <Text>{recipe.instructions}</Text>
+          <View className="mt-4 rounded-lg border border-gray-200 px-4 py-4 dark:border-gray-700">
+            <Text className="mb-2 text-lg font-semibold text-black dark:text-white">
+              Instructions:
+            </Text>
+            <Text className="text-black dark:text-gray-300">
+              {recipe.instructions}
+            </Text>
           </View>
         </ScrollView>
       </CardContent>

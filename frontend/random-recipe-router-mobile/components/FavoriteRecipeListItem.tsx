@@ -20,11 +20,11 @@ export default function FavoriteRecipeListItem({
 
   return (
     <TouchableOpacity onPress={() => onClick(recipe.id)} activeOpacity={0.7}>
-      <Card className="mb-2 border-l-4 border-l-yellow-400">
+      <Card className="mb-2 border-l-4 border-l-yellow-400 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <CardContent className="p-4">
           <View className="flex-row items-center gap-4">
             {/* Recipe Image */}
-            <View className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100 shadow-md">
+            <View className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100 shadow-md dark:bg-gray-700">
               {recipe.imageUrl ? (
                 <Image
                   source={{ uri: recipe.imageUrl }}
@@ -41,12 +41,12 @@ export default function FavoriteRecipeListItem({
             {/* Recipe Info */}
             <View className="min-w-0 flex-1">
               <Text
-                className="text-lg font-semibold text-gray-800"
+                className="text-lg font-semibold text-gray-800 dark:text-gray-100"
                 numberOfLines={1}
               >
                 {recipe.title}
               </Text>
-              <Text className="mt-1 text-sm text-gray-500">
+              <Text className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 🥄 {recipe.ingredients.length} ingredient
                 {recipe.ingredients.length !== 1 ? 's' : ''}
               </Text>
