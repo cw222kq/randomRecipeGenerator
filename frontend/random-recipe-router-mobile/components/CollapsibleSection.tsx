@@ -23,12 +23,12 @@ export default function CollapsibleSection({
       {/* Toggle Header Card */}
       <TouchableOpacity
         onPress={onToggle}
-        className="flex-row items-center justify-between rounded-lg bg-white p-4 shadow-sm"
+        className="flex-row items-center justify-between rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800"
         accessibilityLabel={`${isOpen ? 'Collapse' : 'Expand'} ${title}`}
       >
         <View className="flex-row items-center gap-3">
-          <Text className="text-2xl">{title}</Text>
-          {emoji && <Text className="text-2xl">{emoji}</Text>}
+          <Text className="text-2xl dark:text-white">{title}</Text>
+          {emoji && <Text className="text-2xl dark:text-white">{emoji}</Text>}
         </View>
         <View style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}>
           <ChevronRight size={32} color="#6b7280" />
@@ -39,7 +39,7 @@ export default function CollapsibleSection({
       {isOpen && (
         <>
           {showContentCard && (
-            <View className="mt-2 rounded-lg bg-gray-50 p-4 shadow-sm">
+            <View className="mt-2 rounded-lg bg-gray-50 p-4 shadow-sm dark:bg-gray-800">
               {children}
             </View>
           )}
