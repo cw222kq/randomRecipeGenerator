@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, Button } from 'react-native'
+import { Text, View, ScrollView, TouchableOpacity } from 'react-native'
 import {
   Card,
   CardContent,
@@ -91,11 +91,15 @@ export default function RecipeCard({
       </CardContent>
       <CardFooter>
         <View className="flex-row justify-center w-full">
-          {/* When logged in
-          <Button color="black" title="Save Recipe" />
-          */}
-          {/* When logged out */}
-          <Button color="gray-900" title="New Recipe" onPress={onNewRecipe} />
+          <TouchableOpacity
+            onPress={onNewRecipe}
+            className="rounded-lg bg-gray-900 px-6 py-3 dark:bg-gray-100"
+            activeOpacity={0.7}
+          >
+            <Text className="font-semibold text-white dark:text-gray-900">
+              New Recipe
+            </Text>
+          </TouchableOpacity>
         </View>
       </CardFooter>
     </Card>
