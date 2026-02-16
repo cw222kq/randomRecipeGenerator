@@ -35,7 +35,7 @@ export default function SignOutButton() {
           {isLoading
             ? 'Signing out...'
             : showConfirmation
-              ? 'Tap again to confirm'
+              ? 'Tap to confirm'
               : 'Sign Out'}
         </Text>
       </Pressable>
