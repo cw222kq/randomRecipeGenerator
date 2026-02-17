@@ -59,21 +59,37 @@ export default function Hello() {
       return
     }
 
-    try {
-      const result = await unfavoriteSpoonacularRecipe(user.id, recipeId)
+    Alert.alert(
+      'Remove from favorites?',
+      'Are you sure you want to remove this recipe from favorites?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const result = await unfavoriteSpoonacularRecipe(
+                user.id,
+                recipeId,
+              )
 
-      if (!result) {
-        console.error('Failed to unfavorite recipe')
-        return
-      }
+              if (!result) {
+                console.error('Failed to unfavorite recipe')
+                return
+              }
 
-      // Remove from local state
-      setFavoriteRecipes((prevFavorites) =>
-        prevFavorites.filter((recipe) => recipe.id !== recipeId),
-      )
-    } catch (error) {
-      console.error('Error unfavoriting recipe:', error)
-    }
+              // Remove from local state
+              setFavoriteRecipes((prevFavorites) =>
+                prevFavorites.filter((recipe) => recipe.id !== recipeId),
+              )
+            } catch (error) {
+              console.error('Error unfavoriting recipe:', error)
+            }
+          },
+        },
+      ],
+    )
   }
 
   return (
