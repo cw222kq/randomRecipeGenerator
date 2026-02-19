@@ -8,6 +8,7 @@ import {
 } from '@/services/recipeService'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import FavoriteRecipeList from '@/components/FavoriteRecipeList'
+import RecipeDetailModal from '@/components/RecipeDetailModal'
 
 export default function Hello() {
   const { user, isLoading, isAuthenticated } = useAppSelector(
@@ -18,6 +19,8 @@ export default function Hello() {
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([])
   const [isLoadingFavorites, setIsLoadingFavorites] = useState<boolean>(false)
   const [favoritesError, setFavoritesError] = useState<string | null>(null)
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
   const handleToggleFavorite = async () => {
     if (!showFavorites && user) {
@@ -50,7 +53,13 @@ export default function Hello() {
       console.error('Recipe not found')
       return
     }
-    console.log('Recipe clicked:', recipe)
+    setSelectedRecipe(recipe)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedRecipe(null)
   }
 
   const handleUnfavoriteRecipe = async (recipeId: string) => {
@@ -159,6 +168,11 @@ export default function Hello() {
           </CollapsibleSection>
         </>
       )}
+      <RecipeDetailModal
+        recipe={selectedRecipe}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </ScrollView>
   )
 }
