@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, TouchableOpacity, Modal, Image } from 'react-native'
 import { Recipe } from '@/schemas/recipeSchema'
 
 interface RecipeDetailModalProps {
@@ -35,6 +35,24 @@ export default function RecipeDetailModal({
           >
             <Text className="text-lg text-gray-600 dark:text-gray-300">✕</Text>
           </TouchableOpacity>
+        </View>
+        {/* Content */}
+        <View className="flex-1 px-4 py-4">
+          {/* Recipe Image */}
+          <View className="mb-6 aspect-video w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+            {recipe.imageUrl && (
+              <Image
+                source={{ uri: recipe.imageUrl }}
+                className="h-full w-full"
+                resizeMode="cover"
+              />
+            )}
+            {!recipe.imageUrl && (
+              <View className="flex-1 items-center justify-center">
+                <Text className="text-4xl">🍽️</Text>
+              </View>
+            )}
+          </View>
         </View>
       </View>
     </Modal>
