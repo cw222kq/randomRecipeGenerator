@@ -53,6 +53,28 @@ export default function RecipeDetailModal({
               </View>
             )}
           </View>
+          {/* Ingredients */}
+          <View className="mt-4 rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+            <Text className="mb-3 text-lg font-semibold text-black dark:text-white">
+              Ingredients:
+            </Text>
+            {recipe.ingredients &&
+              recipe.ingredients.length > 0 &&
+              recipe.ingredients.map((ingredient, index) => (
+                <Text
+                  key={index}
+                  className="mb-1 text-gray-700 dark:text-gray-300"
+                >
+                  • {ingredient}
+                </Text>
+              ))}
+            {!recipe.ingredients ||
+              (recipe.ingredients.length === 0 && (
+                <Text className="text-gray-500 dark:text-gray-400">
+                  No ingredients listed
+                </Text>
+              ))}
+          </View>
         </View>
       </View>
     </Modal>
