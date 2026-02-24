@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, Modal, Image } from 'react-native'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Image,
+  ScrollView,
+} from 'react-native'
 import { Recipe } from '@/schemas/recipeSchema'
 
 interface RecipeDetailModalProps {
@@ -23,7 +30,7 @@ export default function RecipeDetailModal({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <View className="flex-1 bg-white dark:bg-gray-900 p-4">
+      <ScrollView className="flex-1 bg-white dark:bg-gray-900 p-4">
         {/* Header */}
         <View className="flex-row items-start justify-between border-b border-gray-200 px-4 py-4 dark:border-gray-700">
           <Text className="flex-1 text-xl font-bold text-black dark:text-white">
@@ -91,7 +98,7 @@ export default function RecipeDetailModal({
             )}
           </View>
         </View>
-      </View>
+      </ScrollView>
     </Modal>
   )
 }
