@@ -75,6 +75,21 @@ export default function RecipeDetailModal({
                 </Text>
               ))}
           </View>
+          {/* Instructions */}
+          <View className="mt-4 rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+            <Text className="mb-3 text-lg font-semibold text-black dark:text-white">
+              Instructions:
+            </Text>
+            {recipe.instructions ? (
+              <Text className="leading-6 text-gray-700 dark:text-gray-300">
+                {recipe.instructions}
+              </Text>
+            ) : (
+              <Text className="text-gray-500 dark:text-gray-400">
+                No instructions provided
+              </Text>
+            )}
+          </View>
         </View>
       </View>
     </Modal>
