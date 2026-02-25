@@ -7,17 +7,20 @@ import {
   ScrollView,
 } from 'react-native'
 import { Recipe } from '@/schemas/recipeSchema'
+import { Ionicons } from '@expo/vector-icons'
 
 interface RecipeDetailModalProps {
   recipe: Recipe | null
   isOpen: boolean
   onClose: () => void
+  onDelete: (recipeId: string) => void
 }
 
 export default function RecipeDetailModal({
   recipe,
   isOpen,
   onClose,
+  onDelete,
 }: RecipeDetailModalProps) {
   if (!recipe) {
     return null
@@ -36,12 +39,20 @@ export default function RecipeDetailModal({
           <Text className="flex-1 text-xl font-bold text-black dark:text-white">
             {recipe.title}
           </Text>
-          <TouchableOpacity
-            onPress={onClose}
-            className="ml-4 rounded-full bg-gray-100 p-2 dark:bg-gray-800"
-          >
-            <Text className="text-lg text-gray-600 dark:text-gray-300">✕</Text>
-          </TouchableOpacity>
+          <View className="ml-4 flex-row gap-1">
+            <TouchableOpacity
+              onPress={() => onDelete(recipe.id)}
+              className="rounded-full bg-red-100 p-2 dark:bg-red-900"
+            >
+              <Ionicons name="trash-outline" size={16} color="#dc2626" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onClose}
+              className="ml-4 rounded-full bg-gray-100 p-2 dark:bg-gray-800"
+            >
+              <Ionicons name="close" size={16} color="#4b5563" />
+            </TouchableOpacity>
+          </View>
         </View>
         {/* Content */}
         <ScrollView className="flex-1 px-4 py-4 pb-6">
