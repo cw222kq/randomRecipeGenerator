@@ -5,6 +5,7 @@ import { Recipe } from '@/schemas/recipeSchema'
 import {
   getUserFavoriteRecipes,
   unfavoriteSpoonacularRecipe,
+  deleteRecipe,
 } from '@/services/recipeService'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import FavoriteRecipeList from '@/components/FavoriteRecipeList'
@@ -101,6 +102,40 @@ export default function Hello() {
     )
   }
 
+  const handleDeleteRecipe = async (recipeId: string) => {
+    if (!user) {
+      console.error('User not authenticated')
+      return
+    }
+
+    Alert.alert(
+      'Delete Recipe',
+      'Are you sure you want to delete this recipe? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteRecipe(recipeId, user.id)
+
+              setFavoriteRecipes((prevFavorites) =>
+                prevFavorites.filter((recipe) => recipe.id !== recipeId),
+              )
+              handleCloseModal()
+            } catch (error) {
+              console.error('Error deleting recipe:', error)
+              Alert.alert('Failed to delete recipe')
+            } finally {
+              setIsLoadingFavorites(false)
+            }
+          },
+        },
+      ],
+    )
+  }
+
   return (
     <ScrollView className="flex-1 px-4 py-6">
       {isLoading && (
@@ -172,6 +207,7 @@ export default function Hello() {
         recipe={selectedRecipe}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onDelete={handleDeleteRecipe}
       />
     </ScrollView>
   )
