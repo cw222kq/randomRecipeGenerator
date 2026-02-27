@@ -44,13 +44,13 @@ export default function RecipeDetailModal({
               onPress={() => onDelete(recipe.id)}
               className="rounded-full bg-red-100 p-2 dark:bg-red-900"
             >
-              <Ionicons name="trash-outline" size={16} color="#dc2626" />
+              <Ionicons name="trash-outline" size={16} color="#FFFFFF" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={onClose}
               className="ml-4 rounded-full bg-gray-100 p-2 dark:bg-gray-800"
             >
-              <Ionicons name="close" size={16} color="#4b5563" />
+              <Ionicons name="close" size={16} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
         </View>
