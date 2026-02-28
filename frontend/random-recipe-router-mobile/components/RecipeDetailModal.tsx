@@ -39,7 +39,13 @@ export default function RecipeDetailModal({
           <Text className="flex-1 text-xl font-bold text-black dark:text-white">
             {recipe.title}
           </Text>
-          <View className="ml-4 flex-row gap-1">
+          <View className="ml-4 flex-row gap-4">
+            <TouchableOpacity
+              onPress={() => {}}
+              className="rounded-full bg-blue-100 p-2 dark:bg-blue-900"
+            >
+              <Ionicons name="create-outline" size={16} color="#FFFFFF" />
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDelete(recipe.id)}
               className="rounded-full bg-red-100 p-2 dark:bg-red-900"
@@ -48,7 +54,7 @@ export default function RecipeDetailModal({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={onClose}
-              className="ml-4 rounded-full bg-gray-100 p-2 dark:bg-gray-800"
+              className="rounded-full bg-gray-100 p-2 dark:bg-gray-800"
             >
               <Ionicons name="close" size={16} color="#FFFFFF" />
             </TouchableOpacity>
