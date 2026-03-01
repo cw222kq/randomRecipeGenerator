@@ -8,6 +8,7 @@ import {
 } from 'react-native'
 import { Recipe } from '@/schemas/recipeSchema'
 import { Ionicons } from '@expo/vector-icons'
+import { useState, useEffect } from 'react'
 
 interface RecipeDetailModalProps {
   recipe: Recipe | null
@@ -22,8 +23,54 @@ export default function RecipeDetailModal({
   onClose,
   onDelete,
 }: RecipeDetailModalProps) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editData, setEditData] = useState({
+    title: '',
+    ingredients: [] as string[],
+    instructions: '',
+    imageUrl: '',
+    currentIngredient: '',
+  })
+
+  // Initialize the edit data when recipe changes
+  useEffect(() => {
+    if (recipe) {
+      setEditData({
+        title: recipe.title,
+        ingredients: [...recipe.ingredients],
+        instructions: recipe.instructions,
+        imageUrl: recipe.imageUrl || '',
+        currentIngredient: '',
+      })
+    }
+  }, [recipe])
+
+  // Reset editing state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setIsEditing(false)
+    }
+  }, [isOpen])
+
   if (!recipe) {
     return null
+  }
+
+  const handleEditClick = () => {
+    setIsEditing(true)
+  }
+
+  const handleCancelEdit = () => {
+    setIsEditing(false)
+    if (recipe) {
+      setEditData({
+        title: recipe.title,
+        ingredients: [...recipe.ingredients],
+        instructions: recipe.instructions,
+        imageUrl: recipe.imageUrl || '',
+        currentIngredient: '',
+      })
+    }
   }
 
   return (
@@ -41,7 +88,7 @@ export default function RecipeDetailModal({
           </Text>
           <View className="ml-4 flex-row gap-4">
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={handleEditClick}
               className="rounded-full bg-blue-100 p-2 dark:bg-blue-900"
             >
               <Ionicons name="create-outline" size={16} color="#FFFFFF" />
