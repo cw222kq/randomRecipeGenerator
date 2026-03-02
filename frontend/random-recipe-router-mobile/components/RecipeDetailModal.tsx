@@ -86,26 +86,44 @@ export default function RecipeDetailModal({
           <Text className="flex-1 text-xl font-bold text-black dark:text-white">
             {recipe.title}
           </Text>
-          <View className="ml-4 flex-row gap-4">
-            <TouchableOpacity
-              onPress={handleEditClick}
-              className="rounded-full bg-blue-100 p-2 dark:bg-blue-900"
-            >
-              <Ionicons name="create-outline" size={16} color="#FFFFFF" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => onDelete(recipe.id)}
-              className="rounded-full bg-red-100 p-2 dark:bg-red-900"
-            >
-              <Ionicons name="trash-outline" size={16} color="#FFFFFF" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={onClose}
-              className="rounded-full bg-gray-100 p-2 dark:bg-gray-800"
-            >
-              <Ionicons name="close" size={16} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
+          {isEditing && (
+            <View className="ml-4 flex-row gap-4">
+              <TouchableOpacity
+                onPress={() => {}}
+                className="rounded-full bg-green-100 p-2 dark:bg-green-900"
+              >
+                <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleCancelEdit}
+                className="ml-2 rounded-full bg-red-100 p-2 dark:bg-red-900"
+              >
+                <Ionicons name="close" size={16} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          )}
+          {!isEditing && (
+            <View className="ml-4 flex-row gap-4">
+              <TouchableOpacity
+                onPress={handleEditClick}
+                className="rounded-full bg-blue-100 p-2 dark:bg-blue-900"
+              >
+                <Ionicons name="create-outline" size={16} color="#FFFFFF" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => onDelete(recipe.id)}
+                className="rounded-full bg-red-100 p-2 dark:bg-red-900"
+              >
+                <Ionicons name="trash-outline" size={16} color="#FFFFFF" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={onClose}
+                className="rounded-full bg-gray-100 p-2 dark:bg-gray-800"
+              >
+                <Ionicons name="close" size={16} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
         {/* Content */}
         <ScrollView className="flex-1 px-4 py-4 pb-6">
