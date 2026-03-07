@@ -5,6 +5,7 @@ import {
   Modal,
   Image,
   ScrollView,
+  TextInput,
 } from 'react-native'
 import { Recipe } from '@/schemas/recipeSchema'
 import { Ionicons } from '@expo/vector-icons'
@@ -83,9 +84,25 @@ export default function RecipeDetailModal({
       <View className="flex-1 bg-white dark:bg-gray-900 p-4">
         {/* Header */}
         <View className="flex-row items-start justify-between border-b border-gray-200 px-4 py-4 dark:border-gray-700">
-          <Text className="flex-1 text-xl font-bold text-black dark:text-white">
-            {recipe.title}
-          </Text>
+          {/* Recipe Title */}
+          {isEditing && (
+            <TextInput
+              value={editData.title}
+              onChangeText={(text) =>
+                setEditData((prev) => ({ ...prev, title: text }))
+              }
+              className="flex-1 text-xl font-bold text-black dark:text-white border-b boder-gray-300 dark:border-gray-600 pb-1"
+              placeholder="Recipe title"
+              placeholderTextColor="#9ca3af"
+            />
+          )}
+          {!isEditing && (
+            <Text className="flex-1 text-xl font-bold text-black dark:text-white">
+              {recipe.title}
+            </Text>
+          )}
+
+          {/* Action Buttons */}
           {isEditing && (
             <View className="ml-4 flex-row gap-4">
               <TouchableOpacity
