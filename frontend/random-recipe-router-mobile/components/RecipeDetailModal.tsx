@@ -186,11 +186,12 @@ export default function RecipeDetailModal({
             <Text className="mb-3 text-lg font-semibold text-black dark:text-white">
               Instructions:
             </Text>
-            {recipe.instructions ? (
+            {recipe.instructions && (
               <Text className="leading-6 text-gray-700 dark:text-gray-300">
                 {recipe.instructions}
               </Text>
-            ) : (
+            )}
+            {!recipe.instructions && (
               <Text className="text-gray-500 dark:text-gray-400">
                 No instructions provided
               </Text>
