@@ -186,12 +186,25 @@ export default function RecipeDetailModal({
             <Text className="mb-3 text-lg font-semibold text-black dark:text-white">
               Instructions:
             </Text>
-            {recipe.instructions && (
+            {isEditing && (
+              <TextInput
+                value={editData.instructions}
+                onChangeText={(text) =>
+                  setEditData((prev) => ({ ...prev, instructions: text }))
+                }
+                className="text-gray-700 dark:text-gray-300 min-h-32"
+                placeholder="Enter cooking instructions"
+                placeholderTextColor="#9ca3af"
+                multiline={true}
+                textAlignVertical="top"
+              />
+            )}
+            {!isEditing && recipe.instructions && (
               <Text className="leading-6 text-gray-700 dark:text-gray-300">
                 {recipe.instructions}
               </Text>
             )}
-            {!recipe.instructions && (
+            {!isEditing && !recipe.instructions && (
               <Text className="text-gray-500 dark:text-gray-400">
                 No instructions provided
               </Text>
