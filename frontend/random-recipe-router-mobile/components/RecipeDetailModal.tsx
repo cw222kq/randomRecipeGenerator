@@ -164,7 +164,72 @@ export default function RecipeDetailModal({
             <Text className="mb-3 text-lg font-semibold text-black dark:text-white">
               Ingredients:
             </Text>
-            {recipe.ingredients &&
+            {/* Ingredients input */}
+            {isEditing && (
+              <View className="mb-3 flex-row">
+                <TextInput
+                  value={editData.currentIngredient}
+                  onChangeText={(text) =>
+                    setEditData((prev) => ({
+                      ...prev,
+                      currentIngredient: text,
+                    }))
+                  }
+                  className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-black dark:border-gray-600 dark:text-white"
+                  placeholder="Add an ingredient"
+                  placeholderTextColor="#9ca3af"
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    if (editData.currentIngredient.trim()) {
+                      setEditData((prev) => ({
+                        ...prev,
+                        ingredients: [
+                          ...prev.ingredients,
+                          prev.currentIngredient.trim(),
+                        ],
+                        currentIngredient: '',
+                      }))
+                    }
+                  }}
+                  className="ml-2 rounded-lg bg-blue-500 px-4 py-2"
+                >
+                  <Text className="text-white font-semibold">Add</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {/* Current ingredients list (editing) */}
+            {isEditing && editData.ingredients.length > 0 && (
+              <View>
+                {editData.ingredients.map((ingredient, index) => (
+                  <View
+                    key={index}
+                    className="mb-2 flex-row items-center justify-between rounded-lg bg-gray-100 p-2 dark:bg-gray-800"
+                  >
+                    <Text className="flex-1 text-gray-700 dark:text-gray-300">
+                      {ingredient}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setEditData((prev) => ({
+                          ...prev,
+                          ingredients: prev.ingredients.filter(
+                            (_, i) => i !== index,
+                          ),
+                        }))
+                      }}
+                      className="ml-2"
+                    >
+                      <Ionicons name="close-circle" size={20} color="#dc2626" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Ingredients list (read-only) */}
+            {!isEditing &&
+              recipe.ingredients &&
               recipe.ingredients.length > 0 &&
               recipe.ingredients.map((ingredient, index) => (
                 <Text
@@ -174,12 +239,12 @@ export default function RecipeDetailModal({
                   • {ingredient}
                 </Text>
               ))}
-            {!recipe.ingredients ||
-              (recipe.ingredients.length === 0 && (
+            {!isEditing &&
+              (!recipe.ingredients || recipe.ingredients.length === 0) && (
                 <Text className="text-gray-500 dark:text-gray-400">
                   No ingredients listed
                 </Text>
-              ))}
+              )}
           </View>
           {/* Instructions */}
           <View className="mt-4 rounded-lg border border-gray-200 p-4 dark:border-gray-700">
