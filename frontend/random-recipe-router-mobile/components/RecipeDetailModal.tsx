@@ -16,6 +16,15 @@ interface RecipeDetailModalProps {
   isOpen: boolean
   onClose: () => void
   onDelete: (recipeId: string) => void
+  onUpdate: (
+    recipeId: string,
+    recipeData: {
+      title: string
+      ingredients: string[]
+      instructions: string
+      imageUrl?: string
+    },
+  ) => void
 }
 
 export default function RecipeDetailModal({
@@ -23,6 +32,7 @@ export default function RecipeDetailModal({
   isOpen,
   onClose,
   onDelete,
+  onUpdate,
 }: RecipeDetailModalProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState({
