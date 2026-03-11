@@ -6,6 +6,7 @@ import {
   Image,
   ScrollView,
   TextInput,
+  Alert,
 } from 'react-native'
 import { Recipe } from '@/schemas/recipeSchema'
 import { Ionicons } from '@expo/vector-icons'
@@ -82,6 +83,28 @@ export default function RecipeDetailModal({
         currentIngredient: '',
       })
     }
+  }
+
+  const handleSaveEdit = () => {
+    if (!editData.title.trim()) {
+      Alert.alert('Error', 'Recipe title is required')
+      return
+    }
+    if (editData.ingredients.length === 0) {
+      Alert.alert('Error', 'At least one ingredient is required')
+      return
+    }
+    if (!editData.instructions.trim()) {
+      Alert.alert('Error', 'Cooking instructions are required')
+      return
+    }
+    onUpdate(recipe.id, {
+      title: editData.title.trim(),
+      ingredients: editData.ingredients,
+      instructions: editData.instructions.trim(),
+      imageUrl: editData.imageUrl || undefined,
+    })
+    setIsEditing(false)
   }
 
   return (
