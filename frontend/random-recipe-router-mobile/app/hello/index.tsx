@@ -6,6 +6,7 @@ import {
   getUserFavoriteRecipes,
   unfavoriteSpoonacularRecipe,
   deleteRecipe,
+  updateRecipe,
 } from '@/services/recipeService'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import FavoriteRecipeList from '@/components/FavoriteRecipeList'
@@ -134,6 +135,37 @@ export default function Hello() {
         },
       ],
     )
+  }
+
+  const handleUpdateRecipe = async (
+    recipeId: string,
+    recipeData: {
+      title: string
+      ingredients: string[]
+      instructions: string
+      imageUrl?: string
+    },
+  ) => {
+    if (!user) {
+      Alert.alert('Error', 'User not authenticated')
+      return
+    }
+    try {
+      const updatedRecipe = await updateRecipe(recipeId, user.id, recipeData)
+      if (!updatedRecipe) {
+        Alert.alert('Error', 'Failed to update recipe')
+        return
+      }
+      setFavoriteRecipes((prevRecipes) =>
+        prevRecipes.map((recipe) =>
+          recipe.id === recipeId ? updatedRecipe : recipe,
+        ),
+      )
+      setSelectedRecipe(updatedRecipe)
+    } catch (error) {
+      console.error('Error updating recipe:', error)
+      Alert.alert('Error', 'An error occurred while updating the recipe')
+    }
   }
 
   return (
