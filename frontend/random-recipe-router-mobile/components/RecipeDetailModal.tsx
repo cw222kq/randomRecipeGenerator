@@ -139,7 +139,7 @@ export default function RecipeDetailModal({
           {isEditing && (
             <View className="ml-4 flex-row gap-4">
               <TouchableOpacity
-                onPress={() => {}}
+                onPress={handleSaveEdit}
                 className="rounded-full bg-green-100 p-2 dark:bg-green-900"
               >
                 <Ionicons name="checkmark" size={16} color="#FFFFFF" />
