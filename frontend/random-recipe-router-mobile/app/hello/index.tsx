@@ -240,7 +240,7 @@ export default function Hello() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onDelete={handleDeleteRecipe}
-        onUpdate={() => {}}
+        onUpdate={handleUpdateRecipe}
       />
     </ScrollView>
   )
