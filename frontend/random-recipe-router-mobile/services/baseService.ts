@@ -106,7 +106,6 @@ const putRequest = async <T>(
           ...options.headers,
         },
         body: JSON.stringify(data),
-        ...options,
       },
     )
 
