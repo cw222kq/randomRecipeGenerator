@@ -7,6 +7,7 @@ import {
   unfavoriteSpoonacularRecipe,
   deleteRecipe,
   updateRecipe,
+  getUserRecipes,
 } from '@/services/recipeService'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import FavoriteRecipeList from '@/components/FavoriteRecipeList'
@@ -23,6 +24,10 @@ export default function Hello() {
   const [favoritesError, setFavoritesError] = useState<string | null>(null)
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [showRecipes, setShowRecipes] = useState<boolean>(false)
+  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(false)
+  const [recipesError, setRecipesError] = useState<string | null>(null)
 
   const handleToggleFavorite = async () => {
     if (!showFavorites && user) {
@@ -166,6 +171,30 @@ export default function Hello() {
       console.error('Error updating recipe:', error)
       Alert.alert('Error', 'An error occurred while updating the recipe')
     }
+  }
+
+  const handleToggleRecipes = async () => {
+    if (!showRecipes && user) {
+      setIsLoadingRecipes(true)
+      setRecipesError(null)
+      try {
+        const userRecipes: Recipe[] | null = await getUserRecipes(user.id)
+        if (!userRecipes) {
+          setRecipesError('Failed to load recipes')
+          return
+        }
+        const userCreatedRecipes = userRecipes.filter(
+          (recipe) => recipe.spoonacularId === null,
+        )
+        setRecipes(userCreatedRecipes)
+      } catch (error) {
+        console.error('Error loading recipes:', error)
+        setRecipesError('An error occurred while loading the recipes')
+      } finally {
+        setIsLoadingRecipes(false)
+      }
+    }
+    setShowRecipes(!showRecipes)
   }
 
   return (
