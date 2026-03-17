@@ -12,6 +12,7 @@ import {
 import CollapsibleSection from '@/components/CollapsibleSection'
 import FavoriteRecipeList from '@/components/FavoriteRecipeList'
 import RecipeDetailModal from '@/components/RecipeDetailModal'
+import RecipeList from '@/components/RecipeList'
 
 export default function Hello() {
   const { user, isLoading, isAuthenticated } = useAppSelector(
@@ -261,6 +262,40 @@ export default function Hello() {
                   onUnfavorite={handleUnfavoriteRecipe}
                 />
               )}
+          </CollapsibleSection>
+          <CollapsibleSection
+            title="My Tasty Recipes"
+            emoji="🍳"
+            isOpen={showRecipes}
+            onToggle={handleToggleRecipes}
+            showContentCard={true}
+          >
+            {isLoadingRecipes && (
+              <View className="items-center py-4">
+                <ActivityIndicator size="small" />
+                <Text className="mt-2 text-gray-600 dark:text-gray-400">
+                  Loading your recipes...
+                </Text>
+              </View>
+            )}
+            {!isLoadingRecipes && recipesError && (
+              <View className="items-center py-4">
+                <Text className="text-red-500 text-center">{recipesError}</Text>
+              </View>
+            )}
+            {!isLoadingRecipes && !recipesError && recipes.length === 0 && (
+              <View className="items-center py-4">
+                <Text className="text-center text-gray-600 dark:text-gray-400">
+                  You don't have any recipes yet.
+                </Text>
+                <Text className="mt-1 text-center text-sm text-gray-500">
+                  Create a recipe to see it here!
+                </Text>
+              </View>
+            )}
+            {!isLoadingRecipes && !recipesError && recipes.length > 0 && (
+              <RecipeList recipes={recipes} onRecipeClick={handleRecipeClick} />
+            )}
           </CollapsibleSection>
         </>
       )}
