@@ -6,8 +6,8 @@ export const RecipeSchema = z.object({
   title: z.string(),
   ingredients: z.array(z.string()),
   instructions: z.string(),
-  imageUrl: z.string().url().optional(),
-  spoonacularId: z.number().optional(),
+  imageUrl: z.string().url().nullable().optional(),
+  spoonacularId: z.number().nullable().optional(),
 })
 
 // Infer and export the TypeScript type

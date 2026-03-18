@@ -56,7 +56,9 @@ export default function Hello() {
   }
 
   const handleRecipeClick = (recipeId: string) => {
-    const recipe = favoriteRecipes.find((recipe) => recipe.id === recipeId)
+    const recipe =
+      favoriteRecipes.find((recipe) => recipe.id === recipeId) ||
+      recipes.find((recipe) => recipe.id === recipeId)
     if (!recipe) {
       console.error('Recipe not found')
       return
@@ -263,7 +265,7 @@ export default function Hello() {
                 />
               )}
           </CollapsibleSection>
-          <CollapsibleSection
+          <CollapsibleSection // TODO: CHECK THIS OUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             title="My Tasty Recipes"
             emoji="🍳"
             isOpen={showRecipes}
