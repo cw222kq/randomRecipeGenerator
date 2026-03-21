@@ -132,6 +132,9 @@ export default function Hello() {
               setFavoriteRecipes((prevFavorites) =>
                 prevFavorites.filter((recipe) => recipe.id !== recipeId),
               )
+              setRecipes((prevRecipes) =>
+                prevRecipes.filter((recipe) => recipe.id !== recipeId),
+              )
               handleCloseModal()
             } catch (error) {
               console.error('Error deleting recipe:', error)
@@ -265,7 +268,7 @@ export default function Hello() {
                 />
               )}
           </CollapsibleSection>
-          <CollapsibleSection // TODO: CHECK THIS OUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          <CollapsibleSection
             title="My Tasty Recipes"
             emoji="🍳"
             isOpen={showRecipes}
