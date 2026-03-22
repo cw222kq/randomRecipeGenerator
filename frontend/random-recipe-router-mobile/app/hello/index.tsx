@@ -172,6 +172,11 @@ export default function Hello() {
           recipe.id === recipeId ? updatedRecipe : recipe,
         ),
       )
+      setRecipes((prevRecipes) =>
+        prevRecipes.map((recipe) =>
+          recipe.id === recipeId ? updatedRecipe : recipe,
+        ),
+      )
       setSelectedRecipe(updatedRecipe)
     } catch (error) {
       console.error('Error updating recipe:', error)
