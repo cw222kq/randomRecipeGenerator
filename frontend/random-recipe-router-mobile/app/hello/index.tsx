@@ -29,6 +29,7 @@ export default function Hello() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(false)
   const [recipesError, setRecipesError] = useState<string | null>(null)
+  const [showCreateRecipe, setShowCreateRecipe] = useState<boolean>(false)
 
   const handleToggleFavorite = async () => {
     if (!showFavorites && user) {
@@ -53,6 +54,10 @@ export default function Hello() {
       }
     }
     setShowFavorites(!showFavorites)
+  }
+
+  const handleToggleCreateRecipe = () => {
+    setShowCreateRecipe(!showCreateRecipe)
   }
 
   const handleRecipeClick = (recipeId: string) => {
