@@ -5,9 +5,10 @@ import { saveRecipe } from '@/services/recipeService'
 
 interface RecipeFormProps {
   user: User
+  onRecipeCreated: () => void
 }
 
-export default function RecipeForm({ user }: RecipeFormProps) {
+export default function RecipeForm({ user, onRecipeCreated }: RecipeFormProps) {
   const [formData, setFormData] = useState({
     title: '',
     ingredients: [] as string[],
@@ -56,6 +57,7 @@ export default function RecipeForm({ user }: RecipeFormProps) {
       if (result) {
         Alert.alert('Success', 'Recipe saved successfully')
         resetForm()
+        onRecipeCreated()
       } else {
         Alert.alert('Error', 'Failed to save recipe')
       }
