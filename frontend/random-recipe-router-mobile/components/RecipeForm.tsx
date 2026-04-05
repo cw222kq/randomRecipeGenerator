@@ -1,4 +1,4 @@
-import { View, Text, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, Alert, ActivityIndicator, TextInput } from 'react-native'
 import { useState } from 'react'
 import { User } from '@/schemas/userSchema'
 import { saveRecipe } from '@/services/recipeService'
@@ -73,9 +73,19 @@ export default function RecipeForm({ user, onRecipeCreated }: RecipeFormProps) {
     <>
       {!isSubmitting && (
         <View>
-          <Text className="text-lg font-semibold text-black dark:text-white">
-            Create Your Recipe
+          {/* Title */}
+          <Text className="mb-1 font-semibold text-black dark:text-white">
+            Recipe Title *
           </Text>
+          <TextInput
+            value={formData.title}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, title: text }))
+            }
+            placeholder="Enter recipe title"
+            placeholderTextColor="#9ca3af"
+            className="rounded-lg border border-gray-300 px-3 py-2 text-black dark:border-gray-600 dark:text-white"
+          />
         </View>
       )}
       {isSubmitting && (
