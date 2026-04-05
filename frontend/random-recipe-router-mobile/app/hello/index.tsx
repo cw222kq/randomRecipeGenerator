@@ -13,6 +13,7 @@ import CollapsibleSection from '@/components/CollapsibleSection'
 import FavoriteRecipeList from '@/components/FavoriteRecipeList'
 import RecipeDetailModal from '@/components/RecipeDetailModal'
 import RecipeList from '@/components/RecipeList'
+import RecipeForm from '@/components/RecipeForm'
 
 export default function Hello() {
   const { user, isLoading, isAuthenticated } = useAppSelector(
@@ -311,6 +312,15 @@ export default function Hello() {
             {!isLoadingRecipes && !recipesError && recipes.length > 0 && (
               <RecipeList recipes={recipes} onRecipeClick={handleRecipeClick} />
             )}
+          </CollapsibleSection>
+          <CollapsibleSection
+            title="Create New Recipe"
+            emoji="🧑‍🍳"
+            isOpen={showCreateRecipe}
+            onToggle={handleToggleCreateRecipe}
+            showContentCard={true}
+          >
+            <RecipeForm user={user} onRecipeCreated={() => {}} />
           </CollapsibleSection>
         </>
       )}
