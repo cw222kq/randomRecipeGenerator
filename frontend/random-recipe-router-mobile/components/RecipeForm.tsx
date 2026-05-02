@@ -158,6 +158,23 @@ export default function RecipeForm({ user, onRecipeCreated }: RecipeFormProps) {
               </TouchableOpacity>
             </View>
           </View>
+          {/* Instructions */}
+          <View className="mt-4">
+            <Text className="mb-1 font-semibold text-black dark:text-white">
+              Instructions *
+            </Text>
+            <TextInput
+              value={formData.instructions}
+              onChangeText={(text) =>
+                setFormData((prev) => ({ ...prev, instructions: text }))
+              }
+              placeholder="Describe the cooking process step by step..."
+              placeholderTextColor="#9ca3af"
+              multiline
+              textAlignVertical="top"
+              className="min-h-32 rounded-lg border border-gray-300 px-3 py-2 text-black dark:border-gray-600 dark:text-white"
+            />
+          </View>
         </View>
       )}
       {isSubmitting && (
